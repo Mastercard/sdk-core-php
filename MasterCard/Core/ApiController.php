@@ -240,7 +240,7 @@ class ApiController {
             if ($statusCode < self::HTTP_AMBIGUOUS) {
                 $responseContent = $response->getBody()->getContents();
                 if (strlen($responseContent) > 0) {
-                    return json_decode($response->getBody()->getContents(), true);
+                    return json_decode($responseContent, true);
                 } else {
                     return array();
                 }
