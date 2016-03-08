@@ -48,6 +48,7 @@ class ApiController
     
     const HTTP_SUCCESS = 200;
     const HTTP_NO_CONTENT = 204;
+    const HTTP_AMBIGUOUS = 300;
     const HTTP_REDIRECTED = 302;
     const HTTP_UNAUTHORIZED = 401;
     const HTTP_NOT_FOUND = 404;
@@ -259,7 +260,7 @@ class ApiController
             $client = new Client();
             $response = $client->send($request);
             $statusCode = $response->getStatusCode();
-            if ($statusCode == self::HTTP_SUCCESS)
+            if ($statusCode < self::HTTP_AMBIGUOUS)
             {
                 return json_decode($response->getBody()->getContents(), true);
             } else {
