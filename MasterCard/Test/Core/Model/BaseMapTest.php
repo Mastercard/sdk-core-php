@@ -60,13 +60,6 @@ class BaseMapTest extends \PHPUnit_Framework_TestCase
     
     public function TestSetAll()
     {
-//                    [Account] => stdClass Object
-//                (
-//                    [Status] => true
-//                    [Listed] => true
-//                    [ReasonCode] => S
-//                    [Reason] => STOLEN
-//                )
         $map = array( "Account" => array( "Status" => true, "Listed" => true, "ReasonCode" => "S", "Reason" => "STOLEN"));
         $baseMap = new BaseMap();
         $baseMap->setAll($map);

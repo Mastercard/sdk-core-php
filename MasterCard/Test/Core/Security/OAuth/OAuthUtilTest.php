@@ -144,19 +144,7 @@ class OAuthUtilTest extends \PHPUnit_Framework_TestCase {
        
         
     }
-    
-    
-    
-    
-    public function testBodyHas()
-    {
-        $body = '{"user":{"name":"andrea","surname":"rizzini"}}';
-        $encodedHash = Util::base64Encode(Util::sha1Encode($body, true));
-        $this->assertEquals("sJ2c8rlm909RG7i2d1OOY7l+gNY=", $encodedHash);
-        
-    }
-    
-    
+ 
     
 
 }
