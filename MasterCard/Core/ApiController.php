@@ -61,8 +61,11 @@ class ApiController {
         'show' => 'GET',
         'update' => 'PUT'
     );
-    public $fullUrl = null;
-    public $baseUrl = null;
+    protected $fullUrl = null;
+    protected $baseUrl = null;
+    protected $client = null;
+            
+    
 
     function __construct($basePath) {
 
@@ -84,6 +87,7 @@ class ApiController {
 
         $this->fullUrl = $fullUrl;
         $this->baseUrl = Util::normalizeUrl($fullUrl);
+        $this->client = new Client();
     }
 
     /// <summary>
@@ -119,6 +123,13 @@ class ApiController {
         $s .= $stringToAppend;
 
         return $s;
+    }
+    
+    /**
+     * @ignore
+     */
+    public function setClient($customClient) {
+        $this->client = $customClient;
     }
 
     /**
@@ -234,8 +245,8 @@ class ApiController {
 
 
         try {
-            $client = new Client();
-            $response = $client->send($request);
+            
+            $response = $this->client->send($request);
             $statusCode = $response->getStatusCode();
             if ($statusCode < self::HTTP_AMBIGUOUS) {
                 $responseContent = $response->getBody()->getContents();
@@ -258,7 +269,7 @@ class ApiController {
 
     private function handleException($response) {
         $status = $response->getStatusCode();
-        $bodyArray = json_decode($response->getBody()->getContents());
+        $bodyArray = json_decode($response->getBody()->getContents(), TRUE);
 
         if ($status < 500) {
             switch ($status) {
@@ -282,7 +293,7 @@ class ApiController {
                     break;
             }
         } else {
-            throw new SystemException("An unexpected error has been raised.  Looks like there's something wrong at our end.", $status, $bodyMessage);
+            throw new SystemException("An unexpected error has been raised.  Looks like there's something wrong at our end.", $status, $bodyArray);
         }
     }
 

@@ -34,6 +34,7 @@ namespace MasterCard\Core\Model;
 class BaseMap {
 
     private $properties = array();
+    private $parrentContainsSquaredBracket = '/\[(.*)\]/';
     
     /**
      * This gets the value in the map associated with the key
@@ -50,41 +51,62 @@ class BaseMap {
             
             $tmpArray = $this->properties;
             foreach ($keys as $index=>$subKey) {
-                if ($index+1 < $keysCount)
+                if (empty($tmpArray) || empty($subKey))
                 {
-                    //arizzini: if the current $index is not the last $subKey
-                    //we want to the last nested map
-                    if (array_key_exists($subKey, $tmpArray) && is_array($tmpArray[$subKey]) ) {
-                        $tmpArray = $tmpArray[$subKey];
-                    } else {
-                        return null;
-                    }
+                    return null;
+                } 
+                else if ($index+1 < $keysCount)
+                {
+                    $tmpArray = $this->getArrayObject($tmpArray, $subKey);
                 }
                 else {
-                    //arizzini: this is the last key we need to 
-                    //check if it is contained in the $tmpArray ans then
-                    // return it
-                    if (array_key_exists($subKey, $tmpArray))
-                    {
-                        return $tmpArray[$subKey];
-                    } else {
-                        return null;
-                    }
-                    
+                    return $this->getArrayObject($tmpArray, $subKey);
                 }
             }
-            
-            return null;
-            
-            
         } else {
-            if (array_key_exists($key, $this->properties)) {
-                return $this->properties[$key];
-            } else {
-                return null;
-            }
+            return $this->getArrayObject($this->properties, $key);
         }   
         
+    }
+    
+    
+    private function getArrayObject($inputArray, $key)
+    {
+//        echo ">>>getArrayObject(key=$key)\r\n";
+        preg_match($this->parrentContainsSquaredBracket, $key, $matches);
+        //arizzini: if the curent key contains a square bracket,
+        //we are referring to an array
+        if (!empty($matches))
+        {
+            $bracketPosition = strpos($key, "[");
+            $listName  = substr($key, 0, $bracketPosition);
+            $listIndex = $matches[1] ?: 0;
+            
+//            echo "listName=$listName \r\n";
+//            echo "listIndex=$listIndex \r\n";
+            if (array_key_exists($listName, $inputArray)) 
+            {
+                
+                if (array_key_exists($listIndex, $inputArray[$listName]))
+                {
+//                    echo "--returning list[$listIndex]--\r\n";    
+                    return $inputArray[$listName][$listIndex];
+                } else {
+                    return null;
+                }
+            } 
+            else {
+//                echo "--returning NULL--\r\n";
+                return null;
+            }
+        } 
+        //arizzini: if the current $index is not the last $subKey
+        //we want to the last nested map
+        else if (array_key_exists($key, $inputArray)) {
+            return $inputArray[$key];
+        } else {
+            return null;
+        }
     }
     
     /**
@@ -103,25 +125,30 @@ class BaseMap {
             
             $tmpArray = $this->properties;
             foreach ($keys as $index=>$subKey) {
-                if ($index+1 < $keysCount)
+             
+                
+                if (empty($tmpArray) || empty($subKey))
+                {
+                    return false;
+                } 
+                else if ($index+1 < $keysCount)
                 {
                     //arizzini: if the current $index is not the last $subKey
                     //we want to check is the $tmpArray is an array
-                    if (is_array($tmpArray) && array_key_exists($subKey, $tmpArray)) {
-                        $tmpArray = $tmpArray[$subKey];
-                    } else {
-                        return false;                    
-                    }
+                    $tmpArray = $this->getArrayObject($tmpArray, $subKey);
                 }
                 else {
-                    return array_key_exists($subKey, $tmpArray);
+//                  echo "checking if subkey=$subKey exists";
+//                  print_r($tmpArray);
+                    //
+                    return $this->getArrayObject($tmpArray, $subKey) !== null;
+                    //return array_key_exists($subKey, $tmpArray);
+                    
                 }
             }
-            
-            return false;
-            
         } else {
-            return array_key_exists($key, $this->properties);
+            return $this->getArrayObject($this->properties, $key) !== null;
+            
         }
         
     }
@@ -138,28 +165,62 @@ class BaseMap {
             //individual string if they are part of the nestes array
             $keys = explode('.', $key);
             $keysCount = count($keys);
-                    
+            
             $tmpArray = &$this->properties;
             foreach ($keys as $index=>$subKey) {
                 if (($index+1) < $keysCount)
                 {
-                    if (!array_key_exists($subKey, $tmpArray)) {
-                        $tmpArray[$subKey] = array();
-                        $tmpArray = &$tmpArray[$subKey];
-                    } else {
-                        $tmpArray = &$tmpArray[$subKey];
-                    }
+//                    echo "createArrayObject(key=$subKey)\r\n";
+                    $tmpArray = & $this->createArrayObject($tmpArray, $subKey);
+                    
                 }
                 else {
-                    $tmpArray[$subKey] = $value;                    
+//                    echo "createArrayObject([key=$subKey]=$value])\r\n";
+                    $tmpArray[$subKey] = & $value;                    
                     return $this;
                 }
             }
         } else {
             $this->properties[$key] = $value;
+//            $tmpArray = & $this->createArrayObject(, $key);
+//            $tmpArray[$key] = $value;
             return $this;
         }
         
+    }
+    
+    private function &createArrayObject(&$inputArray, $key)
+    {
+        preg_match($this->parrentContainsSquaredBracket, $key, $matches);
+        //arizzini: if the curent key contains a square bracket,
+        //we are referring to an array
+        if (!empty($matches))
+        {
+            $listName  = substr($key, 0, strlen($key)-(strpos($key, "[")-1));
+            $listIndex = $matches[1];
+            if (array_key_exists($listName, $inputArray)) {
+                if (isset($listIndex) && array_key_exists($listIndex, $inputArray[$listName]))
+                {
+                    $inputArray = $inputArray[$listName][$listIndex];
+                } 
+                else
+                {
+                    $inputArray = $inputArray[$listName];
+                }
+            } 
+            else {
+                $inputArray[$listName] = array();
+                return $inputArray[$listName];
+            }
+        } 
+        //arizzini: if the current $index is not the last $subKey
+        //we want to the last nested map
+        else if (array_key_exists($key, $inputArray)) {
+            return $inputArray[$key];
+        } else {
+            $inputArray[$key] = array();                       
+            return $inputArray[$key];
+        }
     }
 
     /**
@@ -167,9 +228,30 @@ class BaseMap {
      * @param $map array Map of values to set.
      */
     public function setAll($map) {
-        foreach ($map as $key => $value) {
-            $this->set($key, $value);
+        if ($this->isAssoc($map))
+        {
+            //echo "isAssoc==TRUE\r\n";
+            foreach ($map as $key => $value) {
+                $this->set($key, $value);
+            }
+        } else {
+            //echo "isAssoc==FALSE\r\n";
+            $list = array();
+            foreach ($map as $object) {
+                $tmpBaseMap = new BaseMap();
+                $tmpBaseMap->setAll($object);
+                array_push($list, $tmpBaseMap->getProperties());
+            }
+            
+            $this->set("list", $list);
+//            print_r($this->getProperties());
         }
+    }
+    
+    
+    private function isAssoc($arr)
+    {
+        return array_keys($arr) !== range(0, count($arr) - 1);
     }
     
     /**

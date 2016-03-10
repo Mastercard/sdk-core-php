@@ -41,7 +41,7 @@ abstract class BaseObject extends BaseMap
     abstract function getObjectType();
     
     function __construct($baseMap) {
-        parent::setAll($baseMap->getProperties());
+        $this->setAll($baseMap->getProperties());
     }
         
     /**

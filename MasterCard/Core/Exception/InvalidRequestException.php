@@ -48,10 +48,19 @@ class InvalidRequestException extends ApiException {
 
         if ($errorData != null) {
             
-            $error = reset($errorData->Errors->Error);
-            if ($error !== FALSE && property_exists($error, "FieldErrors")) {
-                $fieldErrors = $error->FieldErrors;
-                if ($fieldErrors != null) {
+            
+            if (array_key_exists('Errors', $errorData) && array_key_exists('Error', $errorData['Errors']))
+            {
+                $error = $errorData['Errors']['Error'];
+                if (!$this->isAssoc($error))
+                {
+                    //arizzini: this is a fix when multiple errors are returned.
+                    $error = $error[0];
+                }
+                                
+                if (array_key_exists('FieldErrors', $error))
+                {
+                    $fieldErrors = $error['FieldErrors'];
                     $this->fieldErrors = array();                
                     foreach ($fieldErrors as $fieldError) {
                         array_push($this->fieldErrors, new FieldError($fieldError));
