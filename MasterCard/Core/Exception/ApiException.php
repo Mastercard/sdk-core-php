@@ -60,15 +60,34 @@ class ApiException extends \Exception
 
         if ($errorData != null) {
             
-            $error = reset($errorData->Errors->Error);
-            if ($error !== FALSE)
+            if (array_key_exists('Errors', $errorData) && array_key_exists('Error', $errorData['Errors']))
             {
-                $this->message = $error->Description;
-                $this->errorCode = $error->ReasonCode;
-                $this->reference = $error->Source;
-                
+                $error = $errorData['Errors']['Error'];
+                if (!$this->isAssoc($error))
+                {
+                    //arizzini: this is a fix when multiple errors are returned.
+                    $error = $error[0];
+                }
+                                
+                if (array_key_exists('Description', $error))
+                {
+                    $this->message = $error['Description'];
+                }
+                if (array_key_exists('ReasonCode', $error))
+                {
+                    $this->message = $error['ReasonCode'];
+                }
+                if (array_key_exists('Source', $error))
+                {
+                    $this->message = $error['Source'];
+                }
             }
         }
+    }
+    
+    protected function isAssoc($arr)
+    {
+        return array_keys($arr) !== range(0, count($arr) - 1);
     }
     
     /**

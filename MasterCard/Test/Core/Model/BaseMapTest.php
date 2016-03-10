@@ -41,8 +41,8 @@ class BaseMapTest extends \PHPUnit_Framework_TestCase
         
         $this->assertTrue($baseObject != NULL);
         $this->assertTrue($baseObject->containsKey("key1"));
-        $this->assertTrue($baseObject->size() == 1);
-        $this->assertTrue($baseObject->get("key1") == "value1");
+        $this->assertEquals(1, $baseObject->size());
+        $this->assertEquals("value1", $baseObject->get("key1"));
     }
     
     
@@ -50,11 +50,74 @@ class BaseMapTest extends \PHPUnit_Framework_TestCase
     {
         $baseObject = new BaseMap();
         $baseObject->set("key1.key2.key3", "value1");
+        $baseObject->set("key1.key2.key4", "value2");
+        
         
         $this->assertTrue($baseObject != NULL);
+        
+        $this->assertTrue($baseObject->containsKey("key1"));
+        $this->assertTrue($baseObject->containsKey("key1.key2"));
         $this->assertTrue($baseObject->containsKey("key1.key2.key3"));
         $this->assertTrue($baseObject->size() == 1);
         $this->assertEquals("value1", $baseObject->get("key1.key2.key3"));
+        
+        $this->assertTrue($baseObject->containsKey("key1.key2.key4"));
+        $this->assertEquals("value2", $baseObject->get("key1.key2.key4"));
+        
+        
+        $this->assertFalse($baseObject->containsKey("key1.key2.key3."));
+        $this->assertNull($baseObject->get("key1.key2.key3."));
+        $this->assertFalse($baseObject->containsKey("key1.key2."));
+        $this->assertNull($baseObject->get("key1.key2."));
+        $this->assertFalse($baseObject->containsKey("key1."));
+        $this->assertNull($baseObject->get("key1."));
+        
+        $this->assertFalse($baseObject->containsKey("key1.key2.something.different"));
+        $this->assertNull($baseObject->get("key1.key2.something.different"));
+        $this->assertFalse($baseObject->containsKey("key1.something.different"));
+        $this->assertNull($baseObject->get("key1.something.different"));
+        $this->assertFalse($baseObject->containsKey("key1..."));
+        $this->assertNull($baseObject->get("key1..."));
+                
+        
+    }
+    
+        public function testNestedMapWithList()
+    {
+        $body = "[ { \"user.name\":\"andrea\", \"user.surname\":\"rizzini\" } ]";
+        $baseMap = new BaseMap();
+        $baseMap->setAll(json_decode($body, true));
+        
+        $this->assertEquals(1, $baseMap->size());
+        $this->assertEquals("andrea", $baseMap->get("list[0].user.name"));
+        $this->assertEquals("rizzini", $baseMap->get("list[0].user.surname"));
+        
+        
+        $this->assertTrue($baseMap->containsKey("list"));
+        $this->assertNotEmpty($baseMap->get("list"));
+        $this->assertTrue($baseMap->containsKey("list[0]"));
+        $this->assertNotEmpty($baseMap->get("list[0]"));
+        $this->assertTrue($baseMap->containsKey("list[0].user"));
+        $this->assertNotEmpty($baseMap->get("list[0].user"));
+        $this->assertTrue($baseMap->containsKey("list[0].user.name"));
+        $this->assertNotEmpty($baseMap->get("list[0].user.name"));
+        $this->assertTrue($baseMap->containsKey("list[]"));
+        $this->assertNotEmpty($baseMap->get("list[]"));
+        $this->assertTrue($baseMap->containsKey("list[].user"));
+        $this->assertNotEmpty($baseMap->get("list[].user"));
+        $this->assertTrue($baseMap->containsKey("list[0].user.name"));
+        $this->assertNotEmpty($baseMap->get("list[0].user.name"));
+        
+        $this->assertFalse($baseMap->containsKey("list2"));
+        $this->assertEmpty($baseMap->get("list2"));
+        $this->assertFalse($baseMap->containsKey("list[2]"));
+        $this->assertEmpty($baseMap->get("list[2]"));
+        
+        $this->assertFalse($baseMap->containsKey("list[2].some.nonsense"));
+        $this->assertEmpty($baseMap->get("list[2].some.nonsense"));
+        $this->assertFalse($baseMap->containsKey("list[2].some...."));
+        $this->assertEmpty($baseMap->get("list[2].some...."));
+        
     }
     
     
@@ -71,5 +134,9 @@ class BaseMapTest extends \PHPUnit_Framework_TestCase
         
         
     }
+    
+
+    
+
             
 }

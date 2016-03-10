@@ -14,14 +14,26 @@ class AccountEnquiry extends  BaseObject{
     const BasePath = "/fraud/loststolen/v1";
     const ObjectType = "account-inquiry";
     
+    /**
+     * getBasePath
+     * @return String
+     */
     public function getBasePath() {
         return self::BasePath;
     }
     
+    /**
+     * getObjectType
+     * @return String
+     */
     public function getObjectType() {
         return self::ObjectType;
     }
     
+    /**
+     * Updates the object
+     * @return AccountEnquiry object
+     */
     public function update()
     {
         return parent::updateObject($this);
