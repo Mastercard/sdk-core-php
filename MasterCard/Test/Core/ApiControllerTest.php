@@ -46,7 +46,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $controller = new ApiController(TestBaseObject::BasePath);
         $controller->setClient(self::mockClient(200, $body));
         
-        $responseArray = $controller->execure(TestBaseObject::ObjectType, "create", new TestBaseObject($requestMap));
+        $responseArray = $controller->execute(TestBaseObject::ObjectType, "create", new TestBaseObject($requestMap));
         
         $this->assertNotEmpty($responseArray);
         
@@ -66,7 +66,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $controller = new ApiController(TestBaseObject::BasePath);
         $controller->setClient(self::mockClient(200, $body));
         
-        $responseArray = $controller->execure(TestBaseObject::ObjectType, "create", new TestBaseObject($requestMap));
+        $responseArray = $controller->execute(TestBaseObject::ObjectType, "create", new TestBaseObject($requestMap));
         
         $this->assertNotEmpty($responseArray);
         
@@ -86,7 +86,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $controller = new ApiController(TestBaseObject::BasePath);
         $controller->setClient(self::mockClient(204, ""));
         
-        $responseArray = $controller->execure(TestBaseObject::ObjectType, "create", new TestBaseObject($requestMap));
+        $responseArray = $controller->execute(TestBaseObject::ObjectType, "create", new TestBaseObject($requestMap));
         
         $this->assertEmpty($responseArray);
         
@@ -103,7 +103,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $controller = new ApiController(TestBaseObject::BasePath);
         $controller->setClient(self::mockClient(405, $body));
         
-        $controller->execure(TestBaseObject::ObjectType, "create", new TestBaseObject($requestMap));
+        $controller->execute(TestBaseObject::ObjectType, "create", new TestBaseObject($requestMap));
     }
     
     
@@ -117,7 +117,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $controller = new ApiController(TestBaseObject::BasePath);
         $controller->setClient(self::mockClient(400, $body));
         
-        $controller->execure(TestBaseObject::ObjectType, "create", new TestBaseObject($requestMap));
+        $controller->execute(TestBaseObject::ObjectType, "create", new TestBaseObject($requestMap));
     }
     
     
@@ -131,7 +131,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $controller = new ApiController(TestBaseObject::BasePath);
         $controller->setClient(self::mockClient(401, $body));
         
-        $controller->execure(TestBaseObject::ObjectType, "create", new TestBaseObject($requestMap));
+        $controller->execute(TestBaseObject::ObjectType, "create", new TestBaseObject($requestMap));
     }
     
     
@@ -145,7 +145,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $controller = new ApiController(TestBaseObject::BasePath);
         $controller->setClient(self::mockClient(500, $body));
         
-        $controller->execure(TestBaseObject::ObjectType, "create", new TestBaseObject($requestMap));
+        $controller->execute(TestBaseObject::ObjectType, "create", new TestBaseObject($requestMap));
     }
     
     

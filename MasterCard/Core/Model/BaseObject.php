@@ -49,7 +49,7 @@ abstract class BaseObject extends BaseMap
      */
     protected static function readObject($inputObject)
     {
-        return self::execure("read", $inputObject);
+        return self::execute("read", $inputObject);
     }
     
     
@@ -58,7 +58,7 @@ abstract class BaseObject extends BaseMap
      */
     protected static function listObjects($inputObject)
     {
-        return self::execure("list", $inputObject);
+        return self::execute("list", $inputObject);
     }
 
     /**
@@ -66,7 +66,7 @@ abstract class BaseObject extends BaseMap
      */
     protected static function createObject($inputObject)
     {
-        return self::execure("create", $inputObject);
+        return self::execute("create", $inputObject);
     }
 
     /**
@@ -92,7 +92,7 @@ abstract class BaseObject extends BaseMap
     private static function execute($action, $inputObject)
     {
         $apiController = new ApiController($inputObject->getBasePath());
-        $responseMap = $apiController->execure($inputObject->getObjectType(), $action, $inputObject);
+        $responseMap = $apiController->execute($inputObject->getObjectType(), $action, $inputObject);
         
         $baseMap = new BaseMap();
         $baseMap->setAll($responseMap);
