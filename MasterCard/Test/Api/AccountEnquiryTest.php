@@ -27,6 +27,7 @@ class AccountEnquiryTest extends \PHPUnit_Framework_TestCase {
         $accountEnquiry = new AccountEnquiry($baseMap);
         $response = $accountEnquiry->update();
         
+        
         $this->assertEquals("true", $response->get("Account.Status"));
         $this->assertEquals("STOLEN", $response->get("Account.Reason"));
         $this->assertEquals("S", $response->get("Account.ReasonCode"));

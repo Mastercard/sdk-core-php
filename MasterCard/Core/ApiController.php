@@ -239,7 +239,7 @@ class ApiController {
         return $request;
     }
 
-    public function execure($type, $action, $baseObjectInstance) {
+    public function execute($type, $action, $baseObjectInstance) {
         $url = $this->getUrl($type, $action, $baseObjectInstance);
         $request = $this->getRequest($url, $action, $baseObjectInstance);
 
