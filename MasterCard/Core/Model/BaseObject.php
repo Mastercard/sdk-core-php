@@ -43,14 +43,25 @@ abstract class BaseObject extends BaseMap {
     }
     
 
-    function __construct($baseMap) {
-        $this->setAll($baseMap->getProperties());
+    function __construct($baseMap = null) {
+        if ($baseMap != null) {
+            $this->setAll($baseMap->getBaseMapAsArray());
+        }
+        
     }
+
 
     /**
      * @ignore
      */
-    protected static function readObject($inputObject) {
+    protected static function readObject($inputObject, $criteria) {
+        if ($criteria != null) {
+            if (is_array($criteria)) {
+                $inputObject->setAll($criteria);
+            } else {
+                $inputObject->setAll($criteria->getBaseMapAsArray());
+            }
+        }
         return self::execute("read", $inputObject);
     }
 
@@ -87,15 +98,19 @@ abstract class BaseObject extends BaseMap {
      */
     private static function execute($action, $inputObject) {
         $apiController = new ApiController();
-        $responseMap = $apiController->execute($action, $inputObject->getResourcePath($action), $inputObject->getHeaderParams($action), $inputObject);
+        $responseMap = $apiController->execute($action, $inputObject->getResourcePath($action), $inputObject->getHeaderParams($action), $inputObject->getBaseMapAsArray());
         $returnObjectClass = get_class($inputObject);
         
-        if ($action == "list" && array_key_exists("list", $responseMap)) {
+        if ($action == "list") {
             $returnObject = array();
             
-            foreach ($returnObject["list"] as $objectMap) {
+            if (array_key_exists("list", $responseMap)) {
+                $responseMap = $responseMap["list"];
+            }
+            
+            foreach ($responseMap as $objectMap) {
                 $baseMap = new BaseMap();
-                $baseMap->setAll($responseMap);
+                $baseMap->setAll($objectMap);
                 $returnObject[] = new $returnObjectClass($baseMap);
             }
             return $returnObject;
