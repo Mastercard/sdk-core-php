@@ -26,17 +26,52 @@
  *
  */
 
-namespace MasterCard\Core\Exception;
+ namespace MasterCard\Test\Api;
+
+ use MasterCard\Core\Model\BaseObject;
+ use MasterCard\Core\Model\BaseMap;
+
 
 /**
- * Exception when there was a system error processing a request.
+ * 
  */
-class SystemException extends ApiException {
+class AccountInquiry extends BaseObject {
 
-    /**
-     * @ignore
-     */
-function __construct($message, $status = null, $errorData = null) {
-        parent::__construct($message, $status, $errorData);
+    public static function getResourcePath($action) {
+        
+        if ($action == "update") {
+            return "/fraud/loststolen/v1/account-inquiry";
+        }
+        throw new \Exception("Invalid action supplied: $action");
+
     }
+
+
+    public static function getHeaderParams($action) {
+        
+        if ($action == "update") {
+            return array();
+        }
+        throw new \Exception("Invalid action supplied: $action");
+    }
+
+    
+    
+    
+       /**
+    * Updates an object of type AccountInquiry
+    *
+    * @return A AccountInquiry object representing the response.
+    */
+    public function update()  {
+        return parent::updateObject($this);
+    }
+    
+    
+    
+    
+    
+
+
 }
+

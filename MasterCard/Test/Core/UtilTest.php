@@ -73,4 +73,50 @@ class UtilTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals("andrea%21andrea%2Aandrea%27andrea%28andrea%29", Util::uriRfc3986Encode("andrea!andrea*andrea'andrea(andrea)"));
     }
     
+    
+    public function testSubMap() {
+        
+        $inputMap = array(
+            'one' => 1,
+            'two' => 2,
+            'three' => 3,
+            'four' => 4,
+            'five' => 5
+        );
+        
+        $keyList = array (
+            'one',
+            'three',
+            'five'
+        );
+        
+        $subMap = Util::subMap($inputMap, $keyList);
+        
+        $this->assertEquals(3, count($subMap));
+        $this->assertEquals(1, $subMap['one']);
+        $this->assertEquals(3, $subMap['three']);
+        $this->assertEquals(5, $subMap['five']);
+        
+        $this->assertEquals(2, count($inputMap));
+        $this->assertEquals(2, $inputMap['two']);
+        $this->assertEquals(4, $inputMap['four']);
+    }
+    
+    
+    public function testGetReplacedPath() {
+        
+        $inputMap = array(
+            'one' => 1,
+            'two' => 2,
+            'three' => 3,
+            'four' => 4,
+            'five' => 5
+        );
+        $path = "http://localhost:8080/{one}/{two}/{three}/car";
+        $result = Util::getReplacedPath($path, $inputMap);
+        
+        $this->assertEquals("http://localhost:8080/1/2/3/car", $result);
+        $this->assertEquals(2, count($inputMap));
+    }
+    
 }
