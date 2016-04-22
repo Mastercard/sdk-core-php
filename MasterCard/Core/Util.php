@@ -109,7 +109,7 @@ class Util {
      * @param type $inputMap
      */
     public static function getReplacedPath($path, &$inputMap)  {
-        $subject = "abcdef";
+        
         $pattern = '/{(.*?)}/';
         $result = $path;
         preg_match_all($pattern, $path, $matches);

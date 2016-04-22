@@ -70,9 +70,9 @@ class ApiController {
         $this->checkState();
 
 
-        $fullUrl = ApiConfig::API_BASE_LIVE_URL;
+        $fullUrl = ApiConfig::getLiveUrl();
         if (ApiConfig::isSandbox()) {
-            $fullUrl = ApiConfig::API_BASE_SANDBOX_URL;
+            $fullUrl = ApiConfig::getSandboxUrl();
         }
 
         if (filter_var($fullUrl, FILTER_VALIDATE_URL) == FALSE) {
@@ -93,12 +93,12 @@ class ApiController {
             throw new ApiException("No ApiConfig::authentication has been configured");
         }
 
-        if (filter_var(ApiConfig::API_BASE_LIVE_URL, FILTER_VALIDATE_URL) == FALSE) {
+        if (filter_var(ApiConfig::getLiveUrl(), FILTER_VALIDATE_URL) == FALSE) {
             throw new ApiException("Invalid URL supplied for API_BASE_LIVE_URL");
         }
 
 
-        if (filter_var(ApiConfig::API_BASE_SANDBOX_URL, FILTER_VALIDATE_URL) == FALSE) {
+        if (filter_var(ApiConfig::getSandboxUrl(), FILTER_VALIDATE_URL) == FALSE) {
             throw new ApiException("Invalid URL supplied for API_BASE_SANDBOX_URL");
         }
     }
@@ -142,7 +142,7 @@ class ApiController {
             case "read":
             case "update":
             case "delete":
-                if ($inputMap->containsKey("id")) {
+                if (array_key_exists("id", $inputMap)) {
                     $url .= "/%s";
                     array_push($queryParams, $inputMap->get("id"));
                 }
@@ -169,13 +169,13 @@ class ApiController {
 
         switch ($action) {
             case "create":
-                $request = new Request("POST", $url, [], json_encode($inputMap->getProperties()));
+                $request = new Request("POST", $url, [], json_encode($inputMap));
                 break;
             case "delete":
                 $request = new Request("DELETE", $url);
                 break;
             case "update":
-                $request = new Request("PUT", $url, [], json_encode($inputMap->getProperties()));
+                $request = new Request("PUT", $url, [], json_encode($inputMap));
                 break;
             case "read":
                 $request = new Request("GET", $url);
@@ -197,7 +197,7 @@ class ApiController {
     }
 
     public function execute($action, $resourcePath, $headerList, $inputMap) {
-
+        
         
         $headerMap = Util::subMap($inputMap, $headerList);
         $url = $this->getUrl($action, $resourcePath, $inputMap);

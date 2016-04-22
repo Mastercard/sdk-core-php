@@ -33,18 +33,16 @@ class ApiConfig {
 
     private static $SANDBOX = true;
     private static $DEBUG = false;
+    private static $LOCALHOST = false;
     private static $AUTHENTICATION = null;
     
     
     // The VERSION
     const VERSION = "1.0.0";
+        
+    private static $API_BASE_LIVE_URL = "https://api.mastercard.com";
+    private static $API_BASE_SANDBOX_URL = "https://sandbox.api.mastercard.com";
 
-    // The API LIVE URL
-    const API_BASE_LIVE_URL = "https://api.mastercard.com";
-
-		
-    // The API SANDBOX URL.
-    const API_BASE_SANDBOX_URL = "https://sandbox.api.mastercard.com";
     
     /**
      * Sets the debug.
@@ -54,6 +52,7 @@ class ApiConfig {
     {
         static::$DEBUG = $debug;
     }
+    
     
     /**
      * Sets get debug.
@@ -80,6 +79,32 @@ class ApiConfig {
     {
         return static::$SANDBOX;
     }
+
+
+    /**
+     * 
+     * @return string
+     */
+    public static function getSandboxUrl() 
+    {
+        if (static::$LOCALHOST == true) {
+            return "http://localhost:8080";
+        }
+        return self::$API_BASE_SANDBOX_URL;
+    }
+    
+    /**
+     * 
+     * @return string
+     */
+    public static function getLiveUrl() 
+    {
+        if (static::$LOCALHOST == true) {
+            return "http://localhost:8080";
+        }
+        return self::$API_BASE_LIVE_URL;
+    }
+    
     
     /**
      * Sets the sandbox.
@@ -97,6 +122,11 @@ class ApiConfig {
     public static function getAuthentication()
     {
         return static::$AUTHENTICATION;
+    }
+    
+    
+    public static function setLocalhost($value) {
+        static::$LOCALHOST = $value;
     }
 
     

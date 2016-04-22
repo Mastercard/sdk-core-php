@@ -29,6 +29,8 @@
 
 namespace MasterCard\Core;
 
+use MasterCard\Core\Model\BaseMap;
+
 class UtilTest extends \PHPUnit_Framework_TestCase {
     
     public function testNormalizeUrl() {
@@ -118,5 +120,17 @@ class UtilTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals("http://localhost:8080/1/2/3/car", $result);
         $this->assertEquals(2, count($inputMap));
     }
+    
+//    public function testGetReplacedPathWithBaseMap() {
+//        
+//        $inputMap = new BaseMap();
+//        $inputMap->set("one", 1)->set("two", 2)->set("three", 3)->set("four", 4)->set("five", 5);
+//            
+//        $path = "http://localhost:8080/{one}/{two}/{three}/car";
+//        $result = Util::getReplacedPath($path, $inputMap);
+//        
+//        $this->assertEquals("http://localhost:8080/1/2/3/car", $result);
+//        $this->assertEquals(2, count($inputMap));
+//    }
     
 }
