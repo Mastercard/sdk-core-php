@@ -43,10 +43,10 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $body = "{ \"user.name\":\"andrea\", \"user.surname\":\"rizzini\" }";
         $requestMap = new BaseMap(json_decode($body, true));
         
-        $controller = new ApiController(TestBaseObject::BasePath);
+        $controller = new ApiController();
         $controller->setClient(self::mockClient(200, $body));
         
-        $responseArray = $controller->execute(TestBaseObject::ObjectType, "create", new TestBaseObject($requestMap));
+        $responseArray = $controller->execute("create", TestBaseObject::getResourcePath("create"), TestBaseObject::getHeaderParams("create"), new TestBaseObject($requestMap));
         
         $this->assertNotEmpty($responseArray);
         
@@ -63,10 +63,10 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $body = "[ { \"user.name\":\"andrea\", \"user.surname\":\"rizzini\" } ]";
         $requestMap = new BaseMap(json_decode($body, true));
         
-        $controller = new ApiController(TestBaseObject::BasePath);
+        $controller = new ApiController();
         $controller->setClient(self::mockClient(200, $body));
         
-        $responseArray = $controller->execute(TestBaseObject::ObjectType, "create", new TestBaseObject($requestMap));
+        $responseArray = $controller->execute("create", TestBaseObject::getResourcePath("create"),  TestBaseObject::getHeaderParams("create"),new TestBaseObject($requestMap));
         
         $this->assertNotEmpty($responseArray);
         
@@ -83,10 +83,10 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $body = "{ \"user.name\":\"andrea\", \"user.surname\":\"rizzini\" }";
         $requestMap = new BaseMap(json_decode($body, true));
         
-        $controller = new ApiController(TestBaseObject::BasePath);
+        $controller = new ApiController();
         $controller->setClient(self::mockClient(204, ""));
         
-        $responseArray = $controller->execute(TestBaseObject::ObjectType, "create", new TestBaseObject($requestMap));
+        $responseArray = $controller->execute("create", TestBaseObject::getResourcePath("create"), TestBaseObject::getHeaderParams("create"),new TestBaseObject($requestMap));
         
         $this->assertEmpty($responseArray);
         
@@ -100,10 +100,10 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $body = "{\"Errors\":{\"Error\":{\"Source\":\"System\",\"ReasonCode\":\"METHOD_NOT_ALLOWED\",\"Description\":\"Method not Allowed\",\"Recoverable\":\"false\"}}}";
         $requestMap = new BaseMap(json_decode($body, true));
                 
-        $controller = new ApiController(TestBaseObject::BasePath);
+        $controller = new ApiController();
         $controller->setClient(self::mockClient(405, $body));
         
-        $controller->execute(TestBaseObject::ObjectType, "create", new TestBaseObject($requestMap));
+        $controller->execute( "create", TestBaseObject::getResourcePath("create"), TestBaseObject::getHeaderParams("create"), new TestBaseObject($requestMap));
     }
     
     
@@ -114,10 +114,10 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $body = "{\"Errors\":{\"Error\":[{\"Source\":\"Validation\",\"ReasonCode\":\"INVALID_TYPE\",\"Description\":\"The supplied field: 'date' is of an unsupported format\",\"Recoverable\":false,\"Details\":null}]}}\n";
         $requestMap = new BaseMap(json_decode($body, true));
                 
-        $controller = new ApiController(TestBaseObject::BasePath);
+        $controller = new ApiController();
         $controller->setClient(self::mockClient(400, $body));
         
-        $controller->execute(TestBaseObject::ObjectType, "create", new TestBaseObject($requestMap));
+        $controller->execute("create", TestBaseObject::getResourcePath("create"),  TestBaseObject::getHeaderParams("create"), new TestBaseObject($requestMap));
     }
     
     
@@ -128,10 +128,10 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $body = "{\"Errors\":{\"Error\":{\"Source\":\"Authentication\",\"ReasonCode\":\"FAILED\",\"Description\":\"OAuth signature is not valid\",\"Recoverable\":\"false\"}}}";
         $requestMap = new BaseMap(json_decode($body, true));
                 
-        $controller = new ApiController(TestBaseObject::BasePath);
+        $controller = new ApiController();
         $controller->setClient(self::mockClient(401, $body));
         
-        $controller->execute(TestBaseObject::ObjectType, "create", new TestBaseObject($requestMap));
+        $controller->execute( "create", TestBaseObject::getResourcePath("create"), TestBaseObject::getHeaderParams("create"), new TestBaseObject($requestMap));
     }
     
     
@@ -142,13 +142,31 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $body = "{\"Errors\":{\"Error\":[{\"Source\":\"OAuth.ConsumerKey\",\"ReasonCode\":\"INVALID_CLIENT_ID\",\"Description\":\"Something went wrong\",\"Recoverable\":false,\"Details\":null}]}}";
         $requestMap = new BaseMap(json_decode($body, true));
                 
-        $controller = new ApiController(TestBaseObject::BasePath);
+        $controller = new ApiController();
         $controller->setClient(self::mockClient(500, $body));
         
-        $controller->execute(TestBaseObject::ObjectType, "create", new TestBaseObject($requestMap));
+        $controller->execute( "create", TestBaseObject::getResourcePath("create"), TestBaseObject::getHeaderParams("create"), new TestBaseObject($requestMap));
     }
     
     
+    public function testGetUrl()
+    {
+        $controller = new ApiController();
+        
+        $inputMap = array(
+            'api' => 'lostandstolen',
+            'version' => 1,
+            'three' => 3,
+            'four' => 4,
+            'five' => 5
+        );
+        
+        $url = $controller->getUrl("create", "/fraud/{api}/v{version}/account-inquiry", $inputMap);
+        
+        $this->assertEquals("https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry?Format=JSON", $url);
+        $this->assertEquals(3, count($inputMap));
+        
+    }
 
     
 }
@@ -156,23 +174,16 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
 
 class TestBaseObject extends BaseObject
 {
-    const BasePath =  "/testurl" ;
-    const ObjectType = "test-base-object";
-
-    /**
-     * getBasePath
-     * @return String
-     */
-    public function getBasePath() {
-        return self::BasePath;
-    }
-
     /**
      * getObjectType
      * @return String
      */
-    public function getObjectType() {
-        return self::ObjectType;
+    public static function getResourcePath($action) {
+        return "/testurl/test-base-object";
+    }
+    
+    public static function getHeaderParams($action) {
+        return array();
     }
 }
 

@@ -64,23 +64,17 @@ class ApiController {
     protected $fullUrl = null;
     protected $baseUrl = null;
     protected $client = null;
-            
-    
 
-    function __construct($basePath) {
+    function __construct() {
 
         $this->checkState();
 
-        if ($basePath == null || trim($basePath) == '' || strlen($basePath) == 0) {
-            throw new ApiException("basePath cannot be empty");
-        }
 
-        $baseUrl = ApiConfig::API_BASE_LIVE_URL;
+        $fullUrl = ApiConfig::API_BASE_LIVE_URL;
         if (ApiConfig::isSandbox()) {
-            $baseUrl = ApiConfig::API_BASE_SANDBOX_URL;
+            $fullUrl = ApiConfig::API_BASE_SANDBOX_URL;
         }
 
-        $fullUrl = $baseUrl . $basePath;
         if (filter_var($fullUrl, FILTER_VALIDATE_URL) == FALSE) {
             throw new ApiException("fullUrl: '" . $fullUrl . "' is not a valid url");
         }
@@ -124,7 +118,7 @@ class ApiController {
 
         return $s;
     }
-    
+
     /**
      * @ignore
      */
@@ -135,69 +129,29 @@ class ApiController {
     /**
      * @ignore
      */
-    public function getUrl($type, $action, $baseObjectInstance) {
+    public function getUrl($action, $resourcePath, &$inputMap) {
 
         $queryParams = array();
-        $url = "";
-
-        $url .= "%s/%s";
-        array_push($queryParams, $this->removeForwardSlashFromTail($this->fullUrl));
-
-        $modifiedType = str_replace("{id}", "", $type);
-        array_push($queryParams, $this->removeForwardSlashFromTail($modifiedType));
-
+               
+        
+        $url = "%s";
+        $tmpUrl = Util::getReplacedPath($this->removeForwardSlashFromTail($this->fullUrl).$this->removeForwardSlashFromTail($resourcePath), $inputMap);
+        array_push($queryParams, $tmpUrl);
+        
         switch ($action) {
-            case "create":
-                break;
             case "read":
             case "update":
             case "delete":
-                if ($baseObjectInstance->containsKey("id")) {
+                if ($inputMap->containsKey("id")) {
                     $url .= "/%s";
-                    array_push($queryParams, $baseObjectInstance->get("id"));
+                    array_push($queryParams, $inputMap->get("id"));
                 }
                 break;
             case "list":
-                if ($baseObjectInstance != null && $baseObjectInstance->size() > 0) {
-
-                    //arizzini: addding max
-                    if ($baseObjectInstance->containsKey("max")) {
-                        $url = $this->appendToQueryString($url, "max=%s");
-                        array_push($queryParams, Util::urlEncode($baseObjectInstance->get("max")));
-                    }
-
-                    if ($baseObjectInstance->containsKey("offset")) {
-                        $url = $this->appendToQueryString($url, "offset=%s");
-                        array_push($queryParams, Util::urlEncode($baseObjectInstance->get("offset")));
-                    }
-
-                    if ($baseObjectInstance->containsKey("sorting")) {
-                        if (is_array($baseObjectInstanceMap->get("sorting"))) {
-                            foreach ($baseObjectInstanceMap->get("sorting") as $key => $value) {
-                                $url = $this->appendToQueryString($url, "sorting[%s]=%s");
-                                array_push($queryParams, Util::urlEncode($key));
-                                array_push($queryParams, Util::urlEncode($value));
-                            }
-                        }
-                    }
-
-                    if ($baseObjectInstance->containsKey("filter")) {
-                        if (is_array($baseObjectInstanceMap->get("filter"))) {
-                            foreach ($baseObjectInstanceMap->get("filter") as $key => $value) {
-                                $url = $this->appendToQueryString($url, "filter[%s]=%s");
-                                array_push($queryParams, Util::urlEncode($key));
-                                array_push($queryParams, Util::urlEncode($value));
-                            }
-                        }
-                    }
-
-//                    IEnumerator enumerator = objectMap.GetEnumerator ();
-//                    while (enumerator.MoveNext ()) {
-//                            DictionaryEntry entry = (DictionaryEntry)enumerator.Current;
-//                            s = appendToQueryString (s, (parameters++)+"="+(parameters++));
-//                            objectList.Add (getURLEncodedString (entry.Key.ToString ()));
-//                            objectList.Add (getURLEncodedString (entry.Value.ToString ()));
-//                    }
+                foreach ($inputMap as $key => $value) {
+                    $url = $this->appendToQueryString($url, "%s=%s");
+                    array_push($queryParams, Util::urlEncode($key));
+                    array_push($queryParams, Util::urlEncode($value));
                 }
 
             default:
@@ -206,22 +160,22 @@ class ApiController {
 
         $url = $this->appendToQueryString($url, "Format=JSON");
         $url = vsprintf($url, $queryParams);
-
+        
         return $url;
     }
 
-    public function getRequest($url, $action, $baseObjectInstance) {
+    public function getRequest($url, $action, $inputMap, $headerMap) {
         $request = null;
 
         switch ($action) {
             case "create":
-                $request = new Request("POST", $url, [], json_encode($baseObjectInstance->getProperties()));
+                $request = new Request("POST", $url, [], json_encode($inputMap->getProperties()));
                 break;
             case "delete":
                 $request = new Request("DELETE", $url);
                 break;
             case "update":
-                $request = new Request("PUT", $url, [], json_encode($baseObjectInstance->getProperties()));
+                $request = new Request("PUT", $url, [], json_encode($inputMap->getProperties()));
                 break;
             case "read":
                 $request = new Request("GET", $url);
@@ -234,18 +188,23 @@ class ApiController {
         $request = $request->withHeader("Accept", "application/json");
         $request = $request->withHeader("Content-Type", "application/json");
         $request = $request->withHeader("User-Agent", "Java-SDK/" . ApiConfig::VERSION);
+        foreach ($headerMap as $key => $value) {
+            $request = $request->withHeader($key, $value);    
+        }
         $request = ApiConfig::getAuthentication()->signRequest($url, $request);
 
         return $request;
     }
 
-    public function execute($type, $action, $baseObjectInstance) {
-        $url = $this->getUrl($type, $action, $baseObjectInstance);
-        $request = $this->getRequest($url, $action, $baseObjectInstance);
+    public function execute($action, $resourcePath, $headerList, $inputMap) {
 
+        
+        $headerMap = Util::subMap($inputMap, $headerList);
+        $url = $this->getUrl($action, $resourcePath, $inputMap);
+        $request = $this->getRequest($url, $action, $inputMap, $headerMap);
 
         try {
-            
+
             $response = $this->client->send($request);
             $statusCode = $response->getStatusCode();
             if ($statusCode < self::HTTP_AMBIGUOUS) {
