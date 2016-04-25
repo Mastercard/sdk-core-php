@@ -226,6 +226,7 @@ class ApiController {
     private function handleException($response) {
         $status = $response->getStatusCode();
         $bodyArray = json_decode($response->getBody()->getContents(), TRUE);
+        print_r($bodyArray);        
 
         if ($status < 500) {
             switch ($status) {
