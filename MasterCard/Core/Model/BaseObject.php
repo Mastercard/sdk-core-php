@@ -32,40 +32,50 @@ namespace MasterCard\Core\Model;
 use \MasterCard\Core\Model\BaseMap;
 use \MasterCard\Core\ApiController;
 
-abstract class BaseObject extends BaseMap
-{
-    const BasePath = "";
-    const ObjectType = "";
-    
-    abstract function getBasePath();
-    abstract function getObjectType();
-    
-    function __construct($baseMap) {
-        $this->setAll($baseMap->getProperties());
+abstract class BaseObject extends BaseMap {
+
+    public static function getResourcePath($action) {
+        throw new Exception("Not implemented");
     }
+    
+    public static function getHeaderParams($action) {
+        throw new Exception("Not implemented");
+    }
+    
+
+    function __construct($baseMap = null) {
+        if ($baseMap != null) {
+            $this->setAll($baseMap->getBaseMapAsArray());
+        }
         
+    }
+
+
     /**
      * @ignore
      */
-    protected static function readObject($inputObject)
-    {
+    protected static function readObject($inputObject, $criteria) {
+        if ($criteria != null) {
+            if (is_array($criteria)) {
+                $inputObject->setAll($criteria);
+            } else {
+                $inputObject->setAll($criteria->getBaseMapAsArray());
+            }
+        }
         return self::execute("read", $inputObject);
     }
-    
-    
+
     /**
      * @ignore
      */
-    protected static function listObjects($inputObject)
-    {
+    protected static function listObjects($inputObject) {
         return self::execute("list", $inputObject);
     }
 
     /**
      * @ignore
      */
-    protected static function createObject($inputObject)
-    {
+    protected static function createObject($inputObject) {
         return self::execute("create", $inputObject);
     }
 
@@ -73,34 +83,43 @@ abstract class BaseObject extends BaseMap
      * @ignore
      */
     protected function updateObject($inputObject) {
-        return self::execute ("update", $inputObject);
+        return self::execute("update", $inputObject);
     }
 
     /**
      * @ignore
      */
     protected function deleteObject($inputObject) {
-         return self::execute ("delete", $inputObject);
+        return self::execute("delete", $inputObject);
     }
 
-    
-    
-    
     /**
      * @ignore
      */
-    private static function execute($action, $inputObject)
-    {
-        $apiController = new ApiController($inputObject->getBasePath());
-        $responseMap = $apiController->execute($inputObject->getObjectType(), $action, $inputObject);
-        
-        $baseMap = new BaseMap();
-        $baseMap->setAll($responseMap);
-        
+    private static function execute($action, $inputObject) {
+        $apiController = new ApiController();
+        $responseMap = $apiController->execute($action, $inputObject->getResourcePath($action), $inputObject->getHeaderParams($action), $inputObject->getBaseMapAsArray());
         $returnObjectClass = get_class($inputObject);
-        $returnObject = new $returnObjectClass($baseMap);
         
-        return $returnObject;
+        if ($action == "list") {
+            $returnObject = array();
+            
+            if (array_key_exists("list", $responseMap)) {
+                $responseMap = $responseMap["list"];
+            }
+            
+            foreach ($responseMap as $objectMap) {
+                $baseMap = new BaseMap();
+                $baseMap->setAll($objectMap);
+                $returnObject[] = new $returnObjectClass($baseMap);
+            }
+            return $returnObject;
+            
+        } else {
+            $baseMap = new BaseMap();
+            $baseMap->setAll($responseMap);
+            return new $returnObjectClass($baseMap);
+        }
     }
-}
 
+}
