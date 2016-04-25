@@ -197,18 +197,15 @@ class ApiController {
     }
 
     public function execute($action, $resourcePath, $headerList, $inputMap) {
-        
-        
         $headerMap = Util::subMap($inputMap, $headerList);
         $url = $this->getUrl($action, $resourcePath, $inputMap);
         $request = $this->getRequest($url, $action, $inputMap, $headerMap);
 
         try {
-
             $response = $this->client->send($request);
             $statusCode = $response->getStatusCode();
+            $responseContent = $response->getBody()->getContents();
             if ($statusCode < self::HTTP_AMBIGUOUS) {
-                $responseContent = $response->getBody()->getContents();
                 if (strlen($responseContent) > 0) {
                     return json_decode($responseContent, true);
                 } else {
@@ -221,7 +218,7 @@ class ApiController {
             if ($ex->hasResponse()) {
                 $this->handleException($ex->getResponse());
             } else {
-                throw new SystemException("An unexpected error has been raised.  Looks like there's something wrong at our end.");
+                throw new SystemException("An unexpected error has been raised: ".$ex->getMessage());
             }
         }
     }
@@ -252,7 +249,7 @@ class ApiController {
                     break;
             }
         } else {
-            throw new SystemException("An unexpected error has been raised.  Looks like there's something wrong at our end.", $status, $bodyArray);
+            throw new SystemException("Internal Server Error:", $status, $bodyArray);
         }
     }
 
