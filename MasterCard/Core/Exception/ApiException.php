@@ -47,9 +47,9 @@ class ApiException extends \Exception
     function __construct($message, $status = null, $errorData = null) {
         parent::__construct($message);
         
-        echo "---ERROR: ".$message." \r\n";
-        print_r($errorData);
-        echo "\r\n";
+//        echo "---ERROR: ".$message." \r\n";
+//        print_r($errorData);
+//        echo "\r\n";
         
 
         $this->status = $status;

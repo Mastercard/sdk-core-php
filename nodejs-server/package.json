@@ -1,0 +1,16 @@
+{
+  "name": "sample-crud",
+  "version": "1.0.0",
+  "description": "This is a sample MOCK CRUD server.\n[Learn about Swagger](http://swagger.io) or join the IRC channel `#swagger` on irc.freenode.net.\n",
+  "main": "index.js",
+  "keywords": [
+    "swagger"
+  ],
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "connect": "^3.2.0",
+    "js-yaml": "^3.3.0",
+    "swagger-tools": "0.9.*"
+  }
+}

@@ -41,7 +41,8 @@ class Util {
         $urlParts = parse_url($requestUrl);
         if ($urlParts != FALSE) {
             $format = '%s://%s%s';
-            $formattedUrl = vsprintf($format, array_values($urlParts));
+            $paddedValues = array_pad(array_values($urlParts), 3, "/");
+            $formattedUrl = vsprintf($format,$paddedValues);
             return $formattedUrl;
         }
         else {
@@ -81,21 +82,87 @@ class Util {
         return $stringBuilder;       
     }
     
+    /**
+     * This method is used to generate a sumMap by taking a subset of the map 
+     * which contains the key specified in the list
+     * @param type $inputMap
+     * @param type $keyList
+     * @return type
+     */
+    public static function subMap(&$inputMap, $keyList) {
+        $subMap = array();
+        foreach ($keyList as $key)
+        {
+            //check is the map contain the 
+            if (array_key_exists($key, $inputMap)){
+                $subMap[$key] = $inputMap[$key];
+                unset($inputMap[$key]);
+            }
+        }
+        
+        return $subMap;
+    }
+    
+    /**
+     * Replace the path which contains {variable_id} by taking values from map
+     * @param type $path
+     * @param type $inputMap
+     */
+    public static function getReplacedPath($path, &$inputMap)  {
+        
+        $pattern = '/{(.*?)}/';
+        $result = $path;
+        preg_match_all($pattern, $path, $matches);
+        
+        foreach ($matches[1] as $key) {
+            if (array_key_exists ( $key , $inputMap )) {
+                $result = str_replace("{".$key."}", $inputMap[$key], $result);
+                unset($inputMap[$key]);
+            } else {
+                throw new \Exception ("Error, path paramer: '$key' expected but not found in input map");
+            }
+        }
+        return $result;
+        
+        
+    }
+    
+    /**
+     * base64Encode
+     * @param type $data
+     * @return type
+     */
     public static function base64Encode($data)
     {
         return base64_encode (  $data );
     }
     
+    /**
+     * sha1Encode
+     * @param type $data
+     * @param type $raw_output
+     * @return type
+     */
     public static function sha1Encode($data, $raw_output = false)
     {
         return sha1( $data, $raw_output );
     }
     
+    /**
+     * urlEncode
+     * @param type $data
+     * @return type
+     */
     public static function urlEncode($data)
     {
         return rawurlencode( $data );
     }
     
+    /**
+     * uriRfc3986Encode
+     * @param type $value
+     * @return type
+     */
     public static function uriRfc3986Encode($value)
     {
         //return str_replace('%7E', '~', rawurlencode($value));
