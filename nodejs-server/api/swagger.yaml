@@ -1,0 +1,592 @@
+---
+swagger: "2.0"
+info:
+  description: "This is a sample MOCK CRUD server.\n[Learn about Swagger](http://swagger.io)\
+    \ or join the IRC channel `#swagger` on irc.freenode.net.\n"
+  version: "1.0.0"
+  title: "Sample CRUD"
+  contact:
+    name: "openapi@mastercard.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "jsonplaceholder.typicode.com"
+basePath: "/mock_crud_server"
+schemes:
+- "http"
+paths:
+  /posts:
+    get:
+      tags:
+      - "post"
+      summary: "List Posts"
+      description: "List Posts Description"
+      operationId: "listPosts"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "max"
+        in: "query"
+        description: "Total number of returned posts"
+        required: false
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Post"
+        400:
+          description: "Invalid status value"
+      x-swagger-router-controller: "Post"
+      x-samples:
+      - name: "list_posts_query_1"
+        request:
+          application/json: "{\n}"
+        response:
+          application/json: "[\n  {\n    \"userId\": 1,\n    \"id\": 1,\n    \"title\"\
+            : \"Title of Post\",\n    \"body\": \"Some text as a body\"\n  },\n  {\n\
+            \    \"userId\": 1,\n    \"id\": 2,\n    \"title\": \"Title of Post\"\
+            ,\n    \"body\": \"Some text as a body\"\n  }\n]"
+      - name: "list_posts_query_2"
+        request:
+          application/json: "{\n  \"max\": \"10\"\n}"
+        response:
+          application/json: "[\n  {\n    \"userId\": 1,\n    \"id\": 1,\n    \"title\"\
+            : \"Title of Post\",\n    \"body\": \"Some text as a body\"\n  },\n  {\n\
+            \    \"userId\": 1,\n    \"id\": 2,\n    \"title\": \"Title of Post\"\
+            ,\n    \"body\": \"Some text as a body\"\n  }\n]"
+    post:
+      tags:
+      - "post"
+      summary: "Add a new Post"
+      description: "Add a new Post Description"
+      operationId: "addPost"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Post object that needs to be added"
+        required: false
+        schema:
+          $ref: "#/definitions/Post"
+      responses:
+        200:
+          description: "Created a new Post"
+          schema:
+            $ref: "#/definitions/Post"
+        405:
+          description: "Invalid input"
+      x-swagger-router-controller: "Post"
+      x-samples:
+      - name: "create_post"
+        request:
+          application/json: "{\n  \"title\": \"Title of Post\",\n  \"body\": \"Some\
+            \ text as a body\"\n}"
+        response:
+          application/json: "{\n  \"id\": 101,\n  \"title\": \"Title of Post\",\n\
+            \  \"body\": \"Some text as a body\"\n}"
+  /posts/{id}:
+    get:
+      tags:
+      - "post"
+      summary: "Find Post by ID"
+      description: "Returns a Post Description"
+      operationId: "readPost"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of Post that needs to be fetched"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Post"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Post not found"
+      x-swagger-router-controller: "Post"
+      x-samples:
+      - name: "get_post_query_1"
+        request:
+          application/json: "{\n  \"id\": \"1\"\n}"
+        response:
+          application/json: "{\n  \"userId\": 1,\n  \"id\": 1,\n  \"title\": \"Title\
+            \ of Post\",\n  \"body\": \"Some text as a body\"\n}"
+      - name: "get_post_query_2"
+        request:
+          application/json: "{\n  \"id\": 1,\n  \"min\": 1,\n  \"max\": 10\n}"
+        response:
+          application/json: "{\n  \"userId\": 1,\n  \"id\": 1,\n  \"title\": \"Title\
+            \ of Post\",\n  \"body\": \"Some text as a body\"\n}"
+    put:
+      tags:
+      - "post"
+      summary: "Update an existing Post"
+      description: "Update an existing Post Description"
+      operationId: "updatePost"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of Post that needs to be updated"
+        required: true
+        type: "integer"
+        format: "int64"
+      - in: "body"
+        name: "body"
+        description: "Post object that needs to be updated"
+        required: false
+        schema:
+          $ref: "#/definitions/Post"
+      responses:
+        200:
+          description: "Updated a Post"
+          schema:
+            $ref: "#/definitions/Post"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Post not found"
+        405:
+          description: "Validation exception"
+      x-swagger-router-controller: "Post"
+      x-samples:
+      - name: "update_post"
+        request:
+          application/json: "{\n  \"id\": 1,\n  \"title\": \"Title of Post\",\n  \"\
+            body\": \"Some text as a body\"\n}"
+        response:
+          application/json: "{\n  \"userId\": 1,\n  \"id\": 1,\n  \"title\": \"Title\
+            \ of Post\",\n  \"body\": \"Some text as a body\"\n}"
+    delete:
+      tags:
+      - "post"
+      summary: "Deletes a Post"
+      description: "Deletes a Post Description"
+      operationId: "deletePost"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "Post id to delete"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "Deleted"
+        400:
+          description: "Invalid Post value"
+      x-swagger-router-controller: "Post"
+      x-samples:
+      - name: "delete_post"
+        request:
+          application/json: "{\n  \"id\": \"1\"\n}"
+        response:
+          application/json: "{\n\n}"
+  /users:
+    get:
+      tags:
+      - "user"
+      summary: "List Users"
+      description: "List Users Description"
+      operationId: "listUsers"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/User"
+        400:
+          description: "Invalid status value"
+      x-swagger-router-controller: "User"
+      x-samples:
+      - name: "list_users"
+        request:
+          application/json: "{\n}"
+        response:
+          application/json: "[\n  {\n    \"id\": \"1\",\n    \"name\": \"Joe Bloggs\"\
+            ,\n    \"username\": \"jbloggs\",\n    \"email\": \"name@example.com\"\
+            ,\n    \"phone\": \"1-770-736-8031\",\n    \"website\": \"active\",\n\
+            \    \"address\": {\n      \"line1\": \"2000 Purchase Street\",\n    \
+            \  \"city\": \"New York\",\n      \"state\": \"NY\",\n      \"postalCode\"\
+            : \"10577\"\n    }\n  },\n  {\n    \"id\": \"2\",\n    \"name\": \"Joe\
+            \ Bloggs\",\n    \"username\": \"jbloggs\",\n    \"email\": \"name@example.com\"\
+            ,\n    \"phone\": \"1-770-736-8031\",\n    \"website\": \"active\",\n\
+            \    \"address\": {\n      \"line1\": \"2000 Purchase Street\",\n    \
+            \  \"city\": \"New York\",\n      \"state\": \"NY\",\n      \"postalCode\"\
+            : \"10577\"\n    }\n  }\n]"
+      - name: "list_users_query"
+        request:
+          application/json: "{\n  \"max\": \"10\"\n}"
+        response:
+          application/json: "[\n  {\n    \"id\": \"1\",\n    \"name\": \"Joe Bloggs\"\
+            ,\n    \"username\": \"jbloggs\",\n    \"email\": \"name@example.com\"\
+            ,\n    \"phone\": \"1-770-736-8031\",\n    \"website\": \"active\",\n\
+            \    \"address\": {\n      \"line1\": \"2000 Purchase Street\",\n    \
+            \  \"city\": \"New York\",\n      \"state\": \"NY\",\n      \"postalCode\"\
+            : \"10577\"\n    }\n  },\n  {\n    \"id\": \"1\",\n    \"name\": \"Joe\
+            \ Bloggs\",\n    \"username\": \"jbloggs\",\n    \"email\": \"name@example.com\"\
+            ,\n    \"phone\": \"1-770-736-8031\",\n    \"website\": \"active\",\n\
+            \    \"address\": {\n      \"line1\": \"2000 Purchase Street\",\n    \
+            \  \"city\": \"New York\",\n      \"state\": \"NY\",\n      \"postalCode\"\
+            : \"10577\"\n    }\n  }\n]"
+    post:
+      tags:
+      - "user"
+      summary: "Add a new User"
+      description: "Add a new User Description"
+      operationId: "addUser"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "User object that needs to be added"
+        required: false
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        200:
+          description: "Created a new User"
+          schema:
+            $ref: "#/definitions/User"
+        405:
+          description: "Invalid input"
+      x-swagger-router-controller: "User"
+      x-samples:
+      - name: "create_user"
+        request:
+          application/json: "{\n  \"name\": \"Joe Bloggs\",\n  \"username\": \"jbloggs\"\
+            ,\n  \"email\": \"name@example.com\",\n  \"phone\": \"1-770-736-8031\"\
+            ,\n  \"website\": \"active\",\n  \"address\": {\n    \"line1\": \"2000\
+            \ Purchase Street\",\n    \"city\": \"New York\",\n    \"state\": \"NY\"\
+            ,\n    \"postalCode\": \"10577\"\n  }\n}"
+        response:
+          application/json: "{\n  \"id\": \"1\",\n  \"name\": \"Joe Bloggs\",\n  \"\
+            username\": \"jbloggs\",\n  \"email\": \"name@example.com\",\n  \"phone\"\
+            : \"1-770-736-8031\",\n  \"website\": \"active\",\n  \"address\": {\n\
+            \    \"line1\": \"2000 Purchase Street\",\n    \"city\": \"New York\"\
+            ,\n    \"state\": \"NY\",\n    \"postalCode\": \"10577\"\n  }\n}"
+  /users/posts:
+    get:
+      tags:
+      - "user post header"
+      summary: "Get User's Posts"
+      description: "Returns a list of Users's Post"
+      operationId: "readUserPostWithHeader"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "user_id"
+        in: "header"
+        description: "ID of User that needs to be fetched"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Post"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Posts not found"
+      x-swagger-router-controller: "UserPostHeader"
+      x-samples:
+      - name: "get_user_posts_with_header"
+        request:
+          application/json: "{\n  \"id\": \"1\"\n}"
+        response:
+          application/json: "{\n  \"id\": \"1\",\n  \"name\": \"Joe Bloggs\",\n  \"\
+            username\": \"jbloggs\",\n  \"email\": \"name@example.com\",\n  \"phone\"\
+            : \"1-770-736-8031\",\n  \"website\": \"active\",\n  \"address\": {\n\
+            \    \"line1\": \"2000 Purchase Street\",\n    \"city\": \"New York\"\
+            ,\n    \"state\": \"NY\",\n    \"postalCode\": \"10577\"\n  }\n}"
+  /users/{id}:
+    get:
+      tags:
+      - "user"
+      summary: "Find User by ID"
+      description: "Returns a User Description"
+      operationId: "readUser"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of User that needs to be fetched"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/User"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "User not found"
+      x-swagger-router-controller: "User"
+      x-samples:
+      - name: "get_user"
+        request:
+          application/json: "{\n  \"id\": \"1\"\n}"
+        response:
+          application/json: "{\n  \"id\": \"1\",\n  \"name\": \"Joe Bloggs\",\n  \"\
+            username\": \"jbloggs\",\n  \"email\": \"name@example.com\",\n  \"phone\"\
+            : \"1-770-736-8031\",\n  \"website\": \"active\",\n  \"address\": {\n\
+            \    \"line1\": \"2000 Purchase Street\",\n    \"city\": \"New York\"\
+            ,\n    \"state\": \"NY\",\n    \"postalCode\": \"10577\"\n  }\n}"
+      - name: "get_user_query"
+        request:
+          application/json: "{\n  \"id\": 1,\n  \"min\": 1,\n  \"max\": 10\n}"
+        response:
+          application/json: "{\n  \"id\": \"1\",\n  \"name\": \"Joe Bloggs\",\n  \"\
+            username\": \"jbloggs\",\n  \"email\": \"name@example.com\",\n  \"phone\"\
+            : \"1-770-736-8031\",\n  \"website\": \"active\",\n  \"address\": {\n\
+            \    \"line1\": \"2000 Purchase Street\",\n    \"city\": \"New York\"\
+            ,\n    \"state\": \"NY\",\n    \"postalCode\": \"10577\"\n  }\n}"
+    put:
+      tags:
+      - "user"
+      summary: "Update an existing User"
+      description: "Update an existing User Description"
+      operationId: "updateUser"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "User object that needs to be updated"
+        required: false
+        schema:
+          $ref: "#/definitions/User"
+      - name: "id"
+        in: "path"
+        description: "ID of User that needs to be updated"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "Updated a User"
+          schema:
+            $ref: "#/definitions/User"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "User not found"
+        405:
+          description: "Validation exception"
+      x-swagger-router-controller: "User"
+      x-samples:
+      - name: "update_user"
+        request:
+          application/json: "{\n  \"id\": \"1\",\n  \"name\": \"Joe Bloggs\",\n  \"\
+            username\": \"jbloggs\",\n  \"email\": \"name@example.com\",\n  \"phone\"\
+            : \"1-770-736-8031\",\n  \"website\": \"active\",\n  \"address\": {\n\
+            \    \"line1\": \"2000 Purchase Street\",\n    \"city\": \"New York\"\
+            ,\n    \"state\": \"NY\",\n    \"postalCode\": \"10577\"\n  }\n}"
+        response:
+          application/json: "{\n  \"id\": \"1\",\n  \"name\": \"Joe Bloggs\",\n  \"\
+            username\": \"jbloggs\",\n  \"email\": \"name@example.com\",\n  \"phone\"\
+            : \"1-770-736-8031\",\n  \"website\": \"active\",\n  \"address\": {\n\
+            \    \"line1\": \"2000 Purchase Street\",\n    \"city\": \"New York\"\
+            ,\n    \"state\": \"NY\",\n    \"postalCode\": \"10577\"\n  }\n}"
+    delete:
+      tags:
+      - "user"
+      summary: "Deletes a User"
+      description: "Deletes a User Description"
+      operationId: "deleteUser"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "User id to delete"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "Deleted"
+        400:
+          description: "Invalid User value"
+      x-swagger-router-controller: "User"
+      x-samples:
+      - name: "delete_user"
+        request:
+          application/json: "{\n  \"id\": \"1\"\n}"
+        response:
+          application/json: "{\n}"
+  /users/{user_id}/posts:
+    get:
+      tags:
+      - "user post path"
+      summary: "Get User's Posts"
+      description: "Returns a list of Users's Post"
+      operationId: "readUserPostWithPath"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "user_id"
+        in: "path"
+        description: "ID of User that needs to be fetched"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Post"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Posts not found"
+      x-swagger-router-controller: "UserPostPath"
+      x-samples:
+      - name: "get_user_posts_with_path"
+        request:
+          application/json: "{\n  \"id\": \"1\"\n}"
+        response:
+          application/json: "{\n  \"id\": \"1\",\n  \"name\": \"Joe Bloggs\",\n  \"\
+            username\": \"jbloggs\",\n  \"email\": \"name@example.com\",\n  \"phone\"\
+            : \"1-770-736-8031\",\n  \"website\": \"active\",\n  \"address\": {\n\
+            \    \"line1\": \"2000 Purchase Street\",\n    \"city\": \"New York\"\
+            ,\n    \"state\": \"NY\",\n    \"postalCode\": \"10577\"\n  }\n}"
+definitions:
+  Post:
+    type: "object"
+    required:
+    - "body"
+    - "title"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+        example: 1
+        description: "id of the Post"
+      userId:
+        type: "integer"
+        format: "int64"
+        example: 1
+        description: "userId of Post owner"
+      title:
+        type: "string"
+        example: "My Title"
+        description: "title of the Post"
+      body:
+        type: "string"
+        example: "some body text"
+        description: "body of the Post"
+  User:
+    type: "object"
+    required:
+    - "email"
+    - "name"
+    - "username"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+        example: 1
+        description: "id of the User"
+      name:
+        type: "string"
+        example: "Joe Bloggs"
+        description: "name of the user"
+      username:
+        type: "string"
+        example: "jbloggs"
+        description: "username of the user"
+      address:
+        $ref: "#/definitions/Address"
+      email:
+        type: "string"
+        example: "name@example.com"
+        description: "email of the user"
+      phone:
+        type: "string"
+        example: "1-770-736-8031"
+        description: "phone number of the user"
+      website:
+        type: "string"
+        example: "hildegard.org"
+        description: "phone number of the user"
+  Address:
+    type: "object"
+    required:
+    - "city"
+    - "line1"
+    - "postalCode"
+    - "state"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+        example: 1
+        description: "id of the Address"
+      line1:
+        type: "string"
+        example: "2000 Purchase Street"
+        description: "line1 of the address"
+      city:
+        type: "string"
+        example: "New York"
+        description: "city of the address"
+      instructions:
+        $ref: "#/definitions/Instruction"
+      state:
+        type: "string"
+        example: "NY"
+        description: "state of the address"
+      postalCode:
+        type: "string"
+        example: "10577"
+        description: "postal code of the address"
+  Instruction:
+    type: "object"
+    required:
+    - "doorman"
+    properties:
+      doorman:
+        type: "boolean"
+        format: "boolean"
+        example: true
+        description: "leave with doorman or not"
+      text:
+        type: "string"
+        example: "some delivery instructions text"
+        description: "some delivery instructions text"

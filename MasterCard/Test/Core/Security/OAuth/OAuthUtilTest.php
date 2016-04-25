@@ -108,7 +108,7 @@ class OAuthUtilTest extends \PHPUnit_Framework_TestCase {
         
         
         $method = "PUT";
-        $body = json_encode($baseMap->getProperties());
+        $body = json_encode($baseMap->getBaseMapAsArray());
         $this->assertEquals('{"AccountInquiry":{"AccountNumber":"5343434343434343"}}', $body);
         $url = "https://sandbox.api.mastercard.com/fraud/loststolen/v1/account-inquiry?Format=JSON";
         

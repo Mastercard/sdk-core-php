@@ -26,17 +26,55 @@
  *
  */
 
-namespace MasterCard\Core\Exception;
+  namespace MasterCard\Test\Api;
+
+ use MasterCard\Core\Model\BaseObject;
+ use MasterCard\Core\Model\BaseMap;
+
 
 /**
- * Exception when there was a system error processing a request.
+ * 
  */
-class SystemException extends ApiException {
+class UserPostHeader extends BaseObject {
 
-    /**
-     * @ignore
-     */
-function __construct($message, $status = null, $errorData = null) {
-        parent::__construct($message, $status, $errorData);
+    public static function getResourcePath($action) {
+        
+        if ($action == "list") {
+           return "/mock_crud_server/users/posts";
+        }
+        throw new \Exception("Invalid action supplied: $action");
+
     }
+
+
+    public static function getHeaderParams($action) {
+        
+        if ($action == "list") {
+           return array("user_id");
+        }
+        throw new \Exception("Invalid action supplied: $action");
+    }
+
+
+
+   /**
+    * List objects of type UserPostHeader
+    *
+    * @param Map criteria
+    * @return Array of UserPostHeader object matching the criteria.
+    */
+    public static function listByCriteria($criteria = null)
+    {
+        if ($criteria == null) {
+            return parent::listObjects(new UserPostHeader());
+        } else {
+            return parent::listObjects(new UserPostHeader($criteria));
+        }
+
+    }
+
+
+
+
 }
+
