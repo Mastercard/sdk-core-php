@@ -240,7 +240,7 @@ class BaseMap {
             foreach ($map as $object) {
                 $tmpBaseMap = new BaseMap();
                 $tmpBaseMap->setAll($object);
-                array_push($list, $tmpBaseMap->getProperties());
+                array_push($list, $tmpBaseMap->getBaseMapAsArray());
             }
             
             $this->set("list", $list);
@@ -274,7 +274,7 @@ class BaseMap {
      * Returns the object's properties as a map.
      * @return array map of properties.
      */
-    public function getProperties() {
+    public function getBaseMapAsArray() {
         return $this->properties;
     }
 }
