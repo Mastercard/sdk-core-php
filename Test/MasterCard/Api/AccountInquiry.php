@@ -26,7 +26,7 @@
  *
  */
 
-  namespace MasterCard\Test\Api;
+ namespace MasterCard\Api;
 
  use MasterCard\Core\Model\BaseObject;
  use MasterCard\Core\Model\BaseMap;
@@ -35,12 +35,12 @@
 /**
  * 
  */
-class UserPostHeader extends BaseObject {
+class AccountInquiry extends BaseObject {
 
     public static function getResourcePath($action) {
         
-        if ($action == "list") {
-           return "/mock_crud_server/users/posts";
+        if ($action == "update") {
+            return "/fraud/loststolen/v1/account-inquiry";
         }
         throw new \Exception("Invalid action supplied: $action");
 
@@ -49,31 +49,28 @@ class UserPostHeader extends BaseObject {
 
     public static function getHeaderParams($action) {
         
-        if ($action == "list") {
-           return array("user_id");
+        if ($action == "update") {
+            return array();
         }
         throw new \Exception("Invalid action supplied: $action");
     }
 
-
-
-   /**
-    * List objects of type UserPostHeader
+    
+    
+    
+       /**
+    * Updates an object of type AccountInquiry
     *
-    * @param Map criteria
-    * @return Array of UserPostHeader object matching the criteria.
+    * @return A AccountInquiry object representing the response.
     */
-    public static function listByCriteria($criteria = null)
-    {
-        if ($criteria == null) {
-            return parent::listObjects(new UserPostHeader());
-        } else {
-            return parent::listObjects(new UserPostHeader($criteria));
-        }
-
+    public function update()  {
+        return parent::updateObject($this);
     }
-
-
+    
+    
+    
+    
+    
 
 
 }
