@@ -147,13 +147,19 @@ class ApiController {
                     array_push($queryParams, $inputMap->get("id"));
                 }
                 break;
+            default:
+                break;
+        }
+        
+        switch ($action) {
+            case "read":
             case "list":
                 foreach ($inputMap as $key => $value) {
                     $url = $this->appendToQueryString($url, "%s=%s");
                     array_push($queryParams, Util::urlEncode($key));
                     array_push($queryParams, Util::urlEncode($value));
                 }
-
+                break;
             default:
                 break;
         }
@@ -226,8 +232,6 @@ class ApiController {
     private function handleException($response) {
         $status = $response->getStatusCode();
         $bodyArray = json_decode($response->getBody()->getContents(), TRUE);
-        print_r($bodyArray);        
-
         if ($status < 500) {
             switch ($status) {
                 case self::HTTP_BAD_REQUEST:
