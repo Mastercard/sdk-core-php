@@ -26,7 +26,7 @@
  *
  */
 
- namespace MasterCard\Test\Api;
+ namespace MasterCard\Api;
 
  use MasterCard\Core\Model\BaseObject;
  use MasterCard\Core\Model\BaseMap;

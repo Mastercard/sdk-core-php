@@ -28,7 +28,7 @@
  */
 
 
-namespace MasterCard\Test\Core\Model;
+namespace MasterCard\Core\Model;
 
 use MasterCard\Core\Model\BaseMap;
 

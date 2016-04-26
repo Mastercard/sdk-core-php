@@ -26,7 +26,7 @@
  *
  */
 
- namespace MasterCard\Test\Api;
+  namespace MasterCard\Api;
 
  use MasterCard\Core\Model\BaseObject;
  use MasterCard\Core\Model\BaseMap;
@@ -35,12 +35,12 @@
 /**
  * 
  */
-class UserPostPath extends BaseObject {
+class UserPostHeader extends BaseObject {
 
     public static function getResourcePath($action) {
         
         if ($action == "list") {
-           return "/mock_crud_server/users/{user_id}/posts";
+           return "/mock_crud_server/users/posts";
         }
         throw new \Exception("Invalid action supplied: $action");
 
@@ -50,7 +50,7 @@ class UserPostPath extends BaseObject {
     public static function getHeaderParams($action) {
         
         if ($action == "list") {
-           return array();
+           return array("user_id");
         }
         throw new \Exception("Invalid action supplied: $action");
     }
@@ -58,17 +58,17 @@ class UserPostPath extends BaseObject {
 
 
    /**
-    * List objects of type UserPostPath
+    * List objects of type UserPostHeader
     *
     * @param Map criteria
-    * @return Array of UserPostPath object matching the criteria.
+    * @return Array of UserPostHeader object matching the criteria.
     */
     public static function listByCriteria($criteria = null)
     {
         if ($criteria == null) {
-            return parent::listObjects(new UserPostPath());
+            return parent::listObjects(new UserPostHeader());
         } else {
-            return parent::listObjects(new UserPostPath($criteria));
+            return parent::listObjects(new UserPostHeader($criteria));
         }
 
     }
