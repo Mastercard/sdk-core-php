@@ -41,7 +41,8 @@ exports.deleteUser = function(args, res, next) {
   * id (Long)
   **/
   // no response value expected for this operation
-  res.end();
+  res.setHeader('Content-Type', 'application/json');
+  res.end("{}");
 }
 
 exports.listUsers = function(args, res, next) {
