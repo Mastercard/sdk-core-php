@@ -71,6 +71,14 @@ abstract class BaseObject extends BaseMap {
     protected static function listObjects($inputObject) {
         return self::execute("list", $inputObject);
     }
+    
+    
+        /**
+     * @ignore
+     */
+    protected static function queryObject($inputObject) {
+        return self::execute("query", $inputObject);
+    }
 
     /**
      * @ignore
