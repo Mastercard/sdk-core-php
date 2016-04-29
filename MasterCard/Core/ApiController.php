@@ -51,16 +51,6 @@ class ApiController {
     const HTTP_NOT_ALLOWED = 405;
     const HTTP_BAD_REQUEST = 400;
 
-    /**
-     * @ignore
-     */
-    public static $methodMap = array(
-        'create' => 'POST',
-        'delete' => 'DELETE',
-        'list' => 'GET',
-        'show' => 'GET',
-        'update' => 'PUT'
-    );
     protected $fullUrl = null;
     protected $baseUrl = null;
     protected $client = null;
@@ -153,7 +143,9 @@ class ApiController {
         
         switch ($action) {
             case "read":
+            case "delete":
             case "list":
+            case "query":
                 foreach ($inputMap as $key => $value) {
                     $url = $this->appendToQueryString($url, "%s=%s");
                     array_push($queryParams, Util::urlEncode($key));
@@ -184,9 +176,8 @@ class ApiController {
                 $request = new Request("PUT", $url, [], json_encode($inputMap));
                 break;
             case "read":
-                $request = new Request("GET", $url);
-                break;
             case "list":
+            case "query":
                 $request = new Request("GET", $url);
                 break;
         }
