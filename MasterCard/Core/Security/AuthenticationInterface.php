@@ -32,7 +32,6 @@ interface AuthenticationInterface {
 
     public function signRequest($uri, $request);
     
-    public function signMessage($message);
+    public function signValue($value);
     
-        
 }

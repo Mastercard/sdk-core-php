@@ -32,25 +32,28 @@ namespace MasterCard\Core\Security\OAuth;
 use MasterCard\Core\ApiConfig;
 use MasterCard\Core\Util;
 use MasterCard\Core\Security\AuthenticationInterface;
-use MasterCard\Core\Security\OAuth\OAuthUtil;
+use MasterCard\Core\Security\SecurityUtil;
 use MasterCard\Core\Security\OAuth\OAuthParameters;
 use MasterCard\Core\Model\BaseMap;
 
 class OAuthUtilTest extends \PHPUnit_Framework_TestCase {
 
+    protected $oauthAuthentication;
+    
     protected function setUp() {
         $privateKey = file_get_contents(getcwd()."/prod_key.p12");
-        ApiConfig::setAuthentication(new OAuthAuthentication("gVaoFbo86jmTfOB4NUyGKaAchVEU8ZVPalHQRLTxeaf750b6!414b543630362f426b4f6636415a5973656c33735661383d", $privateKey, "alias", "password"));
+        $this->oauthAuthentication = new OAuthAuthentication("gVaoFbo86jmTfOB4NUyGKaAchVEU8ZVPalHQRLTxeaf750b6!414b543630362f426b4f6636415a5973656c33735661383d", $privateKey, "alias", "password");
+        ApiConfig::setAuthentication($this->oauthAuthentication);
     }
 
     public function testGetNonce() {
-        $nonce = OAuthUtil::getNonce();
+        $nonce = SecurityUtil::getNonce();
         $this->assertNotNull($nonce);
         $this->assertTrue(strlen($nonce) == 16);
     }
 
     public function testGetTimestamp() {
-        $nonce = OAuthUtil::getTimestamp();
+        $nonce = SecurityUtil::getTimestamp();
         $this->assertNotNull($nonce);
         $this->assertTrue(strlen($nonce) == 10);
     }
@@ -62,7 +65,7 @@ class OAuthUtilTest extends \PHPUnit_Framework_TestCase {
         $url = "http://www.andrea.rizzini.com/simple_service";
 
         $oAuthParameters = new OAuthParameters ();
-        $oAuthParameters->setOAuthConsumerKey(ApiConfig::getAuthentication()->getClientId());
+        $oAuthParameters->setOAuthConsumerKey($oauthAuthentication->getClientId());
         $oAuthParameters->setOAuthNonce("NONCE");
         $oAuthParameters->setOAuthTimestamp("TIMESTAMP");
         $oAuthParameters->setOAuthSignatureMethod("RSA-SHA1");
@@ -72,10 +75,12 @@ class OAuthUtilTest extends \PHPUnit_Framework_TestCase {
             $oAuthParameters->setOAuthBodyHash($encodedHash);
         }
 
-        $baseString = OAuthUtil::getBaseString($url, $method, $oAuthParameters->getBaseParameters());
+        $baseString = OAuthAuthentication::getOAuthBaseString($url, $method, $oAuthParameters->getBaseParameters());
         $this->assertEquals("POST&http%3A%2F%2Fwww.andrea.rizzini.com%2Fsimple_service&oauth_body_hash%3DapwbAT6IoMRmB9wE9K4fNHDsaMo%253D%26oauth_consumer_key%3DgVaoFbo86jmTfOB4NUyGKaAchVEU8ZVPalHQRLTxeaf750b6%2521414b543630362f426b4f6636415a5973656c33735661383d%26oauth_nonce%3DNONCE%26oauth_signature_method%3DRSA-SHA1%26oauth_timestamp%3DTIMESTAMP", $baseString);
 
-        $signature = OAuthUtil::rsaSign($baseString);
+        
+        
+        $signature = $this->oauthAuthentication->signValue($baseString);
         $this->assertEquals("CQJfOX6Yebd7KPPsG7cRopzt+4/QB+GiMQhgcFMw+ew2bWtBLj+t8i6mSe26eEVurxzF4mp0uvjXZzz8Ik5YLjP1byr0v+wsMmAQbWUTj4dO7k8W2+a4AISmKFfbSEUaDgBpPyCl72cL29+hoTNo/usD0EYpaX6P1Vo+EYLbZjK3ZJRtDSd8VZnjxKInUoNI8VvJuGgZ3u7nh5caXvVk6RlCbgwdVEKAv/BsfLSQEgc0/DCCKhX2ZnNOqJJ3FRS6s4bAbqYbui5ouWN5SGkcRaYPt7Fi8oTu561oNZ02HlAWL9m0fp8MK6ZDGQjkeC+zWeo/o0Gbc+/kKGPdOrCNFA==", $signature);
         $oAuthParameters->setOAuthSignature($signature);
         
@@ -116,7 +121,7 @@ class OAuthUtilTest extends \PHPUnit_Framework_TestCase {
 
         
         $oAuthParameters = new OAuthParameters ();
-        $oAuthParameters->setOAuthConsumerKey(ApiConfig::getAuthentication()->getClientId());
+        $oAuthParameters->setOAuthConsumerKey($oauthAuthentication->getClientId());
         $oAuthParameters->setOAuthNonce("Fl0qGYY1ZmwMzzpdN");
         $oAuthParameters->setOAuthTimestamp("1457428003");
         $oAuthParameters->setOAuthSignatureMethod("RSA-SHA1");
@@ -126,10 +131,10 @@ class OAuthUtilTest extends \PHPUnit_Framework_TestCase {
             $oAuthParameters->setOAuthBodyHash($encodedHash);
         }
 
-        $baseString = OAuthUtil::getBaseString($url, $method, $oAuthParameters->getBaseParameters());
+        $baseString = OAuthAuthentication::getOAuthBaseString($url, $method, $oAuthParameters->getBaseParameters());
         $this->assertEquals("PUT&https%3A%2F%2Fsandbox.api.mastercard.com%2Ffraud%2Floststolen%2Fv1%2Faccount-inquiry&Format%3DJSON%26oauth_body_hash%3DnmtgpSOebxR%252FPfZyg9qwNoUEsYY%253D%26oauth_consumer_key%3DgVaoFbo86jmTfOB4NUyGKaAchVEU8ZVPalHQRLTxeaf750b6%2521414b543630362f426b4f6636415a5973656c33735661383d%26oauth_nonce%3DFl0qGYY1ZmwMzzpdN%26oauth_signature_method%3DRSA-SHA1%26oauth_timestamp%3D1457428003", $baseString);
 
-        $signature = OAuthUtil::rsaSign($baseString);
+        $signature = $this->oauthAuthentication->signValue($baseString);
         $this->assertEquals("ABImx5hGm9RK6o3ipHc2/RH0bMfVe5GRBmI8Y6mwn+5pZQgayr0XyFBBK4fkHpWS8LCytadX09qMG7gCfSl9qyM27l5spf164y6L/GSbvmsYgvd7WAkinwf+0LsSc1sZgytDVLCHXFRofFliugf1ttE4ErrzpDi7Bm2Em6xHF8XVokFMpRj2euddCoJBklamIoG0JvE0Xo/qZ9Do16BITEv5t47UhM0XHoBNiKP2X0uZQ//xGGKJLbMGumDkvO7lAHDEtp7VLrKB/Kx3ebNpXh0Mygyla3oIjg7boDL90lG/M1L8cvPhtahfaZ1ot0IjAntUSZ8BGqW2AzHy7WYYwQ==", $signature);
         $oAuthParameters->setOAuthSignature($signature);
         
