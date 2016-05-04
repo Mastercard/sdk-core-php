@@ -29,13 +29,13 @@
 
 
 
-namespace MasterCard\Core\Security\OAuth;
+namespace MasterCard\Core\Security;
 
 
 use \MasterCard\Core\ApiConfig;
 use \MasterCard\Core\Util;
 
-class OAuthUtil
+class SecurityUtil
 {
 
     
@@ -65,47 +65,7 @@ class OAuthUtil
         return $randomString;
     }
     
-    public static function getBaseString($url, $method, $params)
-    {
-        return Util::uriRfc3986Encode(strtoupper($method))."&".Util::uriRfc3986Encode(Util::normalizeUrl($url))."&".Util::uriRfc3986Encode(Util::normalizeParameters($url, $params));
-    }
-    
-    
-    public static function getOAuthKey($url, $method, $body)
-    {
-        $oAuthParameters = new OAuthParameters();
-        $oAuthParameters->setOAuthConsumerKey(ApiConfig::getAuthentication()->getClientId());
-        $oAuthParameters->setOAuthNonce(OAuthUtil::getNonce());
-        $oAuthParameters->setOAuthTimestamp(OAuthUtil::getTimestamp());
-        $oAuthParameters->setOAuthSignatureMethod("RSA-SHA1");
 
-        if (!empty($body)) {
-            $encodedHash = Util::base64Encode(Util::sha1Encode($body, true));
-            $oAuthParameters->setOAuthBodyHash($encodedHash);
-        }
-
-        $baseString = self::getBaseString($url, $method, $oAuthParameters->getBaseParameters());
-        $signature = self::rsaSign($baseString);
-        $oAuthParameters->setOAuthSignature($signature);
-
-        $result = "";
-        foreach ($oAuthParameters->getBaseParameters() as $key => $value) {
-            if (strlen($result) == 0)
-            {
-                $result .=  OAuthParameters::OAUTH_KEY." ";
-            } else {
-                $result .=  ",";
-            }
-            $result .=  Util::uriRfc3986Encode($key)."=\"".Util::uriRfc3986Encode($value)."\"";
-        }
-        return $result;
-    }
-    
-    public static function rsaSign($baseString)
-    {      
-       $signedBaseString = ApiConfig::getAuthentication()->signMessage($baseString);
-       return Util::base64Encode($signedBaseString);
-    }
         
     
 }

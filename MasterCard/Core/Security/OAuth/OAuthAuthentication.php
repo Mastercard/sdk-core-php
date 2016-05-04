@@ -30,7 +30,8 @@
 namespace MasterCard\Core\Security\OAuth;
 
 use MasterCard\Core\Security\AuthenticationInterface;
-use \MasterCard\Core\Util;
+use MasterCard\Core\Security\SecurityUtil;
+use MasterCard\Core\Util;
 
 class OAuthAuthentication implements AuthenticationInterface
 {
@@ -55,21 +56,62 @@ class OAuthAuthentication implements AuthenticationInterface
     public function getPrivateKey() {
         return $this->privateKey;
     }
+    
+    public function getPassword() {
+        return $this->password;
+    }
+    
+    public static function getOAuthBaseString($url, $method, $params)
+    {
+        return Util::uriRfc3986Encode(strtoupper($method))."&".Util::uriRfc3986Encode(Util::normalizeUrl($url))."&".Util::uriRfc3986Encode(Util::normalizeParameters($url, $params));
+    }
 
     public function signRequest($uri, $request) {
         $method = $request->getMethod();
         $body = $request->getBody()->getContents();
         
-        return $request->withHeader(OAuthParameters::AUTHORIZATION, OAuthUtil::getOAuthKey($uri, $method, $body));
+        return $request->withHeader(OAuthParameters::AUTHORIZATION, $this->getOAuthKey($uri, $method, $body));
     }
     
-    public function signMessage($message) {
-        
+    
+    public function getOAuthKey($url, $method, $body)
+    {
+        $oAuthParameters = new OAuthParameters();
+        $oAuthParameters->setOAuthConsumerKey($this->clientId);
+        $oAuthParameters->setOAuthNonce(SecurityUtil::getNonce());
+        $oAuthParameters->setOAuthTimestamp(SecurityUtil::getTimestamp());
+        $oAuthParameters->setOAuthSignatureMethod("RSA-SHA1");
+
+        if (!empty($body)) {
+            $encodedHash = Util::base64Encode(Util::sha1Encode($body, true));
+            $oAuthParameters->setOAuthBodyHash($encodedHash);
+        }
+
+        $baseString = OAuthAuthentication::getOAuthBaseString($url, $method, $oAuthParameters->getBaseParameters());
+        $signature = $this->signValue($baseString);
+        $oAuthParameters->setOAuthSignature($signature);
+
+        $result = "";
+        foreach ($oAuthParameters->getBaseParameters() as $key => $value) {
+            if (strlen($result) == 0)
+            {
+                $result .=  OAuthParameters::OAUTH_KEY." ";
+            } else {
+                $result .=  ",";
+            }
+            $result .=  Util::uriRfc3986Encode($key)."=\"".Util::uriRfc3986Encode($value)."\"";
+        }
+        return $result;
+    }
+    
+    public function signValue($value)
+    {
         openssl_pkcs12_read($this->privateKey, $certs, $this->password);
         $pkeyid = openssl_get_privatekey($certs["pkey"]);
-        openssl_sign($message, $signature, $pkeyid , "sha1");
-        return $signature;
+        openssl_sign($value, $signature, $pkeyid , "sha1");
+        return Util::base64Encode($signature);
     }
+
 
 
 }
