@@ -127,7 +127,9 @@ class ApiController {
         $url = "%s";
         $tmpUrl = Util::getReplacedPath($this->removeForwardSlashFromTail($this->fullUrl).$this->removeForwardSlashFromTail($resourcePath), $inputMap);
         array_push($queryParams, $tmpUrl);
-        
+
+        // getReplacePath should already take care of the path parameter replacement
+        // however this is to make sure that one id is atleas setted correctly. 
         switch ($action) {
             case "read":
             case "update":
