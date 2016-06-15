@@ -65,7 +65,7 @@ class OAuthUtilTest extends \PHPUnit_Framework_TestCase {
         $url = "http://www.andrea.rizzini.com/simple_service";
 
         $oAuthParameters = new OAuthParameters ();
-        $oAuthParameters->setOAuthConsumerKey($oauthAuthentication->getClientId());
+        $oAuthParameters->setOAuthConsumerKey($this->oauthAuthentication->getClientId());
         $oAuthParameters->setOAuthNonce("NONCE");
         $oAuthParameters->setOAuthTimestamp("TIMESTAMP");
         $oAuthParameters->setOAuthSignatureMethod("RSA-SHA1");
@@ -121,7 +121,7 @@ class OAuthUtilTest extends \PHPUnit_Framework_TestCase {
 
         
         $oAuthParameters = new OAuthParameters ();
-        $oAuthParameters->setOAuthConsumerKey($oauthAuthentication->getClientId());
+        $oAuthParameters->setOAuthConsumerKey($this->oauthAuthentication->getClientId());
         $oAuthParameters->setOAuthNonce("Fl0qGYY1ZmwMzzpdN");
         $oAuthParameters->setOAuthTimestamp("1457428003");
         $oAuthParameters->setOAuthSignatureMethod("RSA-SHA1");
