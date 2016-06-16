@@ -1,5 +1,5 @@
 {
-    "name": "master-card/sdk-core-php",
+    "name": "mastercard/sdk-core-php",
     "description": "This is the core or base package of the MasterCard Api, all different flavours of Api provided by MasterCard will reuse this package",
     "authors": [
         {
