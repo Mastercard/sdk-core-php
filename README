@@ -12,9 +12,9 @@ It provide:
 This is composer project.
 For simplicity i've added to the project under the bin an instance of composer.
 
-'''
+```
 chmod +x composer
 chmod +x run-tests
 ./composer install
 ./run-test
-'''
+```
