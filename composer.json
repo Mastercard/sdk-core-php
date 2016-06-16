@@ -1,6 +1,7 @@
 {
     "name": "mastercard/sdk-core-php",
     "description": "This is the core or base package of the MasterCard Api, all different flavours of Api provided by MasterCard will reuse this package",
+    "version": "0.0.5"
     "authors": [
         {
             "name": "Andrea Rizzini",
