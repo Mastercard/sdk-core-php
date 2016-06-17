@@ -54,6 +54,10 @@ class UserPostHeader extends BaseObject {
         }
         throw new \Exception("Invalid action supplied: $action");
     }
+    
+    public static function getApiVersion() {
+        return "0.0.1";
+    }
 
 
 
@@ -72,6 +76,7 @@ class UserPostHeader extends BaseObject {
         }
 
     }
+    
 
 
 

@@ -54,10 +54,15 @@ class ApiController {
     protected $fullUrl = null;
     protected $baseUrl = null;
     protected $client = null;
+    protected $version = "NOT-SET";
 
-    function __construct() {
+    function __construct($version) {
 
         $this->checkState();
+        
+        if ($version != null) {
+            $this->version = $version;
+        }
 
 
         $fullUrl = ApiConfig::getLiveUrl();
@@ -186,7 +191,7 @@ class ApiController {
 
         $request = $request->withHeader("Accept", "application/json");
         $request = $request->withHeader("Content-Type", "application/json");
-        $request = $request->withHeader("User-Agent", "Java-SDK/" . ApiConfig::VERSION);
+        $request = $request->withHeader("User-Agent", "PHP-SDK/" . $this->version);
         foreach ($headerMap as $key => $value) {
             $request = $request->withHeader($key, $value);    
         }
