@@ -39,6 +39,8 @@ use MasterCard\Core\ApiConfig;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 
 class ApiController {
 
@@ -54,11 +56,23 @@ class ApiController {
     protected $fullUrl = null;
     protected $baseUrl = null;
     protected $client = null;
+    protected $version = "NOT-SET";
+    
+    protected $logger = null;
+    
 
-    function __construct() {
+    function __construct($version) {
 
+          
+        $this->logger = new Logger('ApiController');
+        
+        
+        
         $this->checkState();
-
+        
+        if ($version != null) {
+            $this->version = $version;
+        }
 
         $fullUrl = ApiConfig::getLiveUrl();
         if (ApiConfig::isSandbox()) {
@@ -184,9 +198,10 @@ class ApiController {
                 break;
         }
 
+        
         $request = $request->withHeader("Accept", "application/json");
         $request = $request->withHeader("Content-Type", "application/json");
-        $request = $request->withHeader("User-Agent", "Java-SDK/" . ApiConfig::VERSION);
+        $request = $request->withHeader("User-Agent", "PHP-SDK/" . $this->version);
         foreach ($headerMap as $key => $value) {
             $request = $request->withHeader($key, $value);    
         }
@@ -200,10 +215,23 @@ class ApiController {
         $url = $this->getUrl($action, $resourcePath, $inputMap);
         $request = $this->getRequest($url, $action, $inputMap, $headerMap);
 
+        if (ApiConfig::isDebug()) {
+           $this->logger->addDebug(">>request->headers: ", $request->getHeaders());
+           $this->logger->addDebug(">>request->body: ". $request->getBody());
+        }
+
         try {
             $response = $this->client->send($request);
             $statusCode = $response->getStatusCode();
             $responseContent = $response->getBody()->getContents();
+
+            
+            if (ApiConfig::isDebug()) {
+                $this->logger->addDebug(">>response->statusCode: ". $statusCode);
+                $this->logger->addDebug(">>response->headers: ", $response->getHeaders());
+                $this->logger->addDebug(">>response->body: ". $responseContent);
+            }
+            
             if ($statusCode < self::HTTP_AMBIGUOUS) {
                 if (strlen($responseContent) > 0) {
                     return json_decode($responseContent, true);

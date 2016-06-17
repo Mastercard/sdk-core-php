@@ -43,6 +43,11 @@ abstract class BaseObject extends BaseMap {
     }
     
 
+    public static function getApiVersion() {
+        throw new Exception("Not implemented");
+    }
+    
+
     function __construct($baseMap = null) {
         if ($baseMap != null) {
             $this->setAll($baseMap->getBaseMapAsArray());
@@ -105,7 +110,7 @@ abstract class BaseObject extends BaseMap {
      * @ignore
      */
     private static function execute($action, $inputObject) {
-        $apiController = new ApiController();
+        $apiController = new ApiController($inputObject->getApiVersion());
         $responseMap = $apiController->execute($action, $inputObject->getResourcePath($action), $inputObject->getHeaderParams($action), $inputObject->getBaseMapAsArray());
         $returnObjectClass = get_class($inputObject);
         
