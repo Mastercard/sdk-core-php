@@ -38,6 +38,7 @@ class AccountInquiryTest extends \PHPUnit_Framework_TestCase {
     protected function setUp() {
         $privateKey = file_get_contents(getcwd()."/prod_key.p12");
         ApiConfig::setAuthentication(new OAuthAuthentication("gVaoFbo86jmTfOB4NUyGKaAchVEU8ZVPalHQRLTxeaf750b6!414b543630362f426b4f6636415a5973656c33735661383d", $privateKey, "alias", "password"));
+        ApiConfig::setDebug(true);
     }
 
     
