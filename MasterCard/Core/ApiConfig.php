@@ -36,10 +36,6 @@ class ApiConfig {
     private static $LOCALHOST = false;
     private static $AUTHENTICATION = null;
     
-    
-    // The VERSION
-    const VERSION = "1.0.0";
-        
     private static $API_BASE_LIVE_URL = "https://api.mastercard.com";
     private static $API_BASE_SANDBOX_URL = "https://sandbox.api.mastercard.com";
 
