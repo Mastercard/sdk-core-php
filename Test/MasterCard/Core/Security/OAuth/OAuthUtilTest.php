@@ -41,8 +41,8 @@ class OAuthUtilTest extends \PHPUnit_Framework_TestCase {
     protected $oauthAuthentication;
     
     protected function setUp() {
-        $privateKey = file_get_contents(getcwd()."/prod_key.p12");
-        $this->oauthAuthentication = new OAuthAuthentication("gVaoFbo86jmTfOB4NUyGKaAchVEU8ZVPalHQRLTxeaf750b6!414b543630362f426b4f6636415a5973656c33735661383d", $privateKey, "alias", "password");
+        $privateKey = file_get_contents(getcwd()."/mcapi_sandbox_key.p12");
+        $this->oauthAuthentication = new OAuthAuthentication("L5BsiPgaF-O3qA36znUATgQXwJB6MRoMSdhjd7wt50c97279!50596e52466e3966546d434b7354584c4975693238513d3d", $privateKey, "alias", "password");
         ApiConfig::setAuthentication($this->oauthAuthentication);
     }
 
@@ -88,7 +88,7 @@ class OAuthUtilTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(['oauth_body_hash', 'oauth_consumer_key', 'oauth_nonce', 'oauth_signature', 'oauth_signature_method', 'oauth_timestamp'], array_keys($baseParams));
         
         $this->assertEquals("apwbAT6IoMRmB9wE9K4fNHDsaMo=", $baseParams['oauth_body_hash'] );
-        $this->assertEquals("gVaoFbo86jmTfOB4NUyGKaAchVEU8ZVPalHQRLTxeaf750b6!414b543630362f426b4f6636415a5973656c33735661383d", $baseParams['oauth_consumer_key']);
+        $this->assertEquals("L5BsiPgaF-O3qA36znUATgQXwJB6MRoMSdhjd7wt50c97279!50596e52466e3966546d434b7354584c4975693238513d3d", $baseParams['oauth_consumer_key']);
         $this->assertEquals("NONCE", $baseParams['oauth_nonce']);
         $this->assertEquals("CQJfOX6Yebd7KPPsG7cRopzt+4/QB+GiMQhgcFMw+ew2bWtBLj+t8i6mSe26eEVurxzF4mp0uvjXZzz8Ik5YLjP1byr0v+wsMmAQbWUTj4dO7k8W2+a4AISmKFfbSEUaDgBpPyCl72cL29+hoTNo/usD0EYpaX6P1Vo+EYLbZjK3ZJRtDSd8VZnjxKInUoNI8VvJuGgZ3u7nh5caXvVk6RlCbgwdVEKAv/BsfLSQEgc0/DCCKhX2ZnNOqJJ3FRS6s4bAbqYbui5ouWN5SGkcRaYPt7Fi8oTu561oNZ02HlAWL9m0fp8MK6ZDGQjkeC+zWeo/o0Gbc+/kKGPdOrCNFA==", $baseParams['oauth_signature']);
         $this->assertEquals("RSA-SHA1", $baseParams['oauth_signature_method']);
@@ -141,7 +141,7 @@ class OAuthUtilTest extends \PHPUnit_Framework_TestCase {
         $baseParams = $oAuthParameters->getBaseParameters();
         $this->assertEquals(['oauth_body_hash', 'oauth_consumer_key', 'oauth_nonce', 'oauth_signature', 'oauth_signature_method', 'oauth_timestamp'], array_keys($baseParams));
         $this->assertEquals("nmtgpSOebxR/PfZyg9qwNoUEsYY=", $baseParams['oauth_body_hash'] );
-        $this->assertEquals("gVaoFbo86jmTfOB4NUyGKaAchVEU8ZVPalHQRLTxeaf750b6!414b543630362f426b4f6636415a5973656c33735661383d", $baseParams['oauth_consumer_key']);
+        $this->assertEquals("L5BsiPgaF-O3qA36znUATgQXwJB6MRoMSdhjd7wt50c97279!50596e52466e3966546d434b7354584c4975693238513d3d", $baseParams['oauth_consumer_key']);
         $this->assertEquals("Fl0qGYY1ZmwMzzpdN", $baseParams['oauth_nonce']);
         $this->assertEquals("ABImx5hGm9RK6o3ipHc2/RH0bMfVe5GRBmI8Y6mwn+5pZQgayr0XyFBBK4fkHpWS8LCytadX09qMG7gCfSl9qyM27l5spf164y6L/GSbvmsYgvd7WAkinwf+0LsSc1sZgytDVLCHXFRofFliugf1ttE4ErrzpDi7Bm2Em6xHF8XVokFMpRj2euddCoJBklamIoG0JvE0Xo/qZ9Do16BITEv5t47UhM0XHoBNiKP2X0uZQ//xGGKJLbMGumDkvO7lAHDEtp7VLrKB/Kx3ebNpXh0Mygyla3oIjg7boDL90lG/M1L8cvPhtahfaZ1ot0IjAntUSZ8BGqW2AzHy7WYYwQ==", $baseParams['oauth_signature']);
         $this->assertEquals("RSA-SHA1", $baseParams['oauth_signature_method']);
