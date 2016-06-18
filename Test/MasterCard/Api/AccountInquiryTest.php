@@ -36,8 +36,8 @@ use MasterCard\Core\Security\OAuth\OAuthAuthentication;
 class AccountInquiryTest extends \PHPUnit_Framework_TestCase {
 
     protected function setUp() {
-        $privateKey = file_get_contents(getcwd()."/prod_key.p12");
-        ApiConfig::setAuthentication(new OAuthAuthentication("gVaoFbo86jmTfOB4NUyGKaAchVEU8ZVPalHQRLTxeaf750b6!414b543630362f426b4f6636415a5973656c33735661383d", $privateKey, "alias", "password"));
+        $privateKey = file_get_contents(getcwd()."/mcapi_sandbox_key.p12");
+        ApiConfig::setAuthentication(new OAuthAuthentication("L5BsiPgaF-O3qA36znUATgQXwJB6MRoMSdhjd7wt50c97279!50596e52466e3966546d434b7354584c4975693238513d3d", $privateKey, "alias", "password"));
     }
 
     
