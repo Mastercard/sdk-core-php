@@ -54,7 +54,7 @@ class AccountInquiryTest extends \PHPUnit_Framework_TestCase {
             
             $request = new AccountInquiry($map);
             $response = $request->update();
-            $this->assertEquals(strtolower("True"), strtolower($response->get("Account.Listed")));
+            $this->assertEquals(strtolower("True"), strtolower(str_replace("'", "", var_export($response->get("Account.Listed"), true))));
             $this->assertEquals(strtolower("S"), strtolower($response->get("Account.ReasonCode")));
             $this->assertEquals(strtolower("STOLEN"), strtolower($response->get("Account.Reason")));
             
@@ -69,7 +69,7 @@ class AccountInquiryTest extends \PHPUnit_Framework_TestCase {
             
             $request = new AccountInquiry($map);
             $response = $request->update();
-            $this->assertEquals(strtolower("True"), strtolower($response->get("Account.Listed")));
+            $this->assertEquals(strtolower("True"), strtolower(str_replace("'", "", var_export($response->get("Account.Listed"), true))));
             $this->assertEquals(strtolower("L"), strtolower($response->get("Account.ReasonCode")));
             $this->assertEquals(strtolower("LOST"), strtolower($response->get("Account.Reason")));
             
