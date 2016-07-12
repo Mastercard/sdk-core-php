@@ -42,6 +42,10 @@ abstract class BaseObject extends BaseMap {
         throw new Exception("Not implemented");
     }
     
+    public static function getQueryParams($action) {
+        throw new Exception("Not implemented");
+    }
+    
     public static function getApiVersion() {
         throw new Exception("Not implemented");
     }
@@ -110,7 +114,7 @@ abstract class BaseObject extends BaseMap {
      */
     private static function execute($action, $inputObject) {
         $apiController = new ApiController($inputObject->getApiVersion());
-        $responseMap = $apiController->execute($action, $inputObject->getResourcePath($action), $inputObject->getHeaderParams($action), $inputObject->getBaseMapAsArray());
+        $responseMap = $apiController->execute($action, $inputObject->getResourcePath($action), $inputObject->getHeaderParams($action), $inputObject->getQueryParams($action), $inputObject->getBaseMapAsArray());
         $returnObjectClass = get_class($inputObject);
         
         if ($action == "list") {
