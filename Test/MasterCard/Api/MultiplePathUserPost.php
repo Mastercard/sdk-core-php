@@ -26,7 +26,7 @@
  *
  */
 
- namespace MasterCard\Api;
+  namespace MasterCard\Api;
 
  use MasterCard\Core\Model\BaseObject;
  use MasterCard\Core\Model\BaseMap;
@@ -35,12 +35,18 @@
 /**
  * 
  */
-class UserPostPath extends BaseObject {
+class MultiplePathUserPost extends BaseObject {
 
     public static function getResourcePath($action) {
         
         if ($action == "list") {
-           return "/mock_crud_server/users/{user_id}/posts";
+           return "/mock_crud_server/users/{user_id}/post/{post_id}";
+        }
+        if ($action == "update") {
+            return "/mock_crud_server/users/{user_id}/post/{post_id}";
+        }
+        if ($action == "delete") {
+            return "/mock_crud_server/users/{user_id}/post/{post_id}";
         }
         throw new \Exception("Invalid action supplied: $action");
 
@@ -52,17 +58,30 @@ class UserPostPath extends BaseObject {
         if ($action == "list") {
            return array();
         }
+        if ($action == "update") {
+            return array();
+        }
+        if ($action == "delete") {
+            return array();
+        }
         throw new \Exception("Invalid action supplied: $action");
     }
-    
+
+
     public static function getQueryParams($action) {
         
         if ($action == "list") {
            return array();
         }
+        if ($action == "update") {
+            return array("testQuery");
+        }
+        if ($action == "delete") {
+            return array();
+        }
         throw new \Exception("Invalid action supplied: $action");
     }
-    
+
     public static function getApiVersion() {
         return "0.0.1";
     }
@@ -70,19 +89,69 @@ class UserPostPath extends BaseObject {
 
 
    /**
-    * List objects of type UserPostPath
+    * List objects of type MultiplePathUserPost
     *
     * @param Map criteria
-    * @return Array of UserPostPath object matching the criteria.
+    * @return Array of MultiplePathUserPost object matching the criteria.
     */
     public static function listByCriteria($criteria = null)
     {
         if ($criteria == null) {
-            return parent::listObjects(new UserPostPath());
+            return parent::listObjects(new MultiplePathUserPost());
         } else {
-            return parent::listObjects(new UserPostPath($criteria));
+            return parent::listObjects(new MultiplePathUserPost($criteria));
         }
 
+    }
+
+
+
+
+   /**
+    * Updates an object of type MultiplePathUserPost
+    *
+    * @return A MultiplePathUserPost object representing the response.
+    */
+    public function update()  {
+        return parent::updateObject($this);
+    }
+
+
+
+
+
+
+
+   /**
+    * Delete object of type MultiplePathUserPost by id
+    *
+    * @param String id
+    * @return MultiplePathUserPost of the response of the deleted instance.
+    */
+    public static function deleteById($id, $requestMap = null)
+    {
+        $map = new BaseMap();
+        if (!empty($requestMap)) {
+            $map->setAll($requestMap);
+        }
+        
+        if (!empty($id)) {
+            $map->set("id", $id);
+        }
+        
+        
+        $currentObject = new MultiplePathUserPost($map);
+        return $currentObject->deleteObject($currentObject);
+    }
+
+   /**
+    * Delete this object of type MultiplePathUserPost
+    *
+    * @return MultiplePathUserPost of the response of the deleted instance.
+    */
+    public function delete()
+    {
+        return parent::deleteObject($this);
     }
 
 

@@ -78,6 +78,28 @@ class Post extends BaseObject {
         }
         throw new \Exception("Invalid action supplied: $action");
     }
+    
+    
+    public static function getQueryParams($action) {
+        
+        if ($action == "list") {
+           return array();
+        }
+        if ($action == "create") {
+            return array();
+        }
+        if ($action == "read") {
+            return array();
+        }
+        if ($action == "update") {
+            return array();
+        }
+        if ($action == "delete") {
+            return array();
+        }
+        throw new \Exception("Invalid action supplied: $action");
+    }
+
 
     public static function getApiVersion() {
         return "0.0.1";

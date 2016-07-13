@@ -133,7 +133,7 @@ class ApiController {
     /**
      * @ignore
      */
-    public function getUrl($action, $resourcePath, &$inputMap) {
+    public function getUrl($action, $resourcePath, &$inputMap, $queryList) {
 
         $queryParams = array();
                
@@ -150,7 +150,7 @@ class ApiController {
             case "delete":
                 if (array_key_exists("id", $inputMap)) {
                     $url .= "/%s";
-                    array_push($queryParams, $inputMap->get("id"));
+                    array_push($queryParams, $inputMap["id"]);
                 }
                 break;
             default:
@@ -162,7 +162,24 @@ class ApiController {
             case "delete":
             case "list":
             case "query":
+                
                 foreach ($inputMap as $key => $value) {
+                    $url = $this->appendToQueryString($url, "%s=%s");
+                    array_push($queryParams, Util::urlEncode($key));
+                    array_push($queryParams, Util::urlEncode($value));
+                }
+                break;
+            default:
+                break;
+        }
+        
+        // we need to remove any queryParameters specified in the inputMap and 
+        // add them as quertParameters
+        switch ($action) {
+            case "create":
+            case "update":
+                $queryMap = Util::subMap($inputMap, $queryList);
+                foreach ($queryMap as $key => $value) {
                     $url = $this->appendToQueryString($url, "%s=%s");
                     array_push($queryParams, Util::urlEncode($key));
                     array_push($queryParams, Util::urlEncode($value));
@@ -210,9 +227,12 @@ class ApiController {
         return $request;
     }
 
-    public function execute($action, $resourcePath, $headerList, $inputMap) {
+    public function execute($action, $resourcePath, $headerList, $queryList, $inputMap) {
         $headerMap = Util::subMap($inputMap, $headerList);
-        $url = $this->getUrl($action, $resourcePath, $inputMap);
+        //pathMap is the left overs == $inputM
+        
+        
+        $url = $this->getUrl($action, $resourcePath, $inputMap, $queryList);
         $request = $this->getRequest($url, $action, $inputMap, $headerMap);
 
         if (ApiConfig::isDebug()) {
