@@ -63,12 +63,8 @@ abstract class BaseObject extends BaseMap {
      * @ignore
      */
     protected static function readObject($inputObject, $criteria) {
-        if ($criteria != null) {
-            if (is_array($criteria)) {
-                $inputObject->setAll($criteria);
-            } else {
-                $inputObject->setAll($criteria->getBaseMapAsArray());
-            }
+        if (!empty($criteria)) {
+            $inputObject->setAll($criteria);
         }
         return self::execute("read", $inputObject);
     }

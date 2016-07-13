@@ -196,7 +196,7 @@ class NodeJSFunctionalTest extends \PHPUnit_Framework_TestCase{
         $this->assertEquals(1, $item->get("userId"));
     }
     
-        public function testActionListFromUserHeaderPath200() {
+    public function testActionListFromUserHeaderPath200() {
         $requestMap = new BaseMap();
         $requestMap->set("user_id", 1);
         
@@ -210,6 +210,26 @@ class NodeJSFunctionalTest extends \PHPUnit_Framework_TestCase{
         $this->assertEquals("My Title", $item->get("title"));
         $this->assertEquals("some body text", $item->get("body"));
         $this->assertEquals(1, $item->get("userId"));
+    }
+    
+    
+    public function testActionMultipathDelete200() {
+        $requestMap = new BaseMap();
+        $requestMap->set("user_id", 1);
+        $requestMap->set("post_id", 1);
+        
+
+        
+        $deletedItem = MultiplePathUserPost::deleteById(null, $requestMap);
+        $this->assertEquals(0, $deletedItem->size());
+        
+        $requestArray = array(
+            'user_id' => 1, 
+            'post_id' => 1,
+        );
+        
+        $deletedItem = MultiplePathUserPost::deleteById(null, $requestArray);      
+        $this->assertEquals(0, $deletedItem->size());
     }
 
 }
