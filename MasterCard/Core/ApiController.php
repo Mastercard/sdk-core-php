@@ -151,7 +151,7 @@ class ApiController {
             case "delete":
                 if (array_key_exists("id", $inputMap)) {
                     $url .= "/%s";
-                    array_push($queryParams, $inputMap->get("id"));
+                    array_push($queryParams, $inputMap["id"]);
                 }
                 break;
             default:
