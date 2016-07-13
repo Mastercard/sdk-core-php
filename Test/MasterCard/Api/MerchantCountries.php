@@ -35,12 +35,12 @@
 /**
  * 
  */
-class Insights extends BaseObject {
+class MerchantCountries extends BaseObject {
 
     public static function getResourcePath($action) {
         
         if ($action == "query") {
-            return "/sectorinsights/v1/sectins.svc/insights";
+            return "/merchants/v1/country";
         }
         throw new \Exception("Invalid action supplied: $action");
 
@@ -55,7 +55,6 @@ class Insights extends BaseObject {
         throw new \Exception("Invalid action supplied: $action");
     }
     
-    
     public static function getQueryParams($action) {
         
         if ($action == "query") {
@@ -63,7 +62,7 @@ class Insights extends BaseObject {
         }
         throw new \Exception("Invalid action supplied: $action");
     }
-    
+
     public static function getApiVersion() {
         return "0.0.1";
     }
@@ -74,13 +73,13 @@ class Insights extends BaseObject {
 
 
     /**
-     * Query objects of type Insights by id and optional criteria
+     * Query objects of type MerchantCountries by id and optional criteria
      * @param type $criteria
      * @return type
      */
     public static function query($criteria)
     {
-        return parent::queryObject(new Insights($criteria));
+        return parent::queryObject(new MerchantCountries($criteria));
     }
 
 
