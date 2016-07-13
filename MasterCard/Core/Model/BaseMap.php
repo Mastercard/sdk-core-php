@@ -228,23 +228,33 @@ class BaseMap {
      * @param $map array Map of values to set.
      */
     public function setAll($map) {
-        if ($this->isAssoc($map))
+        
+        $updatedMap = null;
+        
+        //arizzini: resolving the map..
+        if (is_array($map)) {
+                $updatedMap = $map;
+        } else {
+            $updatedMap = $map->getBaseMapAsArray();
+        }
+        
+        if ($this->isAssoc($updatedMap))
         {
             //echo "isAssoc==TRUE\r\n";
-            foreach ($map as $key => $value) {
+            foreach ($updatedMap as $key => $value) {
                 $this->set($key, $value);
             }
         } else {
             //echo "isAssoc==FALSE\r\n";
             $list = array();
-            foreach ($map as $object) {
+            foreach ($updatedMap as $object) {
                 $tmpBaseMap = new BaseMap();
                 $tmpBaseMap->setAll($object);
                 array_push($list, $tmpBaseMap->getBaseMapAsArray());
             }
             
             $this->set("list", $list);
-//            print_r($this->getProperties());
+            //print_r($this->getProperties());
         }
     }
     
