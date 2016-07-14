@@ -29,7 +29,7 @@
  namespace MasterCard\Api;
 
  use MasterCard\Core\Model\BaseObject;
- use MasterCard\Core\Model\BaseMap;
+ use MasterCard\Core\Model\RequestMap;
 
 
 /**
@@ -147,7 +147,7 @@ class User extends BaseObject {
      */
     public static function read($id, $criteria = null)
     {
-        $map = new BaseMap();
+        $map = new RequestMap();
         $map->set("id", $id);
         return parent::readObject(new User($map), $criteria);
     }
@@ -174,7 +174,7 @@ class User extends BaseObject {
     */
     public static function deleteById($id)
     {
-        $map = new BaseMap();
+        $map = new RequestMap();
         $map->set("id", $id);
         $currentObject = new User($map);
         return $currentObject->executeDelete();
