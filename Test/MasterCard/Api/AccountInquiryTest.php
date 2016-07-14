@@ -28,7 +28,7 @@
 
 namespace MasterCard\Api;
 
-use MasterCard\Core\Model\BaseMap;
+use MasterCard\Core\Model\RequestMap;
 use MasterCard\Core\ApiConfig;
 use MasterCard\Core\Security\OAuth\OAuthAuthentication;
 
@@ -49,7 +49,7 @@ class AccountInquiryTest extends \PHPUnit_Framework_TestCase {
         public function test_example_stolen()
         {
             //example_stolen
-            $map = new BaseMap();
+            $map = new RequestMap();
             $map->set ("AccountInquiry.AccountNumber", "5343434343434343");
             
             $request = new AccountInquiry($map);
@@ -64,7 +64,7 @@ class AccountInquiryTest extends \PHPUnit_Framework_TestCase {
         public function test_example_lost()
         {
             //example_lost
-            $map = new BaseMap();
+            $map = new RequestMap();
             $map->set ("AccountInquiry.AccountNumber", "5222222222222200");
             
             $request = new AccountInquiry($map);

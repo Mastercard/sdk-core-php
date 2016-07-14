@@ -29,7 +29,7 @@
  namespace MasterCard\Api;
 
  use MasterCard\Core\Model\BaseObject;
- use MasterCard\Core\Model\BaseMap;
+ use MasterCard\Core\Model\RequestMap;
  use MasterCard\Core\ApiConfig;
  use MasterCard\Core\Security\OAuth\OAuthAuthentication;
  use MasterCard\Core\Exception\InvalidRequestException;
@@ -115,7 +115,7 @@ class NodeJSFunctionalTest extends \PHPUnit_Framework_TestCase{
     
     public function testActionListFromPostWithCriteria200() {
         
-        $criteria = new BaseMap();
+        $criteria = new RequestMap();
         $criteria->set("user_id", 5);
                 
         $createdItems = Post::listByCriteria($criteria);
@@ -136,7 +136,7 @@ class NodeJSFunctionalTest extends \PHPUnit_Framework_TestCase{
     
     public function testActionCreateFromPostWith200() {
         
-        $requestMap = new BaseMap();
+        $requestMap = new RequestMap();
         $requestMap->set("id", 1)->set("title", "My Title")->set("body", "some long text");
         
         $createdItem = Post::create($requestMap);
@@ -153,7 +153,7 @@ class NodeJSFunctionalTest extends \PHPUnit_Framework_TestCase{
     
     public function testActionUpdateFromPost200() {
         
-        $requestMap = new BaseMap();
+        $requestMap = new RequestMap();
         $requestMap->set("id", 1)->set("title", "My Title")->set("body", "some long text");
         
         $createdItem = Post::create($requestMap);
@@ -181,7 +181,7 @@ class NodeJSFunctionalTest extends \PHPUnit_Framework_TestCase{
     }
     
     public function testActionListFromUserPostPath200() {
-        $requestMap = new BaseMap();
+        $requestMap = new RequestMap();
         $requestMap->set("user_id", 1);
         
         $items =UserPostPath::listByCriteria($requestMap);
@@ -197,7 +197,7 @@ class NodeJSFunctionalTest extends \PHPUnit_Framework_TestCase{
     }
     
     public function testActionListFromUserHeaderPath200() {
-        $requestMap = new BaseMap();
+        $requestMap = new RequestMap();
         $requestMap->set("user_id", 1);
         
         $items =  UserPostHeader::listByCriteria($requestMap);
@@ -214,7 +214,7 @@ class NodeJSFunctionalTest extends \PHPUnit_Framework_TestCase{
     
     
     public function testActionMultipathDelete200() {
-        $requestMap = new BaseMap();
+        $requestMap = new RequestMap();
         $requestMap->set("user_id", 1);
         $requestMap->set("post_id", 1);
         
