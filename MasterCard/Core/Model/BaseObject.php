@@ -29,10 +29,10 @@
 
 namespace MasterCard\Core\Model;
 
-use \MasterCard\Core\Model\BaseMap;
+use \MasterCard\Core\Model\RequestMap;
 use \MasterCard\Core\ApiController;
 
-abstract class BaseObject extends BaseMap {
+abstract class BaseObject extends RequestMap {
 
     public static function getResourcePath($action) {
         throw new Exception("Not implemented");
@@ -121,14 +121,14 @@ abstract class BaseObject extends BaseMap {
             }
             
             foreach ($responseMap as $objectMap) {
-                $baseMap = new BaseMap();
+                $baseMap = new RequestMap();
                 $baseMap->setAll($objectMap);
                 $returnObject[] = new $returnObjectClass($baseMap);
             }
             return $returnObject;
             
         } else {
-            $baseMap = new BaseMap();
+            $baseMap = new RequestMap();
             $baseMap->setAll($responseMap);
             return new $returnObjectClass($baseMap);
         }
