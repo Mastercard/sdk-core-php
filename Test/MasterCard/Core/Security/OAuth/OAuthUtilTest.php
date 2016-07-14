@@ -34,7 +34,7 @@ use MasterCard\Core\Util;
 use MasterCard\Core\Security\AuthenticationInterface;
 use MasterCard\Core\Security\SecurityUtil;
 use MasterCard\Core\Security\OAuth\OAuthParameters;
-use MasterCard\Core\Model\BaseMap;
+use MasterCard\Core\Model\RequestMap;
 
 class OAuthUtilTest extends \PHPUnit_Framework_TestCase {
 
@@ -108,7 +108,7 @@ class OAuthUtilTest extends \PHPUnit_Framework_TestCase {
     
     public function testOauthSignatureFromCSharpExample()
     {
-        $baseMap = new BaseMap();
+        $baseMap = new RequestMap();
         $baseMap->set("AccountInquiry.AccountNumber", "5343434343434343");
         
         

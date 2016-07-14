@@ -28,7 +28,7 @@
 
 namespace MasterCard\Api;
 
-use MasterCard\Core\Model\BaseMap;
+use MasterCard\Core\Model\RequestMap;
 use MasterCard\Core\ApiConfig;
 use MasterCard\Core\Security\OAuth\OAuthAuthentication;
 use MasterCard\Api\MerchantCategories;
@@ -55,7 +55,7 @@ class MerchantCountriesTest extends \PHPUnit_Framework_TestCase {
         public function test_example_merchants_country()
         {
 
-            $map = new BaseMap();
+            $map = new RequestMap();
             
             $map->set("details", "acceptance.paypass");
             

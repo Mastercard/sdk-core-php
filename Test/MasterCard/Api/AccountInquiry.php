@@ -29,7 +29,7 @@
  namespace MasterCard\Api;
 
  use MasterCard\Core\Model\BaseObject;
- use MasterCard\Core\Model\BaseMap;
+ use MasterCard\Core\Model\RequestMap;
 
 
 /**
