@@ -29,7 +29,7 @@
 
 namespace MasterCard\Core;
 
-use MasterCard\Core\Model\BaseMap;
+use MasterCard\Core\Model\RequestMap;
 
 class UtilTest extends \PHPUnit_Framework_TestCase {
     

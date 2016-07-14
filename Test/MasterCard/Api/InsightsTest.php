@@ -28,7 +28,7 @@
 
 namespace MasterCard\Api;
 
-use MasterCard\Core\Model\BaseMap;
+use MasterCard\Core\Model\RequestMap;
 use MasterCard\Core\ApiConfig;
 use MasterCard\Core\Security\OAuth\OAuthAuthentication;
 
@@ -52,7 +52,7 @@ class InsightsTest extends \PHPUnit_Framework_TestCase {
         public function test_example_insights()
         {
 
-            $map = new BaseMap();
+            $map = new RequestMap();
             
             $map->set("CurrentRow", "1");
             $map->set("Offset", "25");

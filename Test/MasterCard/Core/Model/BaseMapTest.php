@@ -30,13 +30,13 @@
 
 namespace MasterCard\Core\Model;
 
-use MasterCard\Core\Model\BaseMap;
+use MasterCard\Core\Model\RequestMap;
 
 class BaseMapTest extends \PHPUnit_Framework_TestCase
 {
     public function testMap()
     {
-        $baseObject = new BaseMap();
+        $baseObject = new RequestMap();
         $baseObject->set("key1", "value1");
         
         $this->assertTrue($baseObject != NULL);
@@ -48,7 +48,7 @@ class BaseMapTest extends \PHPUnit_Framework_TestCase
     
     public function testNestedMap()
     {
-        $baseObject = new BaseMap();
+        $baseObject = new RequestMap();
         $baseObject->set("key1.key2.key3", "value1");
         $baseObject->set("key1.key2.key4", "value2");
         
@@ -85,7 +85,7 @@ class BaseMapTest extends \PHPUnit_Framework_TestCase
         public function testNestedMapWithList()
     {
         $body = "[ { \"user.name\":\"andrea\", \"user.surname\":\"rizzini\" } ]";
-        $baseMap = new BaseMap();
+        $baseMap = new RequestMap();
         $baseMap->setAll(json_decode($body, true));
         
         $this->assertEquals(1, $baseMap->size());
@@ -124,7 +124,7 @@ class BaseMapTest extends \PHPUnit_Framework_TestCase
     public function TestSetAll()
     {
         $map = array( "Account" => array( "Status" => true, "Listed" => true, "ReasonCode" => "S", "Reason" => "STOLEN"));
-        $baseMap = new BaseMap();
+        $baseMap = new RequestMap();
         $baseMap->setAll($map);
         
         $this->assertTrue($baseMap != NULL);

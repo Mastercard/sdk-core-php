@@ -29,7 +29,7 @@
   namespace MasterCard\Api;
 
  use MasterCard\Core\Model\BaseObject;
- use MasterCard\Core\Model\BaseMap;
+ use MasterCard\Core\Model\RequestMap;
 
 
 /**
@@ -130,7 +130,7 @@ class MultiplePathUserPost extends BaseObject {
     */
     public static function deleteById($id, $requestMap = null)
     {
-        $map = new BaseMap();
+        $map = new RequestMap();
         if (!empty($requestMap)) {
             $map->setAll($requestMap);
         }
