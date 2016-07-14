@@ -31,7 +31,7 @@ namespace MasterCard\Core\Model;
 /**
  * Base class for all domain objects.
  */
-class BaseMap {
+class RequestMap {
 
     private $properties = array();
     private $parrentContainsSquaredBracket = '/\[(.*)\]/';
@@ -157,7 +157,7 @@ class BaseMap {
      * 
      * @param type $key
      * @param type $value
-     * @return \MasterCard\Core\Model\BaseMap
+     * @return \MasterCard\Core\Model\RequestMap
      */
     public function set($key, $value) {
         if (strpos($key, ".") !== false) {
@@ -248,7 +248,7 @@ class BaseMap {
             //echo "isAssoc==FALSE\r\n";
             $list = array();
             foreach ($updatedMap as $object) {
-                $tmpBaseMap = new BaseMap();
+                $tmpBaseMap = new RequestMap();
                 $tmpBaseMap->setAll($object);
                 array_push($list, $tmpBaseMap->getBaseMapAsArray());
             }
