@@ -43,6 +43,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $body = "{ \"user.name\":\"andrea\", \"user.surname\":\"rizzini\" }";
         $requestMap = new RequestMap(json_decode($body, true));
         
+
         $controller = new ApiController("0.0.1");
         $controller->setClient(self::mockClient(200, $body));
         

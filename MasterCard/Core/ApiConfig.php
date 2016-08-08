@@ -84,7 +84,7 @@ class ApiConfig {
     public static function getSandboxUrl() 
     {
         if (static::$LOCALHOST == true) {
-            return "http://localhost:8080";
+            return "http://localhost:8081";
         }
         return self::$API_BASE_SANDBOX_URL;
     }
@@ -96,7 +96,7 @@ class ApiConfig {
     public static function getLiveUrl() 
     {
         if (static::$LOCALHOST == true) {
-            return "http://localhost:8080";
+            return "http://localhost:8081";
         }
         return self::$API_BASE_LIVE_URL;
     }
