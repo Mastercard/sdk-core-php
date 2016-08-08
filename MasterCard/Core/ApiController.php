@@ -74,7 +74,6 @@ class ApiController {
             $this->version = $version;
         }
 
-
         $fullUrl = ApiConfig::getLiveUrl();
         if (ApiConfig::isSandbox()) {
             $fullUrl = ApiConfig::getSandboxUrl();
@@ -235,6 +234,7 @@ class ApiController {
         
         $url = $this->getUrl($action, $resourcePath, $inputMap, $queryList);
         $request = $this->getRequest($url, $action, $inputMap, $headerMap);
+
         if (ApiConfig::isDebug()) {
            $this->logger->addDebug(">>request->headers: ", $request->getHeaders());
            $this->logger->addDebug(">>request->body: ". $request->getBody());
@@ -244,6 +244,7 @@ class ApiController {
             $response = $this->client->send($request);
             $statusCode = $response->getStatusCode();
             $responseContent = $response->getBody()->getContents();
+
             
             if (ApiConfig::isDebug()) {
                 $this->logger->addDebug(">>response->statusCode: ". $statusCode);
