@@ -69,6 +69,7 @@ class UserPostHeader extends BaseObject {
 
 
 
+
    /**
     * List objects of type UserPostHeader
     *
@@ -84,7 +85,7 @@ class UserPostHeader extends BaseObject {
         }
 
     }
-    
+
 
 
 
