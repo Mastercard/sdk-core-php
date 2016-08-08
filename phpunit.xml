@@ -5,4 +5,17 @@
             <directory>./Test</directory>
         </testsuite>
     </testsuites>
+    <logging>
+        <!--
+        <log type="coverage-html" target="./result/report" lowUpperBound="35" highLowerBound="70"/>
+        <log type="coverage-clover" target="./result/coverage.xml"/>
+        <log type="coverage-php" target="./result/coverage.serialized"/>
+        <log type="coverage-text" target="php://stdout" showUncoveredFiles="false"/>
+        -->
+        <log type="json" target="./result/logfile.json"/>
+        <log type="tap" target="./result/logfile.tap"/>
+        <log type="junit" target="./result/logfile.xml" logIncompleteSkipped="false"/>
+        <log type="testdox-html" target="./result/testdox.html"/>
+        <log type="testdox-text" target="./result/testdox.txt"/>
+    </logging>
 </phpunit>
