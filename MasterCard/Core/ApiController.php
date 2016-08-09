@@ -85,7 +85,13 @@ class ApiController {
 
         $this->fullUrl = $fullUrl;
         $this->baseUrl = Util::normalizeUrl($fullUrl);
-        $this->client = new Client();
+        $this->client = new Client([
+            'config' => [
+                'curl' => [
+                    CURLOPT_SSLVERSION => CURL_SSLVERSION_TLSv1_2
+                ]
+            ]
+        ]);
     }
 
     /// <summary>
