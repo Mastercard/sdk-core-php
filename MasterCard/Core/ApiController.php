@@ -272,13 +272,14 @@ class ApiController {
 
     private function handleException($response) {
         $status = $response->getStatusCode();
-        $bodyArray = json_decode($response->getBody()->getContents(), TRUE);
+        $bodyContent = $response->getBody()->getContents();
+        $bodyArray = json_decode($bodyContent, TRUE);
 
 
         if (ApiConfig::isDebug()) {
             $this->logger->addDebug(">>response->statusCode: ". $response->getStatusCode());
             $this->logger->addDebug(">>response->headers: ", $response->getHeaders());
-            $this->logger->addDebug(">>response->body: ". json_encode($bodyArray));
+            $this->logger->addDebug(">>response->body: ". $bodyContent);
         }
 
         if ($status < 500) {
