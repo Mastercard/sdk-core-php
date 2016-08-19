@@ -15,6 +15,8 @@ use GuzzleHttp\Client;
 
 use MasterCard\Core\Model\RequestMap;
 use MasterCard\Core\Model\BaseObject;
+use MasterCard\Core\Model\OperationConfig;
+use MasterCard\Core\Model\OperationMetadata;
 use MasterCard\Core\Security\AuthenticationInterface;
 use MasterCard\Core\Security\OAuth\OAuthAuthentication;
 
@@ -36,7 +38,16 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         return $client;
     }
     
-    
+    public function testApiConfig() {
+        
+        ApiConfig::setSandbox(false);
+        $this->assertEquals(false, ApiConfig::isSandbox());
+        $this->assertEquals(true, ApiConfig::isProduction());
+        
+        ApiConfig::setSandbox(true);
+        $this->assertEquals(true, ApiConfig::isSandbox());
+        $this->assertEquals(false, ApiConfig::isProduction());
+    }
     
     public function test200WithMap() {
         
@@ -47,7 +58,9 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $controller = new ApiController("0.0.1");
         $controller->setClient(self::mockClient(200, $body));
         
-        $responseArray = $controller->execute("create", TestBaseObject::getResourcePath("create"), TestBaseObject::getHeaderParams("create"), TestBaseObject::getQueryParams("create"), new TestBaseObject($requestMap));
+        $testObject = new TestBaseObject($requestMap);
+        
+        $responseArray = $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
         
         $this->assertNotEmpty($responseArray);
         
@@ -67,7 +80,9 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $controller = new ApiController("0.0.1");
         $controller->setClient(self::mockClient(200, $body));
         
-        $responseArray = $controller->execute("create", TestBaseObject::getResourcePath("create"),  TestBaseObject::getHeaderParams("create"), TestBaseObject::getQueryParams("create"), new TestBaseObject($requestMap));
+        $testObject = new TestBaseObject($requestMap);
+        
+        $responseArray = $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
         
         $this->assertNotEmpty($responseArray);
         
@@ -87,7 +102,9 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $controller = new ApiController("0.0.1");
         $controller->setClient(self::mockClient(204, ""));
         
-        $responseArray = $controller->execute("create", TestBaseObject::getResourcePath("create"), TestBaseObject::getHeaderParams("create"), TestBaseObject::getQueryParams("create"), new TestBaseObject($requestMap));
+        $testObject = new TestBaseObject($requestMap);
+        
+        $responseArray = $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
         
         $this->assertEmpty($responseArray);
         
@@ -104,7 +121,9 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $controller = new ApiController("0.0.1");
         $controller->setClient(self::mockClient(405, $body));
         
-        $controller->execute( "create", TestBaseObject::getResourcePath("create"), TestBaseObject::getHeaderParams("create"),TestBaseObject::getQueryParams("create"),  new TestBaseObject($requestMap));
+        $testObject = new TestBaseObject($requestMap);
+        
+        $responseArray = $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
     }
     
     
@@ -118,7 +137,9 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $controller = new ApiController("0.0.1");
         $controller->setClient(self::mockClient(400, $body));
         
-        $controller->execute("create", TestBaseObject::getResourcePath("create"),  TestBaseObject::getHeaderParams("create"), TestBaseObject::getQueryParams("create"),  new TestBaseObject($requestMap));
+        $testObject = new TestBaseObject($requestMap);
+        
+        $responseArray = $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
     }
     
     
@@ -132,7 +153,9 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $controller = new ApiController("0.0.1");
         $controller->setClient(self::mockClient(401, $body));
         
-        $controller->execute( "create", TestBaseObject::getResourcePath("create"), TestBaseObject::getHeaderParams("create"), TestBaseObject::getQueryParams("create"),  new TestBaseObject($requestMap));
+        $testObject = new TestBaseObject($requestMap);
+        
+        $responseArray = $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
     }
     
     
@@ -146,7 +169,9 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $controller = new ApiController("0.0.1");
         $controller->setClient(self::mockClient(500, $body));
         
-        $controller->execute( "create", TestBaseObject::getResourcePath("create"), TestBaseObject::getHeaderParams("create"), TestBaseObject::getQueryParams("create"),  new TestBaseObject($requestMap));
+        $testObject = new TestBaseObject($requestMap);
+        
+        $responseArray = $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
     }
     
     
@@ -162,7 +187,12 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             'five' => 5
         );
         
-        $url = $controller->getUrl("create", "/fraud/{api}/v{version}/account-inquiry", $inputMap, array());
+        
+        
+        $operationConfig = new OperationConfig("/fraud/{api}/v{version}/account-inquiry", "create", array(), array());
+        $operationMetadate = new OperationMetadata("0.0.1", null);
+        
+        $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
         
         $this->assertEquals("https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry?Format=JSON", $url);
         $this->assertEquals(3, count($inputMap));
@@ -182,14 +212,9 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             'five' => 5
         );
         
-        
-        $query = array(
-            'six',
-            'seven',
-            'eight'
-        );
-        
-        $url = $controller->getUrl("create", "/fraud/{api}/v{version}/account-inquiry", $inputMap, $query);
+        $operationConfig = new OperationConfig("/fraud/{api}/v{version}/account-inquiry", "create", array( 'six', 'seven', 'eight' ), array());
+        $operationMetadate = new OperationMetadata("0.0.1", null);
+        $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
         
         $this->assertEquals("https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry?Format=JSON", $url);
         $this->assertEquals(3, count($inputMap));
@@ -210,15 +235,35 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             'five' => 5
         );
         
-        $query = array(
-            'one',
-            'two',
-            'three'
-        );
-        
-        $url = $controller->getUrl("create", "/fraud/{api}/v{version}/account-inquiry", $inputMap, $query);
+        $operationConfig = new OperationConfig("/fraud/{api}/v{version}/account-inquiry", "create", array( 'one', 'two', 'three' ), array());
+        $operationMetadate = new OperationMetadata("0.0.1", null);
+        $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
         
         $this->assertEquals("https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry?three=3&Format=JSON", $url);
+        $this->assertEquals(2, count($inputMap));
+        
+    }
+    
+    
+    
+    public function testGetUrlWithHostOverride()
+    {
+        $controller = new ApiController("0.0.1");
+        
+        $inputMap = array(
+            'api' => 'lostandstolen',
+            'version' => 1,
+            'three' => 3,
+            'four' => 4,
+            'five' => 5
+        );
+
+        
+        $operationConfig = new OperationConfig("/fraud/{api}/v{version}/account-inquiry", "create", array( 'one', 'two', 'three' ), array());
+        $operationMetadate = new OperationMetadata("0.0.1", "http://localhost:8081");
+        $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
+        
+        $this->assertEquals("http://localhost:8081/fraud/lostandstolen/v1/account-inquiry?three=3&Format=JSON", $url);
         $this->assertEquals(2, count($inputMap));
         
     }
@@ -236,17 +281,16 @@ class TestBaseObject extends BaseObject
      * getObjectType
      * @return String
      */
-    public static function getResourcePath($action) {
-        return "/testurl/test-base-object";
+    
+    
+    public static function getOperationMetadata() {
+        return new OperationMetadata("1.0.0", null);
     }
     
-    public static function getHeaderParams($action) {
-        return array();
+    public static function getOperationConfig($operationUUID) {
+        return new OperationConfig("/testurl/test-base-object", "update", array(), array());
     }
-    
-    public static function getQueryParams($action) {
-        return array();
-    }
+
 }
 
 

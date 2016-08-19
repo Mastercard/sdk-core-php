@@ -37,70 +37,26 @@
  */
 class User extends BaseObject {
 
-    public static function getResourcePath($action) {
-        
-        if ($action == "list") {
-           return "/mock_crud_server/users";
+    
+    protected static function getOperationConfig($operationUUID) {
+        switch ($operationUUID) {
+            case "list":
+                return new OperationConfig("/mock_crud_server/users", "list", array(), array());
+            case "create":
+                return new OperationConfig("/mock_crud_server/users", "create", array(), array());
+            case "read":
+                return new OperationConfig("/mock_crud_server/users/{id}", "read", array(), array());
+            case "delete":
+                return new OperationConfig("/mock_crud_server/users/{id}", "delete", array(), array());
+            case "update":
+                return new OperationConfig("/mock_crud_server/users/{id}", "update", array(), array());
+            default:
+                throw new \Exception("Invalid operationUUID supplied: $operationUUID");
         }
-        if ($action == "create") {
-            return "/mock_crud_server/users";
-        }
-        if ($action == "read") {
-            return "/mock_crud_server/users/{id}";
-        }
-        if ($action == "update") {
-            return "/mock_crud_server/users/{id}";
-        }
-        if ($action == "delete") {
-            return "/mock_crud_server/users/{id}";
-        }
-        throw new \Exception("Invalid action supplied: $action");
-
-    }
-
-
-    public static function getHeaderParams($action) {
-        
-        if ($action == "list") {
-           return array();
-        }
-        if ($action == "create") {
-            return array();
-        }
-        if ($action == "read") {
-            return array();
-        }
-        if ($action == "update") {
-            return array();
-        }
-        if ($action == "delete") {
-            return array();
-        }
-        throw new \Exception("Invalid action supplied: $action");
     }
     
-    public static function getQueryParams($action) {
-        
-        if ($action == "list") {
-           return array();
-        }
-        if ($action == "create") {
-            return array();
-        }
-        if ($action == "read") {
-            return array();
-        }
-        if ($action == "update") {
-            return array();
-        }
-        if ($action == "delete") {
-            return array();
-        }
-        throw new \Exception("Invalid action supplied: $action");
-    }
-
-    public static function getApiVersion() {
-        return "0.0.1";
+    protected static function getOperationMetadata() {
+        return new OperationMetadata("1.0.0", "http://localhost:8081");
     }
 
 
@@ -113,11 +69,10 @@ class User extends BaseObject {
     public static function listByCriteria($criteria = null)
     {
         if ($criteria == null) {
-            return parent::listObjects(new User());
+            return parent::execute("list", new User());
         } else {
-            return parent::listObjects(new User($criteria));
+            return parent::execute("list", new User($criteria));
         }
-
     }
 
 
@@ -129,7 +84,7 @@ class User extends BaseObject {
     */
     public static function create($map)
     {
-        return parent::createObject(new User($map));
+        return parent::execute("create", new User($map));
     }
 
 
@@ -149,7 +104,10 @@ class User extends BaseObject {
     {
         $map = new RequestMap();
         $map->set("id", $id);
-        return parent::readObject(new User($map), $criteria);
+        if ($criteria != null) {
+            $map->setAll($criteria);
+        }
+        return parent::execute("read", new User($map));
     }
 
    /**
@@ -158,7 +116,7 @@ class User extends BaseObject {
     * @return A User object representing the response.
     */
     public function update()  {
-        return parent::updateObject($this);
+        return parent::execute("update", $this);
     }
 
 
@@ -176,8 +134,7 @@ class User extends BaseObject {
     {
         $map = new RequestMap();
         $map->set("id", $id);
-        $currentObject = new User($map);
-        return $currentObject->executeDelete();
+        return self::execute("delete", new User($map));
     }
 
    /**
@@ -187,7 +144,7 @@ class User extends BaseObject {
     */
     public function delete()
     {
-        return parent::deleteObject($this);
+        return self::execute("delete", $this);
     }
 
 

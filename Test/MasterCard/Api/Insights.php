@@ -30,6 +30,8 @@
 
  use MasterCard\Core\Model\BaseObject;
  use MasterCard\Core\Model\RequestMap;
+ use MasterCard\Core\Model\OperationMetadata;
+ use MasterCard\Core\Model\OperationConfig;
 
 
 /**
@@ -37,37 +39,20 @@
  */
 class Insights extends BaseObject {
 
-    public static function getResourcePath($action) {
-        
-        if ($action == "query") {
-            return "/sectorinsights/v1/sectins.svc/insights";
-        }
-        throw new \Exception("Invalid action supplied: $action");
-
-    }
-
-
-    public static function getHeaderParams($action) {
-        
-        if ($action == "query") {
-           return array();
-        }
-        throw new \Exception("Invalid action supplied: $action");
+    
+       
+    protected static function getOperationMetadata() {
+        return new OperationMetadata("1.0.0", null);
     }
     
-    
-    public static function getQueryParams($action) {
-        
-        if ($action == "query") {
-           return array();
+    protected static function getOperationConfig($operationUUID) {
+        switch ($operationUUID) {
+            case "uuid":
+                return new OperationConfig("/sectorinsights/v1/sectins.svc/insights", "query", array(), array());
+            default:
+                throw new \Exception("Invalid operationUUID supplied: $operationUUID");
         }
-        throw new \Exception("Invalid action supplied: $action");
     }
-    
-    public static function getApiVersion() {
-        return "0.0.1";
-    }
-
 
 
 
@@ -80,7 +65,7 @@ class Insights extends BaseObject {
      */
     public static function query($criteria)
     {
-        return parent::queryObject(new Insights($criteria));
+        return parent::execute("uuid", new Insights($criteria));
     }
 
 

@@ -53,8 +53,7 @@ class ApiController {
     const HTTP_NOT_ALLOWED = 405;
     const HTTP_BAD_REQUEST = 400;
 
-    protected $fullUrl = null;
-    protected $baseUrl = null;
+    protected $hostUrl = null;
     protected $client = null;
     protected $version = "NOT-SET";
     
@@ -83,8 +82,8 @@ class ApiController {
             throw new ApiException("fullUrl: '" . $fullUrl . "' is not a valid url");
         }
 
-        $this->fullUrl = $fullUrl;
-        $this->baseUrl = Util::normalizeUrl($fullUrl);
+        $this->hostUrl = $fullUrl;
+        $this->hostUrl = Util::normalizeUrl($fullUrl);
         $this->client = new Client([
             'config' => [
                 'curl' => [
@@ -139,13 +138,23 @@ class ApiController {
     /**
      * @ignore
      */
-    public function getUrl($action, $resourcePath, &$inputMap, $queryList) {
+    public function getUrl($operationConfig, $operationMetadata, &$inputMap) {
 
         $queryParams = array();
-               
+        
+        $action = $operationConfig->getAction();
+        $resourcePath = $operationConfig->getResourcePath();
+        $queryList = $operationConfig->getQueryParams();
+        $hostOverride = $operationMetadata->getHost();
         
         $url = "%s";
-        $tmpUrl = Util::getReplacedPath($this->removeForwardSlashFromTail($this->fullUrl).$this->removeForwardSlashFromTail($resourcePath), $inputMap);
+        
+        $resolvedHostUrl = $this->hostUrl;
+        if (!is_null($hostOverride)) {
+            $resolvedHostUrl = $hostOverride;
+        }
+        
+        $tmpUrl = Util::getReplacedPath($this->removeForwardSlashFromTail($resolvedHostUrl).$this->removeForwardSlashFromTail($resourcePath), $inputMap);
         array_push($queryParams, $tmpUrl);
 
         // getReplacePath should already take care of the path parameter replacement
@@ -201,7 +210,18 @@ class ApiController {
         return $url;
     }
 
-    public function getRequest($url, $action, $inputMap, $headerMap) {
+    public function getRequest($operationConfig, $operationMetadata, &$inputMap) {
+        
+        $action = $operationConfig->getAction();
+        $resourcePath = $operationConfig->getResourcePath();
+        $headerList = $operationConfig->getHeaderParams();
+        $queryList = $operationConfig->getQueryParams();
+        
+        //arizzini: store seperately the header paramters
+        $headerMap = Util::subMap($inputMap, $headerList);
+        
+        $url = $this->getUrl($operationConfig, $operationMetadata, $inputMap);
+        
         $request = null;
 
         switch ($action) {
@@ -233,13 +253,10 @@ class ApiController {
         return $request;
     }
 
-    public function execute($action, $resourcePath, $headerList, $queryList, $inputMap) {
-        $headerMap = Util::subMap($inputMap, $headerList);
-        //pathMap is the left overs == $inputM
+    public function execute($operationConfig, $operationMetadata, $inputMap) {
         
         
-        $url = $this->getUrl($action, $resourcePath, $inputMap, $queryList);
-        $request = $this->getRequest($url, $action, $inputMap, $headerMap);
+        $request = $this->getRequest($operationConfig, $operationMetadata, $inputMap);
 
         if (ApiConfig::isDebug()) {
            $this->logger->addDebug(">>request->headers: ", $request->getHeaders());
