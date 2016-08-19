@@ -30,44 +30,28 @@
 
  use MasterCard\Core\Model\BaseObject;
  use MasterCard\Core\Model\RequestMap;
-
+ use MasterCard\Core\Model\OperationMetadata;
+ use MasterCard\Core\Model\OperationConfig;
 
 /**
  * 
  */
 class UserPostHeader extends BaseObject {
 
-    public static function getResourcePath($action) {
-        
-        if ($action == "list") {
-           return "/mock_crud_server/users/posts";
+    
+    protected static function getOperationConfig($operationUUID) {
+        switch ($operationUUID) {
+            case "list":
+                return new OperationConfig("/mock_crud_server/users/posts", "list", array("user_id"), array("user_id"));
+            default:
+                throw new \Exception("Invalid operationUUID supplied: $operationUUID");
         }
-        throw new \Exception("Invalid action supplied: $action");
-
-    }
-
-
-    public static function getHeaderParams($action) {
-        
-        if ($action == "list") {
-           return array("user_id");
-        }
-        throw new \Exception("Invalid action supplied: $action");
     }
     
-    public static function getQueryParams($action) {
-        
-        if ($action == "list") {
-           return array("user_id");
-        }
-        throw new \Exception("Invalid action supplied: $action");
+    protected static function getOperationMetadata() {
+        return new OperationMetadata("1.0.0", "http://localhost:8081");
     }
     
-    public static function getApiVersion() {
-        return "0.0.1";
-    }
-
-
 
 
    /**
@@ -79,11 +63,10 @@ class UserPostHeader extends BaseObject {
     public static function listByCriteria($criteria = null)
     {
         if ($criteria == null) {
-            return parent::listObjects(new UserPostHeader());
+            return parent::execute("list", new UserPostHeader());
         } else {
-            return parent::listObjects(new UserPostHeader($criteria));
+            return parent::execute("list", new UserPostHeader($criteria));
         }
-
     }
 
 

@@ -25,100 +25,53 @@
  * SUCH DAMAGE.
  *
  */
-namespace MasterCard\Core;
 
-use MasterCard\Core\Security\AuthenticationInterface;
+namespace MasterCard\Core\Model;
 
-class ApiConfig {
-
-    private static $SANDBOX = true;
-    private static $DEBUG = false;
-    private static $AUTHENTICATION = null;
+class OperationConfig {
+    protected $resourcePath;
+    protected $action;
+    protected $queryParams;
+    protected $headerParams;
     
-    private static $API_BASE_LIVE_URL = "https://api.mastercard.com";
-    private static $API_BASE_SANDBOX_URL = "https://sandbox.api.mastercard.com";
-
+    public function __construct($resourcePath, $action, $queryParams, $headerParams) {
+        $this->resourcePath = $resourcePath;
+        $this->action = $action;
+        $this->queryParams = $queryParams;
+        $this->headerParams = $headerParams;
+    }
     
     /**
-     * Sets the debug.
-     * @param boolean $debug
+     * returns the resource path for this operation
+     * @return type
      */
-    public static function setDebug($debug)
-    {
-        static::$DEBUG = $debug;
+    public function getResourcePath() {
+        return $this->resourcePath;
+    }
+    
+    /**
+     * returns the action for this operation
+     * @return type
+     */
+    public function getAction() {
+        return $this->action;
+    }
+    
+    /**
+     * return queryParams for this operation
+     * @return type
+     */
+    public function getQueryParams() {
+        return $this->queryParams;
     }
     
     
     /**
-     * Sets get debug.
+     * return headerParams for this operation
+     * @return type
      */
-    public static function isDebug()
-    {
-        return static::$DEBUG;
-    }
-    
-    /**
-     * Sets the sandbox.
-     * @param boolean sandbox
-     */
-    public static function setSandbox($sandbox)
-    {
-        static::$SANDBOX = $sandbox;
-    }
-    
-    
-    /**
-     * Sets get debug.
-     */
-    public static function isSandbox()
-    {
-        return static::$SANDBOX == true;
-    }   
-    
-    /**
-     * Sets get debug.
-     */
-    public static function isProduction()
-    {
-        return static::$SANDBOX == false;
+    public function getHeaderParams() {
+        return $this->headerParams;
     }
 
-
-    /**
-     * 
-     * @return string
-     */
-    public static function getSandboxUrl() 
-    {
-        return self::$API_BASE_SANDBOX_URL;
-    }
-    
-    /**
-     * 
-     * @return string
-     */
-    public static function getLiveUrl() 
-    {
-        return self::$API_BASE_LIVE_URL;
-    }
-    
-    
-    /**
-     * Sets the sandbox.
-     * @param boolean sandbox
-     */
-    public static function setAuthentication(AuthenticationInterface $authentication)
-    {
-        static::$AUTHENTICATION = $authentication;
-    }
-    
-    
-    /**
-     * Sets get debug.
-     */
-    public static function getAuthentication()
-    {
-        return static::$AUTHENTICATION;
-    }
-    
 }
