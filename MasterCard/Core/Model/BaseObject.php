@@ -34,22 +34,16 @@ use \MasterCard\Core\ApiController;
 
 abstract class BaseObject extends RequestMap {
 
-    public static function getResourcePath($action) {
-        throw new Exception("Not implemented");
+    
+    protected static function getOperationConfig($operationUUID) {
+        throw new \Exception("Not implemented");
+    }
+
+    protected static function getOperationMetadata() {
+        throw new \Exception("Not implemented");
     }
     
-    public static function getHeaderParams($action) {
-        throw new Exception("Not implemented");
-    }
-    
-    public static function getQueryParams($action) {
-        throw new Exception("Not implemented");
-    }
-    
-    public static function getApiVersion() {
-        throw new Exception("Not implemented");
-    }
-    
+       
 
     function __construct($baseMap = null) {
         if ($baseMap != null) {
@@ -58,62 +52,20 @@ abstract class BaseObject extends RequestMap {
         
     }
 
-
     /**
      * @ignore
      */
-    protected static function readObject($inputObject, $criteria) {
-        if (!empty($criteria)) {
-            $inputObject->setAll($criteria);
-        }
-        return self::execute("read", $inputObject);
-    }
-
-    /**
-     * @ignore
-     */
-    protected static function listObjects($inputObject) {
-        return self::execute("list", $inputObject);
-    }
-    
-    
-        /**
-     * @ignore
-     */
-    protected static function queryObject($inputObject) {
-        return self::execute("query", $inputObject);
-    }
-
-    /**
-     * @ignore
-     */
-    protected static function createObject($inputObject) {
-        return self::execute("create", $inputObject);
-    }
-
-    /**
-     * @ignore
-     */
-    protected function updateObject($inputObject) {
-        return self::execute("update", $inputObject);
-    }
-
-    /**
-     * @ignore
-     */
-    protected function deleteObject($inputObject) {
-        return self::execute("delete", $inputObject);
-    }
-
-    /**
-     * @ignore
-     */
-    private static function execute($action, $inputObject) {
-        $apiController = new ApiController($inputObject->getApiVersion());
-        $responseMap = $apiController->execute($action, $inputObject->getResourcePath($action), $inputObject->getHeaderParams($action), $inputObject->getQueryParams($action), $inputObject->getBaseMapAsArray());
+    protected static function execute($operationUUID, $inputObject) {
+        
+        $operationConfig = $inputObject->getOperationConfig($operationUUID);
+        $operationMetadata = $inputObject->getOperationMetadata();
+        
+        $apiController = new ApiController($operationMetadata->getApiVersion());
+        
+        $responseMap = $apiController->execute($operationConfig, $operationMetadata, $inputObject->getBaseMapAsArray());
         $returnObjectClass = get_class($inputObject);
         
-        if ($action == "list") {
+        if ($operationConfig->getAction() == "list") {
             $returnObject = array();
             
             if (array_key_exists("list", $responseMap)) {

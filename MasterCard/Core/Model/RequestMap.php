@@ -284,7 +284,7 @@ class RequestMap {
      * Returns the object's properties as a map.
      * @return array map of properties.
      */
-    public function getBaseMapAsArray() {
+    public function &getBaseMapAsArray() {
         return $this->properties;
     }
 }

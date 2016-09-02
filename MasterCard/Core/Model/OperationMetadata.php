@@ -26,46 +26,33 @@
  *
  */
 
- namespace MasterCard\Api;
+namespace MasterCard\Core\Model;
 
- use MasterCard\Core\Model\BaseObject;
- use MasterCard\Core\Model\RequestMap;
- use MasterCard\Core\Model\OperationMetadata;
- use MasterCard\Core\Model\OperationConfig;
-
-
-/**
- * 
- */
-class MerchantCountries extends BaseObject {
+class OperationMetadata {
+    protected $apiVersion;
+    protected $host;
     
-    protected static function getOperationConfig($operationUUID) {
-        switch ($operationUUID) {
-            case "uuid":
-                return new OperationConfig("/merchants/v1/country", "query", array(), array());
-            default:
-                throw new \Exception("Invalid operationUUID supplied: $operationUUID");
-        }
+    public function __construct($apiVersion, $host) {
+        $this->apiVersion = $apiVersion;
+        $this->host = $host;
     }
-
-    protected static function getOperationMetadata() {
-        return new OperationMetadata("1.0.0", null);
-    }
-
-
-
-
-
+    
     /**
-     * Query objects of type MerchantCountries by id and optional criteria
-     * @param type $criteria
+     * return the apiversion
      * @return type
      */
-    public static function query($criteria)
-    {
-        return parent::execute("uuid", new MerchantCountries($criteria));
+    public function getApiVersion() {
+        return $this->apiVersion;
     }
-
-
+    
+    /**
+     * return the host
+     * @return type
+     */
+    public function getHost() {
+        return $this->host;
+    }
+    
+    
+    
 }
-

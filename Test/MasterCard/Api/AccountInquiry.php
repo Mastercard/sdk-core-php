@@ -30,54 +30,41 @@
 
  use MasterCard\Core\Model\BaseObject;
  use MasterCard\Core\Model\RequestMap;
-
+ use MasterCard\Core\Model\OperationMetadata;
+ use MasterCard\Core\Model\OperationConfig;
 
 /**
  * 
  */
 class AccountInquiry extends BaseObject {
 
-    public static function getResourcePath($action) {
-        
-        if ($action == "update") {
-            return "/fraud/loststolen/v1/account-inquiry";
+   
+    protected static function getOperationMetadata() {
+        return new OperationMetadata("1.0.0", null);
+    }
+    
+    protected static function getOperationConfig($operationUUID) {
+        switch ($operationUUID) {
+            case "uuid":
+                return new OperationConfig("/fraud/loststolen/v1/account-inquiry", "update", array(), array());
+            default:
+                throw new \Exception("Invalid operationUUID supplied: $operationUUID");
         }
-        throw new \Exception("Invalid action supplied: $action");
-
     }
 
 
-    public static function getHeaderParams($action) {
-        
-        if ($action == "update") {
-            return array();
-        }
-        throw new \Exception("Invalid action supplied: $action");
-    }
-    
-    public static function getQueryParams($action) {
-        
-        if ($action == "update") {
-            return array();
-        }
-        throw new \Exception("Invalid action supplied: $action");
-    }
-    
-    
-    public static function getApiVersion() {
-        return "0.0.1";
-    }
 
-    
-    
-    
-       /**
+
+
+
+
+    /**
     * Updates an object of type AccountInquiry
     *
     * @return A AccountInquiry object representing the response.
     */
     public function update()  {
-        return parent::updateObject($this);
+        return self::execute("uuid", $this);
     }
     
     
