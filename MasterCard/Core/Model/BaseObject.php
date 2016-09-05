@@ -60,7 +60,7 @@ abstract class BaseObject extends RequestMap {
         $operationConfig = $inputObject->getOperationConfig($operationUUID);
         $operationMetadata = $inputObject->getOperationMetadata();
         
-        $apiController = new ApiController($operationMetadata->getApiVersion());
+        $apiController = new ApiController();
         
         $responseMap = $apiController->execute($operationConfig, $operationMetadata, $inputObject->getBaseMapAsArray());
         $returnObjectClass = get_class($inputObject);
