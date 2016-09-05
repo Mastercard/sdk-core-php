@@ -54,11 +54,13 @@ class ApiController {
     const HTTP_BAD_REQUEST = 400;
 
     protected $hostUrl = null;
-    protected $client = null;    
+    protected $client = null;
+    protected $version = "NOT-SET";
+    
     protected $logger = null;
     
 
-    function __construct() {
+    function __construct($version) {
 
           
         $this->logger = new Logger('ApiController');
@@ -66,6 +68,10 @@ class ApiController {
         
         
         $this->checkState();
+        
+        if ($version != null) {
+            $this->version = $version;
+        }
 
         $fullUrl = ApiConfig::getLiveUrl();
         if (ApiConfig::isSandbox()) {
@@ -238,7 +244,7 @@ class ApiController {
         
         $request = $request->withHeader("Accept", "application/json");
         $request = $request->withHeader("Content-Type", "application/json");
-        $request = $request->withHeader("User-Agent", "PHP-SDK/" . $operationMetadata->getApiVersion());
+        $request = $request->withHeader("User-Agent", "PHP-SDK/" . $this->version);
         foreach ($headerMap as $key => $value) {
             $request = $request->withHeader($key, $value);    
         }
