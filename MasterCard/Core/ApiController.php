@@ -259,8 +259,10 @@ class ApiController {
         $request = $this->getRequest($operationConfig, $operationMetadata, $inputMap);
 
         if (ApiConfig::isDebug()) {
-           $this->logger->addDebug(">>request->headers: ", $request->getHeaders());
-           $this->logger->addDebug(">>request->body: ". $request->getBody());
+            $this->logger->debug("---------------------");
+            $this->logger->debug(">>request(".$request->getMethod().") ". $request->getUri()->__toString() );    
+            $this->logger->debug(">>headers: ", $request->getHeaders());
+            $this->logger->debug(">>body: ". $request->getBody());
         }
 
         try {
@@ -270,9 +272,10 @@ class ApiController {
 
             
             if (ApiConfig::isDebug()) {
-                $this->logger->addDebug(">>response->statusCode: ". $statusCode);
-                $this->logger->addDebug(">>response->headers: ", $response->getHeaders());
-                $this->logger->addDebug(">>response->body: ". $responseContent);
+                $this->logger->debug("<<statusCode: ". $statusCode);
+                $this->logger->debug("<<headers: ", $response->getHeaders());
+                $this->logger->debug("<<body: ". $responseContent);
+                $this->logger->debug("---------------------");
             }
             
             if ($statusCode < self::HTTP_AMBIGUOUS) {
@@ -282,28 +285,34 @@ class ApiController {
                     return array();
                 }
             } else {
-                $this->handleException($response);
+                $this->handleException($response, $request);
             }
         } catch (RequestException $ex) {
             if ($ex->hasResponse()) {
-                $this->handleException($ex->getResponse());
+                $this->handleException($ex->getResponse(), $request);
             } else {
                 throw new SystemException("An unexpected error has been raised: ".$ex->getMessage());
             }
         }
     }
 
-    private function handleException($response) {
+    private function handleException($response, $request) {
         $status = $response->getStatusCode();
         $bodyContent = $response->getBody()->getContents();
         $bodyArray = json_decode($bodyContent, TRUE);
 
-
-        if (ApiConfig::isDebug()) {
-            $this->logger->addDebug(">>response->statusCode: ". $response->getStatusCode());
-            $this->logger->addDebug(">>response->headers: ", $response->getHeaders());
-            $this->logger->addDebug(">>response->body: ". $bodyContent);
+        //arizzini: in the case of an exception we always show the error.
+        if (!ApiConfig::isDebug()) {
+            $this->logger->debug("---------------------");
+            $this->logger->debug(">>request(".$request->getMethod().") ". $request->getUri()->__toString() );    
+            $this->logger->debug(">>headers: ", $request->getHeaders());
+            $this->logger->debug(">>body: ". $request->getBody());
         }
+        
+        $this->logger->debug("<<statusCode: ". $response->getStatusCode());
+        $this->logger->debug("<<headers: ", $response->getHeaders());
+        $this->logger->debug("<<body: ". $bodyContent);
+        $this->logger->debug("---------------------");
 
         if ($status < 500) {
             switch ($status) {
