@@ -210,16 +210,19 @@ class RequestMap {
             } 
             else {
                 $inputArray[$listName] = array();
-                return $inputArray[$listName];
+                $ref = & $inputArray[$listName];
+                return $ref;
             }
         } 
         //arizzini: if the current $index is not the last $subKey
         //we want to the last nested map
         else if (array_key_exists($key, $inputArray)) {
-            return $inputArray[$key];
+            $ref = & $inputArray[$key];
+            return $ref;
         } else {
             $inputArray[$key] = array();                       
-            return $inputArray[$key];
+            $ref = & $inputArray[$key];
+            return $ref;
         }
     }
 
