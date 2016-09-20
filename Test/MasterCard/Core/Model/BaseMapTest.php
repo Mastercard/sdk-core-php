@@ -77,8 +77,7 @@ class BaseMapTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($baseObject->containsKey("key1.something.different"));
         $this->assertNull($baseObject->get("key1.something.different"));
         $this->assertFalse($baseObject->containsKey("key1..."));
-        $this->assertNull($baseObject->get("key1..."));
-                
+        $this->assertNull($baseObject->get("key1..."));           
         
     }
     
@@ -117,6 +116,48 @@ class BaseMapTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($baseMap->get("list[2].some.nonsense"));
         $this->assertFalse($baseMap->containsKey("list[2].some...."));
         $this->assertEmpty($baseMap->get("list[2].some...."));
+        
+    }
+    
+    public function TestNestedMapFromSetMethod() {
+        $map = new RequestMap();
+        $map->set("payment_transfer.transfer_reference", "10010920928521687681493");
+        $map->set("payment_transfer.payment_type", "P2P");
+        $map->set("payment_transfer.amount", "1000");
+        $map->set("payment_transfer.currency", "USD");
+        $map->set("payment_transfer.sender_account_uri", "pan:5013040000000018;exp=2017-08;cvc=123");
+        $map->set("payment_transfer.sender.first_name", "John");
+        $map->set("payment_transfer.sender.middle_name", "Tyler");
+        $map->set("payment_transfer.sender.last_name", "Jones");
+        $map->set("payment_transfer.sender.nationality", "USA");
+        $map->set("payment_transfer.sender.date_of_birth", "1994-05-21");
+        $map->set("payment_transfer.sender.address.line1", "21 Broadway");
+        $map->set("payment_transfer.sender.address.line2", "Apartment A-6");
+        $map->set("payment_transfer.sender.address.city", "OFallon");
+        $map->set("payment_transfer.sender.address.country_subdivision", "MO");
+        $map->set("payment_transfer.sender.address.postal_code", "63368");
+        $map->set("payment_transfer.sender.address.country", "USA");
+        $map->set("payment_transfer.sender.phone", "11234565555");
+        $map->set("payment_transfer.sender.email", " John.Jones123@abcmail.com ");
+        $map->set("payment_transfer.recipient_account_uri", "pan:5013040000000018;exp=2017-08;cvc=123");
+        $map->set("payment_transfer.recipient.first_name", "Jane");
+        $map->set("payment_transfer.recipient.middle_name", "Tyler");
+        $map->set("payment_transfer.recipient.last_name", "Smith");
+        $map->set("payment_transfer.recipient.nationality", "USA");
+        $map->set("payment_transfer.recipient.date_of_birth", "1999-12-30");
+        $map->set("payment_transfer.recipient.address.line1", "1 Main St");
+        $map->set("payment_transfer.recipient.address.line2", "Apartment 9");
+        $map->set("payment_transfer.recipient.address.city", "OFallon");
+        $map->set("payment_transfer.recipient.address.country_subdivision", "MO");
+        $map->set("payment_transfer.recipient.address.postal_code", "63368");
+        $map->set("payment_transfer.recipient.address.country", "USA");
+        $map->set("payment_transfer.recipient.phone", "11234567890");
+        $map->set("payment_transfer.recipient.email", " Jane.Smith123@abcmail.com ");
+        $map->set("payment_transfer.reconciliation_data.custom_field[0].name", " ABC");
+        $map->set("payment_transfer.reconciliation_data.custom_field[0].value", " 123 ");
+        $map->set("payment_transfer.reconciliation_data.custom_field[1].name", " DEF");
+        $map->set("payment_transfer.reconciliation_data.custom_field[1].value", " 456 ");
+        
         
     }
     
