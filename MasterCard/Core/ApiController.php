@@ -156,32 +156,18 @@ class ApiController {
         
         $tmpUrl = Util::getReplacedPath($this->removeForwardSlashFromTail($resolvedHostUrl).$this->removeForwardSlashFromTail($resourcePath), $inputMap);
         array_push($queryParams, $tmpUrl);
-
-        // getReplacePath should already take care of the path parameter replacement
-        // however this is to make sure that one id is atleas setted correctly. 
-        switch ($action) {
-            case "read":
-            case "update":
-            case "delete":
-                if (array_key_exists("id", $inputMap)) {
-                    $url .= "/%s";
-                    array_push($queryParams, $inputMap["id"]);
-                }
-                break;
-            default:
-                break;
-        }
         
         switch ($action) {
             case "read":
             case "delete":
             case "list":
             case "query":
-                
                 foreach ($inputMap as $key => $value) {
-                    $url = $this->appendToQueryString($url, "%s=%s");
-                    array_push($queryParams, Util::urlEncode($key));
-                    array_push($queryParams, Util::urlEncode($value));
+                    if(!is_array($value)) {
+                        $url = $this->appendToQueryString($url, "%s=%s");
+                        array_push($queryParams, Util::urlEncode(strval($key)));
+                        array_push($queryParams, Util::urlEncode(strval($value)));
+                    }
                 }
                 break;
             default:
@@ -195,9 +181,11 @@ class ApiController {
             case "update":
                 $queryMap = Util::subMap($inputMap, $queryList);
                 foreach ($queryMap as $key => $value) {
-                    $url = $this->appendToQueryString($url, "%s=%s");
-                    array_push($queryParams, Util::urlEncode($key));
-                    array_push($queryParams, Util::urlEncode($value));
+                    if(!is_array($value)) {
+                        $url = $this->appendToQueryString($url, "%s=%s");
+                        array_push($queryParams, Util::urlEncode(strval($key)));
+                        array_push($queryParams, Util::urlEncode(strval($value)));
+                    }
                 }
                 break;
             default:
@@ -254,8 +242,6 @@ class ApiController {
     }
 
     public function execute($operationConfig, $operationMetadata, $inputMap) {
-        
-        
         $request = $this->getRequest($operationConfig, $operationMetadata, $inputMap);
 
         if (ApiConfig::isDebug()) {
