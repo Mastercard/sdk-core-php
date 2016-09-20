@@ -166,17 +166,17 @@ class RequestMap {
             $keys = explode('.', $key);
             $keysCount = count($keys);
             
-            $tmpArray = &$this->properties;
+            $tmpArray =& $this->properties;
             foreach ($keys as $index=>$subKey) {
                 if (($index+1) < $keysCount)
                 {
-//                    echo "createArrayObject(key=$subKey)\r\n";
-                    $tmpArray = & $this->createArrayObject($tmpArray, $subKey);
+                    //echo "createArrayObject(key=$subKey)\r\n";
+                    $tmpArray =& $this->createArrayObject($tmpArray, $subKey);
                     
                 }
                 else {
-//                    echo "createArrayObject([key=$subKey]=$value])\r\n";
-                    $tmpArray[$subKey] = & $value;                    
+                    //echo "createArrayObject([key=$subKey]=$value])\r\n";
+                    $tmpArray[$subKey] =& $value;                    
                     return $this;
                 }
             }
@@ -191,21 +191,27 @@ class RequestMap {
     
     private function &createArrayObject(&$inputArray, $key)
     {
-        preg_match($this->parrentContainsSquaredBracket, $key, $matches);
         //arizzini: if the curent key contains a square bracket,
         //we are referring to an array
+        preg_match($this->parrentContainsSquaredBracket, $key, $matches);
         if (!empty($matches))
         {
-            $listName  = substr($key, 0, strlen($key)-(strpos($key, "[")-1));
+            
+            $indexOfSquareBraket = strpos($key, "[");
+            $listName  = substr($key, 0, $indexOfSquareBraket);
             $listIndex = $matches[1];
+            
+            
+            
             if (array_key_exists($listName, $inputArray)) {
                 if (isset($listIndex) && array_key_exists($listIndex, $inputArray[$listName]))
                 {
-                    $inputArray = $inputArray[$listName][$listIndex];
+                    return $inputArray[$listName][$listIndex];
                 } 
                 else
                 {
-                    $inputArray = $inputArray[$listName];
+                    $inputArray[$listName] = array();
+                    return $inputArray[$listName][$listIndex];
                 }
             } 
             else {
@@ -213,10 +219,12 @@ class RequestMap {
                 return $inputArray[$listName];
             }
         } 
+        
         //arizzini: if the current $index is not the last $subKey
         //we want to the last nested map
-        else if (array_key_exists($key, $inputArray)) {
+        if (array_key_exists($key, $inputArray)) {
             return $inputArray[$key];
+            
         } else {
             $inputArray[$key] = array();                       
             return $inputArray[$key];

@@ -77,8 +77,7 @@ class BaseMapTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($baseObject->containsKey("key1.something.different"));
         $this->assertNull($baseObject->get("key1.something.different"));
         $this->assertFalse($baseObject->containsKey("key1..."));
-        $this->assertNull($baseObject->get("key1..."));
-                
+        $this->assertNull($baseObject->get("key1..."));           
         
     }
     
@@ -117,6 +116,15 @@ class BaseMapTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($baseMap->get("list[2].some.nonsense"));
         $this->assertFalse($baseMap->containsKey("list[2].some...."));
         $this->assertEmpty($baseMap->get("list[2].some...."));
+        
+    }
+    
+    public function testNestedMapFromSetMethod() {
+            $map = new RequestMap();
+            $map->set("payment_transfer.reconciliation_data.custom_field[0].name", " ABC");
+            $map->set("payment_transfer.reconciliation_data.custom_field[0].value", " 123 ");
+            $this->assertTrue($map->containsKey("payment_transfer.reconciliation_data.custom_field[0].value"));
+        
         
     }
     
