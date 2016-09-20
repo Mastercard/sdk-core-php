@@ -176,7 +176,25 @@ class RequestMap {
                 }
                 else {
                     //echo "createArrayObject([key=$subKey]=$value])\r\n";
-                    $tmpArray[$subKey] =& $value;                    
+//                    echo "assignKey: $subKey\r\n";
+                    preg_match($this->parrentContainsSquaredBracket, $subKey, $matches);
+                    if (!empty($matches))
+                    {
+                        $indexOfSquareBraket = strpos($subKey, "[");
+                        $listName  = substr($subKey, 0, $indexOfSquareBraket);
+                        $listIndex = $matches[1];
+                        
+//                        echo "listName: $listName\r\n";
+//                        echo "listIndex: $listIndex\r\n";
+                        
+                        if (isset($listIndex)) {
+                            $tmpArray[$listName][$listIndex] =& $value;
+                        } else {
+                            $tmpArray[$listName][] =& $value;
+                        }
+                    } else {
+                        $tmpArray[$subKey] =& $value;
+                    }
                     return $this;
                 }
             }
@@ -201,7 +219,7 @@ class RequestMap {
             $listName  = substr($key, 0, $indexOfSquareBraket);
             $listIndex = $matches[1];
             
-            
+
             
             if (array_key_exists($listName, $inputArray)) {
                 if (isset($listIndex))
