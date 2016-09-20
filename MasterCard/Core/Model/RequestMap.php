@@ -204,19 +204,29 @@ class RequestMap {
             
             
             if (array_key_exists($listName, $inputArray)) {
-                if (isset($listIndex) && array_key_exists($listIndex, $inputArray[$listName]))
+                if (isset($listIndex))
                 {
-                    return $inputArray[$listName][$listIndex];
+                    if (array_key_exists($listIndex, $inputArray[$listName])) {
+                        return $inputArray[$listName][$listIndex];
+                    } else {
+                        $inputArray[$listName][$listIndex] = array();
+                        return $inputArray[$listName][$listIndex];
+                    }
                 } 
                 else
                 {
-                    $inputArray[$listName] = array();
-                    return $inputArray[$listName][$listIndex];
+                    return $inputArray[$listName][];
                 }
             } 
             else {
                 $inputArray[$listName] = array();
-                return $inputArray[$listName];
+                if (isset($listIndex))
+                {
+                    return $inputArray[$listName][$listIndex];
+                } else {
+                    return $inputArray[$listName][];
+                }
+                
             }
         } 
         
