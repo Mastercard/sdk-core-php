@@ -166,17 +166,17 @@ class RequestMap {
             $keys = explode('.', $key);
             $keysCount = count($keys);
             
-            $tmpArray = &$this->properties;
+            $tmpArray =& $this->properties;
             foreach ($keys as $index=>$subKey) {
                 if (($index+1) < $keysCount)
                 {
 //                    echo "createArrayObject(key=$subKey)\r\n";
-                    $tmpArray = & $this->createArrayObject($tmpArray, $subKey);
+                    $tmpArray =& $this->createArrayObject($tmpArray, $subKey);
                     
                 }
                 else {
 //                    echo "createArrayObject([key=$subKey]=$value])\r\n";
-                    $tmpArray[$subKey] = & $value;                    
+                    $tmpArray[$subKey] =& $value;                    
                     return $this;
                 }
             }
@@ -210,18 +210,18 @@ class RequestMap {
             } 
             else {
                 $inputArray[$listName] = array();
-                $ref = & $inputArray[$listName];
+                $ref =& $inputArray[$listName];
                 return $ref;
             }
         } 
         //arizzini: if the current $index is not the last $subKey
         //we want to the last nested map
         else if (array_key_exists($key, $inputArray)) {
-            $ref = & $inputArray[$key];
+            $ref =& $inputArray[$key];
             return $ref;
         } else {
             $inputArray[$key] = array();                       
-            $ref = & $inputArray[$key];
+            $ref =& $inputArray[$key];
             return $ref;
         }
     }
