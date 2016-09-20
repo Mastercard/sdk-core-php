@@ -49,6 +49,8 @@ class ParametersTest extends \PHPUnit_Framework_TestCase {
         public function test_example_parameters()
         {
 
+            $this->markTestSkipped('sandbox is down.');
+            
             $map = new RequestMap();
             
             $map->set("CurrentRow", "1");
