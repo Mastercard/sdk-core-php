@@ -121,9 +121,54 @@ class BaseMapTest extends \PHPUnit_Framework_TestCase
     
     public function testNestedMapFromSetMethod() {
             $map = new RequestMap();
+            $map->set("payment_transfer.transfer_reference", "10017018676132929870330");
+            $map->set("payment_transfer.payment_type", "P2P");
+            $map->set("payment_transfer.amount", "1000");
+            $map->set("payment_transfer.currency", "USD");
+            $map->set("payment_transfer.sender_account_uri", "pan:5013040000000018;exp=2017-08;cvc=123");
+            $map->set("payment_transfer.sender.first_name", "John");
+            $map->set("payment_transfer.sender.middle_name", "Tyler");
+            $map->set("payment_transfer.sender.last_name", "Jones");
+            $map->set("payment_transfer.sender.nationality", "USA");
+            $map->set("payment_transfer.sender.date_of_birth", "1994-05-21");
+            $map->set("payment_transfer.sender.address.line1", "21 Broadway");
+            $map->set("payment_transfer.sender.address.line2", "Apartment A-6");
+            $map->set("payment_transfer.sender.address.city", "OFallon");
+            $map->set("payment_transfer.sender.address.country_subdivision", "MO");
+            $map->set("payment_transfer.sender.address.postal_code", "63368");
+            $map->set("payment_transfer.sender.address.country", "USA");
+            $map->set("payment_transfer.sender.phone", "11234565555");
+            $map->set("payment_transfer.sender.email", " John.Jones123@abcmail.com ");
+            $map->set("payment_transfer.recipient_account_uri", "pan:5013040000000018;exp=2017-08;cvc=123");
+            $map->set("payment_transfer.recipient.first_name", "Jane");
+            $map->set("payment_transfer.recipient.middle_name", "Tyler");
+            $map->set("payment_transfer.recipient.last_name", "Smith");
+            $map->set("payment_transfer.recipient.nationality", "USA");
+            $map->set("payment_transfer.recipient.date_of_birth", "1999-12-30");
+            $map->set("payment_transfer.recipient.address.line1", "1 Main St");
+            $map->set("payment_transfer.recipient.address.line2", "Apartment 9");
+            $map->set("payment_transfer.recipient.address.city", "OFallon");
+            $map->set("payment_transfer.recipient.address.country_subdivision", "MO");
+            $map->set("payment_transfer.recipient.address.postal_code", "63368");
+            $map->set("payment_transfer.recipient.address.country", "USA");
+            $map->set("payment_transfer.recipient.phone", "11234567890");
+            $map->set("payment_transfer.recipient.email", " Jane.Smith123@abcmail.com ");
             $map->set("payment_transfer.reconciliation_data.custom_field[0].name", " ABC");
             $map->set("payment_transfer.reconciliation_data.custom_field[0].value", " 123 ");
+            $map->set("payment_transfer.reconciliation_data.custom_field[1].name", " DEF");
+            $map->set("payment_transfer.reconciliation_data.custom_field[1].value", " 456 ");
+            $map->set("payment_transfer.reconciliation_data.custom_field[2].name", " GHI");
+            $map->set("payment_transfer.reconciliation_data.custom_field[2].value", " 789 ");
+            $map->set("payment_transfer.statement_descriptor", "CLA*THANK YOU");
+            $map->set("payment_transfer.channel", "KIOSK");
+            $map->set("payment_transfer.funding_source", "DEBIT");
+            $map->set("payment_transfer.text", "funding_source");
             $this->assertTrue($map->containsKey("payment_transfer.reconciliation_data.custom_field[0].value"));
+            $this->assertTrue($map->containsKey("payment_transfer.reconciliation_data.custom_field[1].value"));
+            $this->assertTrue($map->containsKey("payment_transfer.reconciliation_data.custom_field[2].value"));
+
+            $jsonString = '{"payment_transfer":{"transfer_reference":"10017018676132929870330","payment_type":"P2P","amount":"1000","currency":"USD","sender_account_uri":"pan:5013040000000018;exp=2017-08;cvc=123","sender":{"first_name":"John","middle_name":"Tyler","last_name":"Jones","nationality":"USA","date_of_birth":"1994-05-21","address":{"line1":"21 Broadway","line2":"Apartment A-6","city":"OFallon","country_subdivision":"MO","postal_code":"63368","country":"USA"},"phone":"11234565555","email":" John.Jones123@abcmail.com "},"recipient_account_uri":"pan:5013040000000018;exp=2017-08;cvc=123","recipient":{"first_name":"Jane","middle_name":"Tyler","last_name":"Smith","nationality":"USA","date_of_birth":"1999-12-30","address":{"line1":"1 Main St","line2":"Apartment 9","city":"OFallon","country_subdivision":"MO","postal_code":"63368","country":"USA"},"phone":"11234567890","email":" Jane.Smith123@abcmail.com "},"reconciliation_data":{"custom_field":[{"name":" ABC","value":" 123 "},{"name":" DEF","value":" 456 "},{"name":" GHI","value":" 789 "}]},"statement_descriptor":"CLA*THANK YOU","channel":"KIOSK","funding_source":"DEBIT","text":"funding_source"}}';
+            $this->assertEquals(strval($jsonString), strval(json_encode($map->getBaseMapAsArray())));
         
         
     }
