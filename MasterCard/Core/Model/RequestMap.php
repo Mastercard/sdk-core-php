@@ -153,6 +153,29 @@ class RequestMap {
         
     }
     
+    private function assignArrayByPath(&$arr, $path, $value, $separator='.') {
+        $keys = explode($separator, $path);
+
+        foreach ($keys as $key) {
+            preg_match($this->parrentContainsSquaredBracket, $key, $matches);
+            if (!empty($matches))
+            {
+                $indexOfSquareBraket = strpos($key, "[");
+                $listName  = substr($key, 0, $indexOfSquareBraket);
+                $listIndex = $matches[1];
+                if (isset($listIndex)) {
+                    $arr = &$arr[$listName][$listIndex];
+                } else {
+                    $arr = &$arr[$listName][];
+                }
+            } else {
+                $arr = &$arr[$key];
+            }
+        }
+
+        $arr = $value;
+    }
+    
     /**
      * 
      * @param type $key
@@ -160,103 +183,8 @@ class RequestMap {
      * @return \MasterCard\Core\Model\RequestMap
      */
     public function set($key, $value) {
-        if (strpos($key, ".") !== false) {
-            //we have a dot, we need to split the ket by the dot and check
-            //individual string if they are part of the nestes array
-            $keys = explode('.', $key);
-            $keysCount = count($keys);
-            
-            $tmpArray =& $this->properties;
-            foreach ($keys as $index=>$subKey) {
-                if (($index+1) < $keysCount)
-                {
-                    //echo "createArrayObject(key=$subKey)\r\n";
-                    $tmpArray =& $this->createArrayObject($tmpArray, $subKey);
-                    
-                }
-                else {
-                    //echo "createArrayObject([key=$subKey]=$value])\r\n";
-//                    echo "assignKey: $subKey\r\n";
-                    preg_match($this->parrentContainsSquaredBracket, $subKey, $matches);
-                    if (!empty($matches))
-                    {
-                        $indexOfSquareBraket = strpos($subKey, "[");
-                        $listName  = substr($subKey, 0, $indexOfSquareBraket);
-                        $listIndex = $matches[1];
-                        
-//                        echo "listName: $listName\r\n";
-//                        echo "listIndex: $listIndex\r\n";
-                        
-                        if (isset($listIndex)) {
-                            $tmpArray[$listName][$listIndex] =& $value;
-                        } else {
-                            $tmpArray[$listName][] =& $value;
-                        }
-                    } else {
-                        $tmpArray[$subKey] =& $value;
-                    }
-                    return $this;
-                }
-            }
-        } else {
-            $this->properties[$key] = $value;
-//            $tmpArray = & $this->createArrayObject(, $key);
-//            $tmpArray[$key] = $value;
-            return $this;
-        }
-        
-    }
-    
-    private function &createArrayObject(&$inputArray, $key)
-    {
-        //arizzini: if the curent key contains a square bracket,
-        //we are referring to an array
-        preg_match($this->parrentContainsSquaredBracket, $key, $matches);
-        if (!empty($matches))
-        {
-            
-            $indexOfSquareBraket = strpos($key, "[");
-            $listName  = substr($key, 0, $indexOfSquareBraket);
-            $listIndex = $matches[1];
-            
-
-            
-            if (array_key_exists($listName, $inputArray)) {
-                if (isset($listIndex))
-                {
-                    if (array_key_exists($listIndex, $inputArray[$listName])) {
-                        return $inputArray[$listName][$listIndex];
-                    } else {
-                        $inputArray[$listName][$listIndex] = array();
-                        return $inputArray[$listName][$listIndex];
-                    }
-                } 
-                else
-                {
-                    return $inputArray[$listName][];
-                }
-            } 
-            else {
-                $inputArray[$listName] = array();
-                if (isset($listIndex))
-                {
-                    return $inputArray[$listName][$listIndex];
-                } else {
-                    return $inputArray[$listName][];
-                }
-                
-            }
-        } 
-        
-        //arizzini: if the current $index is not the last $subKey
-        //we want to the last nested map
-        if (array_key_exists($key, $inputArray)) {
-            return $inputArray[$key];
-            
-        } else {
-            $inputArray[$key] = array();                       
-            return $inputArray[$key];
-        }
+        $this->assignArrayByPath($this->properties, $key, $value);
+        return $this;
     }
 
     /**
