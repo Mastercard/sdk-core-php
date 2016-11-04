@@ -33,23 +33,27 @@
  use MasterCard\Core\Model\OperationMetadata;
  use MasterCard\Core\Model\OperationConfig;
 
+
 /**
  * 
  */
 class UserPostPath extends BaseObject {
 
-     protected static function getOperationConfig($operationUUID) {
+
+    protected static function getOperationConfig($operationUUID) {
         switch ($operationUUID) {
-            case "list":
+            case "56ec1669-7311-479a-9ded-641b53fe5d01":
                 return new OperationConfig("/mock_crud_server/users/{user_id}/posts", "list", array(), array());
+            
             default:
                 throw new \Exception("Invalid operationUUID supplied: $operationUUID");
         }
     }
-    
+
     protected static function getOperationMetadata() {
         return new OperationMetadata("1.0.0", "http://localhost:8081");
     }
+
 
 
 
@@ -62,12 +66,13 @@ class UserPostPath extends BaseObject {
     public static function listByCriteria($criteria = null)
     {
         if ($criteria == null) {
-            return parent::execute("list", new UserPostPath());
+            return self::execute("56ec1669-7311-479a-9ded-641b53fe5d01",new UserPostPath());
         } else {
-            return parent::execute("list", new UserPostPath($criteria));
+            return self::execute("56ec1669-7311-479a-9ded-641b53fe5d01",new UserPostPath($criteria));
         }
 
     }
+
 
 
 
