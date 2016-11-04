@@ -26,12 +26,12 @@
  *
  */
 
-namespace MasterCard\Api;
+ namespace MasterCard\Api;
 
-use MasterCard\Core\Model\BaseObject;
-use MasterCard\Core\Model\RequestMap;
-use MasterCard\Core\Model\OperationMetadata;
-use MasterCard\Core\Model\OperationConfig;
+ use MasterCard\Core\Model\BaseObject;
+ use MasterCard\Core\Model\RequestMap;
+ use MasterCard\Core\Model\OperationMetadata;
+ use MasterCard\Core\Model\OperationConfig;
 
 
 /**
@@ -39,16 +39,16 @@ use MasterCard\Core\Model\OperationConfig;
  */
 class MultiplePathUserPost extends BaseObject {
 
-      
-    
+
     protected static function getOperationConfig($operationUUID) {
         switch ($operationUUID) {
-            case "list":
+            case "57d7e431-4edb-4cc4-b21a-75eb8c5ecd8d":
                 return new OperationConfig("/mock_crud_server/users/{user_id}/post/{post_id}", "list", array(), array());
-            case "update":
+            case "a6fd8826-a957-4975-b977-388064bd5f8c":
                 return new OperationConfig("/mock_crud_server/users/{user_id}/post/{post_id}", "update", array("testQuery"), array());
-            case "delete":
+            case "40e28221-901f-4a39-a23c-80c677d63908":
                 return new OperationConfig("/mock_crud_server/users/{user_id}/post/{post_id}", "delete", array(), array());
+            
             default:
                 throw new \Exception("Invalid operationUUID supplied: $operationUUID");
         }
@@ -56,11 +56,13 @@ class MultiplePathUserPost extends BaseObject {
 
     protected static function getOperationMetadata() {
         return new OperationMetadata("1.0.0", "http://localhost:8081");
+
     }
 
 
 
-    /**
+
+   /**
     * List objects of type MultiplePathUserPost
     *
     * @param Map criteria
@@ -69,9 +71,9 @@ class MultiplePathUserPost extends BaseObject {
     public static function listByCriteria($criteria = null)
     {
         if ($criteria == null) {
-            return parent::execute("list", new MultiplePathUserPost());
+            return self::execute("57d7e431-4edb-4cc4-b21a-75eb8c5ecd8d",new MultiplePathUserPost());
         } else {
-            return parent::execute("list", new MultiplePathUserPost($criteria));
+            return self::execute("57d7e431-4edb-4cc4-b21a-75eb8c5ecd8d",new MultiplePathUserPost($criteria));
         }
 
     }
@@ -85,7 +87,7 @@ class MultiplePathUserPost extends BaseObject {
     * @return A MultiplePathUserPost object representing the response.
     */
     public function update()  {
-        return parent::execute("update", $this);
+        return self::execute("a6fd8826-a957-4975-b977-388064bd5f8c",$this);
     }
 
 
@@ -103,16 +105,13 @@ class MultiplePathUserPost extends BaseObject {
     public static function deleteById($id, $requestMap = null)
     {
         $map = new RequestMap();
-        if (!empty($requestMap)) {
-            $map->setAll($requestMap);
-        }
-        
         if (!empty($id)) {
             $map->set("id", $id);
         }
-        
-        $currentObject = new MultiplePathUserPost($map);
-        return parent::execute("delete", $currentObject);
+        if (!empty($requestMap)) {
+            $map->setAll($requestMap);
+        }
+        return self::execute("40e28221-901f-4a39-a23c-80c677d63908", new MultiplePathUserPost($map));
     }
 
    /**
@@ -122,7 +121,7 @@ class MultiplePathUserPost extends BaseObject {
     */
     public function delete()
     {
-        return parent::execute("delete", $this);
+        return self::execute("40e28221-901f-4a39-a23c-80c677d63908", $this);
     }
 
 

@@ -33,32 +33,37 @@
  use MasterCard\Core\Model\OperationMetadata;
  use MasterCard\Core\Model\OperationConfig;
 
+
 /**
  * 
  */
 class Post extends BaseObject {
 
-     
+
     protected static function getOperationConfig($operationUUID) {
         switch ($operationUUID) {
-            case "list":
-                return new OperationConfig("/mock_crud_server/posts", "list", array(), array());
-            case "create":
+            case "25d892e8-a0bb-444f-8fad-3fc778b68a33":
+                return new OperationConfig("/mock_crud_server/posts", "list", array("max"), array());
+            case "6fe6926a-f94f-4045-8546-11ab3f60e256":
                 return new OperationConfig("/mock_crud_server/posts", "create", array(), array());
-            case "read":
+            case "6d79bf40-6b37-4a27-9df4-32016d7503db":
                 return new OperationConfig("/mock_crud_server/posts/{id}", "read", array(), array());
-            case "delete":
-                return new OperationConfig("/mock_crud_server/posts/{id}", "delete", array(), array());
-            case "update":
+            case "96ca8b65-6cdd-46d7-86bd-cdad499fa863":
                 return new OperationConfig("/mock_crud_server/posts/{id}", "update", array(), array());
+            case "382c96c8-12d4-439a-94b1-9e607ec11c03":
+                return new OperationConfig("/mock_crud_server/posts/{id}", "delete", array(), array());
+            
             default:
                 throw new \Exception("Invalid operationUUID supplied: $operationUUID");
         }
     }
-    
+
     protected static function getOperationMetadata() {
         return new OperationMetadata("1.0.0", "http://localhost:8081");
     }
+
+
+
 
    /**
     * List objects of type Post
@@ -69,12 +74,13 @@ class Post extends BaseObject {
     public static function listByCriteria($criteria = null)
     {
         if ($criteria == null) {
-            return parent::execute("list", new Post());
+            return self::execute("25d892e8-a0bb-444f-8fad-3fc778b68a33",new Post());
         } else {
-            return parent::execute("list", new Post($criteria));
+            return self::execute("25d892e8-a0bb-444f-8fad-3fc778b68a33",new Post($criteria));
         }
 
     }
+
 
 
    /**
@@ -85,8 +91,9 @@ class Post extends BaseObject {
     */
     public static function create($map)
     {
-        return parent::execute("create", new Post($map));
+        return self::execute("6fe6926a-f94f-4045-8546-11ab3f60e256", new Post($map));
     }
+
 
 
 
@@ -104,12 +111,15 @@ class Post extends BaseObject {
     public static function read($id, $criteria = null)
     {
         $map = new RequestMap();
-        $map->set("id", $id);
+        if (!empty($id)) {
+            $map->set("id", $id);
+        }
         if ($criteria != null) {
             $map->setAll($criteria);
         }
-        return parent::execute("read", new Post($map));
+        return self::execute("6d79bf40-6b37-4a27-9df4-32016d7503db",new Post($map));
     }
+
 
    /**
     * Updates an object of type Post
@@ -117,8 +127,9 @@ class Post extends BaseObject {
     * @return A Post object representing the response.
     */
     public function update()  {
-        return parent::execute("update",$this);
+        return self::execute("96ca8b65-6cdd-46d7-86bd-cdad499fa863",$this);
     }
+
 
 
 
@@ -131,11 +142,16 @@ class Post extends BaseObject {
     * @param String id
     * @return Post of the response of the deleted instance.
     */
-    public static function deleteById($id)
+    public static function deleteById($id, $requestMap = null)
     {
         $map = new RequestMap();
-        $map->set("id", $id);
-        return self::execute("delete", new Post($map));
+        if (!empty($id)) {
+            $map->set("id", $id);
+        }
+        if (!empty($requestMap)) {
+            $map->setAll($requestMap);
+        }
+        return self::execute("382c96c8-12d4-439a-94b1-9e607ec11c03", new Post($map));
     }
 
    /**
@@ -145,8 +161,9 @@ class Post extends BaseObject {
     */
     public function delete()
     {
-        return parent::execute("delete",$this);
+        return self::execute("382c96c8-12d4-439a-94b1-9e607ec11c03", $this);
     }
+
 
 
 
