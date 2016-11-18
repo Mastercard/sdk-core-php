@@ -46,6 +46,30 @@ class BaseMapTest extends \PHPUnit_Framework_TestCase
     }
     
     
+    public function testMapWithListOfValues() {
+        $map = new RequestMap();
+        $map->set("channels[0]", "ATM");
+        $map->set("channels[1]", "POS");
+        $map->set("channels[2]", "ECOM");
+        
+        $jsonString = "{\"channels\":[\"ATM\",\"POS\",\"ECOM\"]}";
+        
+        $jsonStringFromMap = strval(json_encode($map->getBaseMapAsArray()));
+
+        
+        $this->assertEquals($jsonString, $jsonStringFromMap);
+        
+        
+        $newMap = new RequestMap();
+        $newMap->setAll($map->getBaseMapAsArray());
+        $jsonStringFromNewMap = strval(json_encode($newMap->getBaseMapAsArray()));
+        
+        $this->assertEquals($jsonStringFromMap, $jsonStringFromNewMap);
+        
+        
+    }
+    
+    
     public function testNestedMap()
     {
         $baseObject = new RequestMap();
