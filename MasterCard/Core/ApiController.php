@@ -56,7 +56,6 @@ class ApiController {
     protected $hostUrl = null;
     protected $client = null;
     protected $version = "NOT-SET";
-    
     protected $logger = null;
     
 
@@ -65,24 +64,23 @@ class ApiController {
           
         $this->logger = new Logger('ApiController');
         
-        
-        
         $this->checkState();
         
         if ($version != null) {
             $this->version = $version;
         }
 
-        $fullUrl = ApiConfig::getLiveUrl();
-        if (ApiConfig::isSandbox()) {
-            $fullUrl = ApiConfig::getSandboxUrl();
+        $fullUrl = "https://";
+        if (!empty(ApiConfig::getSubDomain())) {
+            $fullUrl .= ApiConfig::getSubDomain();
+            $fullUrl .= ".";
         }
+        $fullUrl .= "api.mastercard.com";
 
         if (filter_var($fullUrl, FILTER_VALIDATE_URL) == FALSE) {
             throw new ApiException("fullUrl: '" . $fullUrl . "' is not a valid url");
         }
 
-        $this->hostUrl = $fullUrl;
         $this->hostUrl = Util::normalizeUrl($fullUrl);
         $this->client = new Client([
             'config' => [
@@ -102,14 +100,6 @@ class ApiController {
             throw new ApiException("No ApiConfig::authentication has been configured");
         }
 
-        if (filter_var(ApiConfig::getLiveUrl(), FILTER_VALIDATE_URL) == FALSE) {
-            throw new ApiException("Invalid URL supplied for API_BASE_LIVE_URL");
-        }
-
-
-        if (filter_var(ApiConfig::getSandboxUrl(), FILTER_VALIDATE_URL) == FALSE) {
-            throw new ApiException("Invalid URL supplied for API_BASE_SANDBOX_URL");
-        }
     }
 
     private function removeForwardSlashFromTail($url) {
@@ -136,7 +126,11 @@ class ApiController {
     }
 
     /**
-     * @ignore
+     * This method generated the URL 
+     * @param type $operationConfig
+     * @param type $operationMetadata
+     * @param type $inputMap
+     * @return type
      */
     public function getUrl($operationConfig, $operationMetadata, &$inputMap) {
 
@@ -150,8 +144,20 @@ class ApiController {
         $url = "%s";
         
         $resolvedHostUrl = $this->hostUrl;
-        if (!is_null($hostOverride)) {
+        if (!empty($hostOverride)) {
             $resolvedHostUrl = $hostOverride;
+        }
+        
+        //arizzini: we need to apply the environment variable.
+        if (strpos($resourcePath, "{:env}") !== FALSE) {
+            $environment = "";
+            if (!empty($operationMetadata->getEnvironment())) {
+                 $environment = $operationMetadata->getEnvironment();
+            } else if (!empty(ApiConfig::getEnvironment())) {
+                $environment = ApiConfig::getEnvironment();
+            }
+            $resourcePath = str_replace("{:env}", $environment, $resourcePath);
+            $resourcePath = str_replace("//", "/", $resourcePath);
         }
         
         $tmpUrl = Util::getReplacedPath($this->removeForwardSlashFromTail($resolvedHostUrl).$this->removeForwardSlashFromTail($resourcePath), $inputMap);
@@ -197,7 +203,22 @@ class ApiController {
         
         return $url;
     }
+    
+    /**
+     * This is a protected function to return the hostURL (for testing)
+     * @return type
+     */
+    public function getHostUrl() {
+        return $this->hostUrl;
+    }
 
+    /**
+     * This is the function that returns a Request object
+     * @param type $operationConfig
+     * @param type $operationMetadata
+     * @param type $inputMap
+     * @return type
+     */
     public function getRequest($operationConfig, $operationMetadata, &$inputMap) {
         
         $action = $operationConfig->getAction();
@@ -241,6 +262,14 @@ class ApiController {
         return $request;
     }
 
+    /**
+     * This function executes the request
+     * @param type $operationConfig
+     * @param type $operationMetadata
+     * @param type $inputMap
+     * @return type
+     * @throws SystemException
+     */
     public function execute($operationConfig, $operationMetadata, $inputMap) {
         $request = $this->getRequest($operationConfig, $operationMetadata, $inputMap);
 

@@ -31,13 +31,12 @@ use MasterCard\Core\Security\AuthenticationInterface;
 
 class ApiConfig {
 
-    private static $SANDBOX = true;
     private static $DEBUG = false;
     private static $AUTHENTICATION = null;
     
-    private static $API_BASE_LIVE_URL = "https://api.mastercard.com";
-    private static $API_BASE_SANDBOX_URL = "https://sandbox.api.mastercard.com";
-
+    private static $SUBDOMAIN = "sandbox";
+    private static $ENVIRONMENT = null;
+    
     
     /**
      * Sets the debug.
@@ -63,24 +62,35 @@ class ApiConfig {
      */
     public static function setSandbox($sandbox)
     {
-        static::$SANDBOX = $sandbox;
+        if ($sandbox == true) {
+            static::$SUBDOMAIN = "sandbox";
+        } else {
+            static::$SUBDOMAIN = null;
+        }
     }
     
-    
     /**
-     * Sets get debug.
+     * This method is used to set the SubDomain
+     * @param type $subDomain
      */
-    public static function isSandbox()
-    {
-        return static::$SANDBOX == true;
-    }   
-    
+    public static function setSubDomain($subDomain) {
+        if (!empty($subDomain)) {
+            static::$SUBDOMAIN = $subDomain;
+        } else {
+            static::$SUBDOMAIN = null;
+        }
+    }
+
     /**
-     * Sets get debug.
+     * This method is used to set the SubDomain
+     * @param type $subDomain
      */
-    public static function isProduction()
-    {
-        return static::$SANDBOX == false;
+    public static function setEnvironment($environment) {
+        if (!empty($environment)) {
+            static::$ENVIRONMENT = $environment;
+        } else {
+            static::$ENVIRONMENT = null;
+        }
     }
 
 
@@ -88,18 +98,18 @@ class ApiConfig {
      * 
      * @return string
      */
-    public static function getSandboxUrl() 
+    public static function getSubDomain() 
     {
-        return self::$API_BASE_SANDBOX_URL;
+        return self::$SUBDOMAIN;
     }
     
     /**
      * 
      * @return string
      */
-    public static function getLiveUrl() 
+    public static function getEnvironment() 
     {
-        return self::$API_BASE_LIVE_URL;
+        return self::$ENVIRONMENT;
     }
     
     
