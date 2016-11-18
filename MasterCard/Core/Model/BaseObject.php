@@ -46,8 +46,8 @@ abstract class BaseObject extends RequestMap {
        
 
     function __construct($baseMap = null) {
-        if ($baseMap != null) {
-            $this->setAll($baseMap->getBaseMapAsArray());
+        if ($baseMap) {
+            $this->setAll($baseMap);
         }
         
     }

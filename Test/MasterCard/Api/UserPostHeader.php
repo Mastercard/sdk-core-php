@@ -26,32 +26,35 @@
  *
  */
 
-  namespace MasterCard\Api;
+ namespace MasterCard\Api;
 
  use MasterCard\Core\Model\BaseObject;
  use MasterCard\Core\Model\RequestMap;
  use MasterCard\Core\Model\OperationMetadata;
  use MasterCard\Core\Model\OperationConfig;
 
+
 /**
  * 
  */
 class UserPostHeader extends BaseObject {
 
-    
+
     protected static function getOperationConfig($operationUUID) {
         switch ($operationUUID) {
-            case "list":
-                return new OperationConfig("/mock_crud_server/users/posts", "list", array("user_id"), array("user_id"));
+            case "f11ca4cf-ff85-4515-8ce5-1d7530d6f7b2":
+                return new OperationConfig("/mock_crud_server/users/posts", "list", array(), array("user_id"));
+            
             default:
                 throw new \Exception("Invalid operationUUID supplied: $operationUUID");
         }
     }
-    
+
     protected static function getOperationMetadata() {
         return new OperationMetadata("1.0.0", "http://localhost:8081");
     }
-    
+
+
 
 
    /**
@@ -63,10 +66,11 @@ class UserPostHeader extends BaseObject {
     public static function listByCriteria($criteria = null)
     {
         if ($criteria == null) {
-            return parent::execute("list", new UserPostHeader());
+            return self::execute("f11ca4cf-ff85-4515-8ce5-1d7530d6f7b2",new UserPostHeader());
         } else {
-            return parent::execute("list", new UserPostHeader($criteria));
+            return self::execute("f11ca4cf-ff85-4515-8ce5-1d7530d6f7b2",new UserPostHeader($criteria));
         }
+
     }
 
 

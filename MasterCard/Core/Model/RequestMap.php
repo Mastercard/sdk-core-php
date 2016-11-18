@@ -193,32 +193,36 @@ class RequestMap {
      */
     public function setAll($map) {
         
-        $updatedMap = null;
-        
-        //arizzini: resolving the map..
-        if (is_array($map)) {
-                $updatedMap = $map;
+        if ($map instanceof RequestMap) {
+            $this->properties = array_merge($this->properties, $map->getBaseMapAsArray());
         } else {
-            $updatedMap = $map->getBaseMapAsArray();
-        }
-        
-        if ($this->isAssoc($updatedMap))
-        {
-            //echo "isAssoc==TRUE\r\n";
-            foreach ($updatedMap as $key => $value) {
-                $this->set($key, $value);
+            $updatedMap = null;
+//        
+//            //arizzini: resolving the map..
+//            if (is_array($map)) {
+//                $updatedMap = $map;
+//            } else {
+//                $updatedMap = $map->getBaseMapAsArray();
+//            }
+
+            if ($this->isAssoc($map))
+            {
+                //echo "isAssoc==TRUE\r\n";
+                foreach ($map as $key => $value) {
+                    $this->set($key, $value);
+                }
+            } else {
+                //echo "isAssoc==FALSE\r\n";
+                $list = array();
+                foreach ($map as $object) {
+                    $tmpBaseMap = new RequestMap();
+                    $tmpBaseMap->setAll($object);
+                    array_push($list, $tmpBaseMap->getBaseMapAsArray());
+                }
+
+                $this->set("list", $list);
+                //print_r($this->getProperties());
             }
-        } else {
-            //echo "isAssoc==FALSE\r\n";
-            $list = array();
-            foreach ($updatedMap as $object) {
-                $tmpBaseMap = new RequestMap();
-                $tmpBaseMap->setAll($object);
-                array_push($list, $tmpBaseMap->getBaseMapAsArray());
-            }
-            
-            $this->set("list", $list);
-            //print_r($this->getProperties());
         }
     }
     
