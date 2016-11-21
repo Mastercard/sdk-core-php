@@ -130,7 +130,7 @@ class ApiController {
         
         $url = "%s";
         
-        $resolvedHostUrl = $this->generateHostUrl();
+        $resolvedHostUrl = $this->generateHost();
         if (!empty($hostOverride)) {
             $resolvedHostUrl = $hostOverride;
         }
@@ -198,7 +198,7 @@ class ApiController {
      * ApiConfig subDomain
      * @throws ApiException
      */
-    public function generateHostUrl() {
+    public function generateHost() {
         $fullUrl = "https://";
         if (!empty(ApiConfig::getSubDomain())) {
             $fullUrl .= ApiConfig::getSubDomain();
