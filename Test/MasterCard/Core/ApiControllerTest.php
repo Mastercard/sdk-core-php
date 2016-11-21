@@ -70,19 +70,19 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
     public function testHost() {
         
         $apiController = new ApiController("0.0.1");
-        $this->assertEquals("https://sandbox.api.mastercard.com/", $apiController->getHostUrl());
+        $this->assertEquals("https://sandbox.api.mastercard.com/", $apiController->generateHostUrl());
         
         ApiConfig::setSubDomain("stage");
         $apiController = new ApiController("0.0.1");
-        $this->assertEquals("https://stage.api.mastercard.com/", $apiController->getHostUrl());
+        $this->assertEquals("https://stage.api.mastercard.com/", $apiController->generateHostUrl());
         
         ApiConfig::setSubDomain("dev");
         $apiController = new ApiController("0.0.1");
-        $this->assertEquals("https://dev.api.mastercard.com/", $apiController->getHostUrl());
+        $this->assertEquals("https://dev.api.mastercard.com/", $apiController->generateHostUrl());
         
         ApiConfig::setSubDomain("");
         $apiController = new ApiController("0.0.1");
-        $this->assertEquals("https://api.mastercard.com/", $apiController->getHostUrl());
+        $this->assertEquals("https://api.mastercard.com/", $apiController->generateHostUrl());
         
         //resetting the config
         ApiConfig::setSubDomain("sandbox");

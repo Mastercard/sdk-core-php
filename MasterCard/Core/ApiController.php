@@ -53,7 +53,6 @@ class ApiController {
     const HTTP_NOT_ALLOWED = 405;
     const HTTP_BAD_REQUEST = 400;
 
-    protected $hostUrl = null;
     protected $client = null;
     protected $version = "NOT-SET";
     protected $logger = null;
@@ -70,18 +69,6 @@ class ApiController {
             $this->version = $version;
         }
 
-        $fullUrl = "https://";
-        if (!empty(ApiConfig::getSubDomain())) {
-            $fullUrl .= ApiConfig::getSubDomain();
-            $fullUrl .= ".";
-        }
-        $fullUrl .= "api.mastercard.com";
-
-        if (filter_var($fullUrl, FILTER_VALIDATE_URL) == FALSE) {
-            throw new ApiException("fullUrl: '" . $fullUrl . "' is not a valid url");
-        }
-
-        $this->hostUrl = Util::normalizeUrl($fullUrl);
         $this->client = new Client([
             'config' => [
                 'curl' => [
@@ -143,7 +130,7 @@ class ApiController {
         
         $url = "%s";
         
-        $resolvedHostUrl = $this->hostUrl;
+        $resolvedHostUrl = $this->generateHostUrl();
         if (!empty($hostOverride)) {
             $resolvedHostUrl = $hostOverride;
         }
@@ -203,13 +190,27 @@ class ApiController {
         
         return $url;
     }
+
+    
     
     /**
-     * This is a protected function to return the hostURL (for testing)
-     * @return type
+     * This function is used to re-calculate the host from the 
+     * ApiConfig subDomain
+     * @throws ApiException
      */
-    public function getHostUrl() {
-        return $this->hostUrl;
+    public function generateHostUrl() {
+        $fullUrl = "https://";
+        if (!empty(ApiConfig::getSubDomain())) {
+            $fullUrl .= ApiConfig::getSubDomain();
+            $fullUrl .= ".";
+        }
+        $fullUrl .= "api.mastercard.com";
+
+        if (filter_var($fullUrl, FILTER_VALIDATE_URL) == FALSE) {
+            throw new ApiException("fullUrl: '" . $fullUrl . "' is not a valid url");
+        }
+
+        return Util::normalizeUrl($fullUrl);
     }
 
     /**
