@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright 2016 MasterCard International.
  *
@@ -26,42 +27,22 @@
  *
  */
 
- namespace MasterCard\Api;
 
- use MasterCard\Core\Model\BaseObject;
- use MasterCard\Core\Model\RequestMap;
-use MasterCard\Core\Model\OperationMetadata;
- use MasterCard\Core\Model\OperationConfig;
+namespace MasterCard\Core\Model;
 
-
-/**
- * 
- */
-class Parameters extends BaseObject {
-
-    protected static function getOperationConfig($operationUUID) {
-        switch ($operationUUID) {
-            case "uuid":
-                return new OperationConfig("/sectorinsights/v1/sectins.svc/parameters", "query", array(), array());
-            default:
-                throw new \Exception("Invalid operationUUID supplied: $operationUUID");
-        }
-    }
+class Environment {
+    const PRODUCTION = "production";
+    const SANDBOX = "sandbox"; 
+    const STAGE = "stage";
+    const DEV = "dev";
+    const MTF = "mtf";
+    const ITF = "itf";
+    const LOCALHOST = "localhost";
+    const DEVCLOUD = "devcloud";
+    const LABSCLOUD = "labscloud";
+    const OTHER1 = "other1";
+    const OTHER2 = "other2";
+    const OTHER3 = "other3";
     
-    protected static function getOperationMetadata() {
-        return new OperationMetadata("1.0.0", "https://sandbox.api.mastercard.com");
-    }
-
-    /**
-     * Query objects of type Parameters by id and optional criteria
-     * @param type $criteria
-     * @return type
-     */
-    public static function query($criteria)
-    {
-        return parent::execute("uuid", new Parameters($criteria));
-    }
-
-
 }
 
