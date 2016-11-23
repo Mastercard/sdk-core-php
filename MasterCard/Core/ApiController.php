@@ -58,16 +58,12 @@ class ApiController {
     protected $logger = null;
     
 
-    function __construct($version) {
+    function __construct() {
 
           
         $this->logger = new Logger('ApiController');
         
         $this->checkState();
-        
-        if ($version != null) {
-            $this->version = $version;
-        }
 
         $this->client = new Client([
             'config' => [
@@ -126,23 +122,20 @@ class ApiController {
         $action = $operationConfig->getAction();
         $resourcePath = $operationConfig->getResourcePath();
         $queryList = $operationConfig->getQueryParams();
-        $hostOverride = $operationMetadata->getHost();
+        $resolvedHostUrl = $operationMetadata->getHost();
+
+        //arizzini: we need to validate the host
+        $this->validateHost($resolvedHostUrl);
         
         $url = "%s";
-        
-        $resolvedHostUrl = $this->generateHost();
-        if (!empty($hostOverride)) {
-            $resolvedHostUrl = $hostOverride;
-        }
         
         //arizzini: we need to apply the environment variable.
         if (strpos($resourcePath, "{:env}") !== FALSE) {
             $environment = "";
-            if (!empty($operationMetadata->getEnvironment())) {
-                 $environment = $operationMetadata->getEnvironment();
-            } else if (!empty(ApiConfig::getEnvironment())) {
-                $environment = ApiConfig::getEnvironment();
-            }
+            if (!empty($operationMetadata->getContext())) {
+                 $environment = $operationMetadata->getContext();
+            } 
+            
             $resourcePath = str_replace("{:env}", $environment, $resourcePath);
             $resourcePath = str_replace("//", "/", $resourcePath);
         }
@@ -194,23 +187,14 @@ class ApiController {
     
     
     /**
-     * This function is used to re-calculate the host from the 
+     * This function is used to valide the host
      * ApiConfig subDomain
      * @throws ApiException
      */
-    public function generateHost() {
-        $fullUrl = "https://";
-        if (!empty(ApiConfig::getSubDomain())) {
-            $fullUrl .= ApiConfig::getSubDomain();
-            $fullUrl .= ".";
+    public function validateHost($host) {
+                if (filter_var($host, FILTER_VALIDATE_URL) == FALSE) {
+            throw new \RuntimeException("fullUrl: '" . $host . "' is not a valid url");
         }
-        $fullUrl .= "api.mastercard.com";
-
-        if (filter_var($fullUrl, FILTER_VALIDATE_URL) == FALSE) {
-            throw new ApiException("fullUrl: '" . $fullUrl . "' is not a valid url");
-        }
-
-        return Util::normalizeUrl($fullUrl);
     }
 
     /**
@@ -231,6 +215,14 @@ class ApiController {
         $headerMap = Util::subMap($inputMap, $headerList);
         
         $url = $this->getUrl($operationConfig, $operationMetadata, $inputMap);
+        
+                
+//        echo "-------------------------------------\n";
+//        echo "-------------------------------------\n";
+//        echo "url: $url \n";
+//        echo "-------------------------------------\n";
+//        echo "-------------------------------------\n";
+        
         
         $request = null;
 
@@ -254,7 +246,7 @@ class ApiController {
         
         $request = $request->withHeader("Accept", "application/json");
         $request = $request->withHeader("Content-Type", "application/json");
-        $request = $request->withHeader("User-Agent", "PHP-SDK/" . $this->version);
+        $request = $request->withHeader("User-Agent", "PHP-SDK/" . $operationMetadata->getApiVersion());
         foreach ($headerMap as $key => $value) {
             $request = $request->withHeader($key, $value);    
         }

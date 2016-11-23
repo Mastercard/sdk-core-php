@@ -27,15 +27,16 @@
  */
 namespace MasterCard\Core;
 
+use MasterCard\Core\Model\Environment;
 use MasterCard\Core\Security\AuthenticationInterface;
+
 
 class ApiConfig {
 
     private static $DEBUG = false;
     private static $AUTHENTICATION = null;
-    
-    private static $SUBDOMAIN = "sandbox";
-    private static $ENVIRONMENT = null;
+    private static $registeredInstances = array();
+    private static $ENVIRONMENT = Environment::SANDBOX;
     
     
     /**
@@ -63,23 +64,13 @@ class ApiConfig {
     public static function setSandbox($sandbox)
     {
         if ($sandbox == true) {
-            static::$SUBDOMAIN = "sandbox";
+            static::$ENVIRONMENT = Environment::SANDBOX;
         } else {
-            static::$SUBDOMAIN = null;
+            static::$ENVIRONMENT = Environment::PRODUCTION;
         }
+        static::setEnvironment(static::$ENVIRONMENT);
     }
-    
-    /**
-     * This method is used to set the SubDomain
-     * @param type $subDomain
-     */
-    public static function setSubDomain($subDomain) {
-        if (!empty($subDomain)) {
-            static::$SUBDOMAIN = $subDomain;
-        } else {
-            static::$SUBDOMAIN = null;
-        }
-    }
+
 
     /**
      * This method is used to set the SubDomain
@@ -87,32 +78,42 @@ class ApiConfig {
      */
     public static function setEnvironment($environment) {
         if (!empty($environment)) {
+            foreach (array_values(static::$registeredInstances) as $instance) {
+                $instance->setEnvironment($environment);
+            }
             static::$ENVIRONMENT = $environment;
-        } else {
-            static::$ENVIRONMENT = null;
+        } 
+        
+    }
+    
+    /**
+     * This method is used to return the set environment
+     * @return type
+     */
+    public static function getEnvironment() {
+        return static::$ENVIRONMENT;
+    }
+
+
+    /**
+     * This is used to add the SDKCOnfig to the APIConfig
+     * so when the configuration changes the underline SDKConfig
+     * are updated.
+     * 
+     * @param type $instance
+     */
+    public static function registerResourceConfig($instance) {
+        $className = get_class($instance);
+        if (!array_key_exists($className, static::$registeredInstances)){
+            static::$registeredInstances['$className'] = $instance;
         }
     }
-
-
-    /**
-     * 
-     * @return string
-     */
-    public static function getSubDomain() 
-    {
-        return self::$SUBDOMAIN;
+            
+    
+    public static function clearResourceConfig() {
+        static::$registeredInstances = array();
     }
-    
-    /**
-     * 
-     * @return string
-     */
-    public static function getEnvironment() 
-    {
-        return self::$ENVIRONMENT;
-    }
-    
-    
+
     /**
      * Sets the sandbox.
      * @param boolean sandbox
