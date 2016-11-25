@@ -40,16 +40,26 @@ class ResourceConfig  {
     private static $override = null;
     private static $host = null;
     private static $context = null;
-    private static $isInitialized = false;
+    private static $instance = null;
+
+
+
+
+    private function __construct() {
+//        $environment = ApiConfig::getEnvironment();
+//        $this->setEnvironment($environment);
+//        ApiConfig::addSDKConfig($this);
+    }
     
     
-//    function __construct() {
-//        if (static::$isInitialized == false) {
-//            $environment = ApiConfig::getEnvironment();
-//            $this->setEnvironment($environment);
-//            ApiConfig::addSDKConfig($this);
-//        }
-//    }
+    public static function getInstance()
+    {
+        if ( is_null( static::$instance ) )
+        {
+            static::$instance = new self();
+        }
+        return static::$instance;
+    }
 
 
     private static $environmentMap = [
