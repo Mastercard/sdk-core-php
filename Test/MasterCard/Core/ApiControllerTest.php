@@ -57,7 +57,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $controller = new ApiController("0.0.1");
 
         $inputMap = array();
-        $config = new ResourceConfig();
+        $config = ResourceConfig::getInstance();
         ApiConfig::registerResourceConfig($config);
         
 
@@ -228,7 +228,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         );
 
 
-        $config = new ResourceConfig();
+        $config = ResourceConfig::getInstance();
         $config->setEnvironment(Environment::SANDBOX);
         $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
         $operationConfig = new OperationConfig("/fraud/{api}/v{version}/account-inquiry", "create", array(), array());
@@ -251,7 +251,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             'five' => 5
         );
 
-        $config = new ResourceConfig();
+        $config = ResourceConfig::getInstance();
         $config->setEnvironment(Environment::SANDBOX);
         $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
 
@@ -274,7 +274,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             'five' => 5
         );
         
-        $config = new ResourceConfig();
+        $config = ResourceConfig::getInstance();
         $config->setEnvironment(Environment::SANDBOX);
         $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
 
@@ -298,7 +298,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             'five' => 5
         );
         
-        $config = new ResourceConfig();
+        $config = ResourceConfig::getInstance();
         $config->setOverride();
         $config->setEnvironment(Environment::SANDBOX);
         $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
