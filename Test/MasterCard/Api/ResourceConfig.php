@@ -75,8 +75,8 @@ class ResourceConfig  {
     
     
     public function setEnvironment($environment) {
-        if (array_key_exists($environment, Environment::$ENVIRONMENT_MAPPING)) {
-            $configArray = Environment::$ENVIRONMENT_MAPPING[$environment];
+        if (array_key_exists($environment, Environment::$MAPPING)) {
+            $configArray = Environment::$MAPPING[$environment];
             static::$host = $configArray[0];
             static::$context = $configArray[1];
         } else {

@@ -44,7 +44,7 @@ class Environment {
     const OTHER2 = "other2";
     const OTHER3 = "other3";
     
-    public static $ENVIRONMENT_MAPPING = [
+    public static $MAPPING = [
         Environment::PRODUCTION => ["https://api.mastercard.com", null],
         Environment::SANDBOX => ["https://sandbox.api.mastercard.com", null],
         Environment::STAGE => ["https://stage.api.mastercard.com", null],
