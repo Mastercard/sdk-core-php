@@ -61,17 +61,6 @@ class ResourceConfig  {
         return static::$instance;
     }
 
-
-    private static $environmentMap = [
-        Environment::PRODUCTION => ["https://api.mastercard.com", null],
-        Environment::SANDBOX => ["https://sandbox.api.mastercard.com", null],
-        Environment::STAGE => ["https://stage.api.mastercard.com", null],
-        Environment::DEV => ["https://dev.api.mastercard.com", null],
-        Environment::MTF => ["https://sandbox.api.mastercard.com", "mtf"],
-        Environment::ITF => ["https://sandbox.api.mastercard.com", "itf"],
-        Environment::LOCALHOST => ["https://lococalhost:8081", null],
-    ];
-
     public function getContext() {
         return static::$context;
     }
@@ -86,8 +75,8 @@ class ResourceConfig  {
     
     
     public function setEnvironment($environment) {
-        if (array_key_exists($environment, static::$environmentMap)) {
-            $configArray = static::$environmentMap[$environment];
+        if (array_key_exists($environment, Environment::$ENVIRONMENT_MAPPING)) {
+            $configArray = Environment::$ENVIRONMENT_MAPPING[$environment];
             static::$host = $configArray[0];
             static::$context = $configArray[1];
         } else {
