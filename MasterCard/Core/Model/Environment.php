@@ -51,7 +51,7 @@ class Environment {
         Environment::DEV => ["https://dev.api.mastercard.com", null],
         Environment::MTF => ["https://sandbox.api.mastercard.com", "mtf"],
         Environment::ITF => ["https://sandbox.api.mastercard.com", "itf"],
-        Environment::LOCALHOST => ["https://localhost:8081", null],
+        Environment::LOCALHOST => ["http://localhost:8081", null],
     ];
     
 }
