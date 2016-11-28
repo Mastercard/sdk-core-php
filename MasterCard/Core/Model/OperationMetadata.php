@@ -31,11 +31,12 @@ namespace MasterCard\Core\Model;
 class OperationMetadata {
     protected $apiVersion;
     protected $host;
-    protected $environment = null;
+    protected $context = null;
     
-    public function __construct($apiVersion, $host, $environment = null) {
+    public function __construct($apiVersion, $host, $context = null) {
         $this->apiVersion = $apiVersion;
         $this->host = $host;
+        $this->context = $context;
     }
     
     
@@ -59,8 +60,8 @@ class OperationMetadata {
      * return the environment
      * @return type
      */
-    public function getEnvironment() {
-        return $this->environment;
+    public function getContext() {
+        return $this->context;
     }
     
     
