@@ -143,6 +143,17 @@ class Util {
      * @param type $raw_output
      * @return type
      */
+    public static function sha256Encode($data, $raw_output = false)
+    {
+        return hash('sha256', $data, $raw_output);
+    }
+    
+    /**
+     * sha256Encode
+     * @param type $data
+     * @param type $raw_output
+     * @return type
+     */
     public static function sha1Encode($data, $raw_output = false)
     {
         return sha1( $data, $raw_output );
