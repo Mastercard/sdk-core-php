@@ -12,6 +12,8 @@ use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Client;
+use MasterCard\Api\ResourceConfig;
+use MasterCard\Core\Model\Environment;
 use MasterCard\Core\Model\RequestMap;
 use MasterCard\Core\Model\BaseObject;
 use MasterCard\Core\Model\OperationConfig;
@@ -39,54 +41,15 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
     public function testApiConfig() {
 
         //test default      
-        $this->assertEquals("sandbox", ApiConfig::getSubDomain());
-        $this->assertEquals(null, ApiConfig::getEnvironment());
+        
+        $this->assertEquals(Environment::SANDBOX, ApiConfig::getEnvironment());
 
         ApiConfig::setSandbox(true);
-        $this->assertEquals("sandbox", ApiConfig::getSubDomain());
-        $this->assertEquals(null, ApiConfig::getEnvironment());
+        $this->assertEquals(Environment::SANDBOX, ApiConfig::getEnvironment());
 
         ApiConfig::setSandbox(false);
-        $this->assertEquals(null, ApiConfig::getSubDomain());
-        $this->assertEquals(null, ApiConfig::getEnvironment());
+        $this->assertEquals(Environment::PRODUCTION, ApiConfig::getEnvironment());
 
-        ApiConfig::setSubDomain("stage");
-        ApiConfig::setEnvironment("mtf");
-
-        $this->assertEquals("stage", ApiConfig::getSubDomain());
-        $this->assertEquals("mtf", ApiConfig::getEnvironment());
-
-        ApiConfig::setSubDomain("");
-        ApiConfig::setEnvironment("");
-
-        $this->assertEquals(null, ApiConfig::getSubDomain());
-        $this->assertEquals(null, ApiConfig::getEnvironment());
-        
-        //resetting the config
-        ApiConfig::setSubDomain("sandbox");
-        ApiConfig::setEnvironment("");
-    }
-    
-    public function testHost() {
-        
-        $apiController = new ApiController("0.0.1");
-        $this->assertEquals("https://sandbox.api.mastercard.com/", $apiController->generateHost());
-        
-        ApiConfig::setSubDomain("stage");
-        $apiController = new ApiController("0.0.1");
-        $this->assertEquals("https://stage.api.mastercard.com/", $apiController->generateHost());
-        
-        ApiConfig::setSubDomain("dev");
-        $apiController = new ApiController("0.0.1");
-        $this->assertEquals("https://dev.api.mastercard.com/", $apiController->generateHost());
-        
-        ApiConfig::setSubDomain("");
-        $apiController = new ApiController("0.0.1");
-        $this->assertEquals("https://api.mastercard.com/", $apiController->generateHost());
-        
-        //resetting the config
-        ApiConfig::setSubDomain("sandbox");
-        ApiConfig::setEnvironment("");
     }
     
     
@@ -94,31 +57,49 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $controller = new ApiController("0.0.1");
 
         $inputMap = array();
-        $operationMetadate = new OperationMetadata("0.0.1", null);
-        $operationConfig = new OperationConfig("/{:env}/fraud/v1/account-inquiry", "create", array(), array());
+        $config = ResourceConfig::getInstance();
+        ApiConfig::registerResourceConfig($config);
         
+
+        ApiConfig::setEnvironment(Environment::SANDBOX);
+        $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
+        $operationConfig = new OperationConfig("/{:env}/fraud/v1/account-inquiry", "create", array(), array());
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
         $this->assertEquals("https://sandbox.api.mastercard.com/fraud/v1/account-inquiry?Format=JSON", $url);
         
-        ApiConfig::setEnvironment("itf");
+        ApiConfig::setEnvironment(Environment::ITF);
+        $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
+        $operationConfig = new OperationConfig("/{:env}/fraud/v1/account-inquiry", "create", array(), array());
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
         $this->assertEquals("https://sandbox.api.mastercard.com/itf/fraud/v1/account-inquiry?Format=JSON", $url);
         
-        ApiConfig::setEnvironment("mtf");
+        ApiConfig::setEnvironment(Environment::MTF);
+        $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
+        $operationConfig = new OperationConfig("/{:env}/fraud/v1/account-inquiry", "create", array(), array());
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
         $this->assertEquals("https://sandbox.api.mastercard.com/mtf/fraud/v1/account-inquiry?Format=JSON", $url);
         
-        ApiConfig::setEnvironment("peat");
-        $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
-        $this->assertEquals("https://sandbox.api.mastercard.com/peat/fraud/v1/account-inquiry?Format=JSON", $url);
-        
         ApiConfig::setEnvironment(null);
+        $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
+        $operationConfig = new OperationConfig("/{:env}/fraud/v1/account-inquiry", "create", array(), array());
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
-        $this->assertEquals("https://sandbox.api.mastercard.com/fraud/v1/account-inquiry?Format=JSON", $url);
+        $this->assertEquals("https://sandbox.api.mastercard.com/mtf/fraud/v1/account-inquiry?Format=JSON", $url);
         
         ApiConfig::setEnvironment("");
+        $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
+        $operationConfig = new OperationConfig("/{:env}/fraud/v1/account-inquiry", "create", array(), array());
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
-        $this->assertEquals("https://sandbox.api.mastercard.com/fraud/v1/account-inquiry?Format=JSON", $url);
+        $this->assertEquals("https://sandbox.api.mastercard.com/mtf/fraud/v1/account-inquiry?Format=JSON", $url);
+        
+        
+        ApiConfig::setEnvironment(Environment::PRODUCTION);
+        $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
+        $operationConfig = new OperationConfig("/{:env}/fraud/v1/account-inquiry", "create", array(), array());
+        $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
+        $this->assertEquals("https://api.mastercard.com/fraud/v1/account-inquiry?Format=JSON", $url);
+        
+        ApiConfig::clearResourceConfig();
+        ApiConfig::setEnvironment(Environment::SANDBOX);
     }
 
 
@@ -247,9 +228,11 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         );
 
 
-
+        $config = ResourceConfig::getInstance();
+        $config->setEnvironment(Environment::SANDBOX);
+        $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
         $operationConfig = new OperationConfig("/fraud/{api}/v{version}/account-inquiry", "create", array(), array());
-        $operationMetadate = new OperationMetadata("0.0.1", null);
+        
 
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
 
@@ -268,8 +251,12 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             'five' => 5
         );
 
+        $config = ResourceConfig::getInstance();
+        $config->setEnvironment(Environment::SANDBOX);
+        $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
+
+        
         $operationConfig = new OperationConfig("/fraud/{api}/v{version}/account-inquiry", "create", array('six', 'seven', 'eight'), array());
-        $operationMetadate = new OperationMetadata("0.0.1", null);
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
 
         $this->assertEquals("https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry?Format=JSON", $url);
@@ -286,16 +273,21 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             'four' => 4,
             'five' => 5
         );
+        
+        $config = ResourceConfig::getInstance();
+        $config->setEnvironment(Environment::SANDBOX);
+        $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
+
+
 
         $operationConfig = new OperationConfig("/fraud/{api}/v{version}/account-inquiry", "create", array('one', 'two', 'three'), array());
-        $operationMetadate = new OperationMetadata("0.0.1", null);
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
 
         $this->assertEquals("https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry?three=3&Format=JSON", $url);
         $this->assertEquals(2, count($inputMap));
     }
-
-    public function testGetUrlWithHostOverride() {
+    
+        public function testGetUrlWithOverride() {
         $controller = new ApiController("0.0.1");
 
         $inputMap = array(
@@ -305,15 +297,20 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             'four' => 4,
             'five' => 5
         );
+        
+        $config = ResourceConfig::getInstance();
+        $config->setOverride();
+        $config->setEnvironment(Environment::SANDBOX);
+        $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
 
 
         $operationConfig = new OperationConfig("/fraud/{api}/v{version}/account-inquiry", "create", array('one', 'two', 'three'), array());
-        $operationMetadate = new OperationMetadata("0.0.1", "http://localhost:8081");
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
 
         $this->assertEquals("http://localhost:8081/fraud/lostandstolen/v1/account-inquiry?three=3&Format=JSON", $url);
         $this->assertEquals(2, count($inputMap));
     }
+
 
 }
 
@@ -324,7 +321,7 @@ class TestBaseObject extends BaseObject {
      * @return String
      */
     public static function getOperationMetadata() {
-        return new OperationMetadata("1.0.0", null);
+        return new OperationMetadata("1.0.0", "http://localhost:8081");
     }
 
     public static function getOperationConfig($operationUUID) {
