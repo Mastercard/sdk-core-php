@@ -28,39 +28,70 @@
 
  namespace MasterCard\Api;
 
- use MasterCard\Core\Model\BaseObject;
- use MasterCard\Core\Model\RequestMap;
-use MasterCard\Core\Model\OperationMetadata;
- use MasterCard\Core\Model\OperationConfig;
+ use MasterCard\Core\ApiConfig;
+ use MasterCard\Core\Model\Environment;
 
 
 /**
  * 
  */
-class Parameters extends BaseObject {
+class ResourceConfig  {
 
-    protected static function getOperationConfig($operationUUID) {
-        switch ($operationUUID) {
-            case "uuid":
-                return new OperationConfig("/sectorinsights/v1/sectins.svc/parameters", "query", array(), array());
-            default:
-                throw new \Exception("Invalid operationUUID supplied: $operationUUID");
+    private static $override = null;
+    private static $host = null;
+    private static $context = null;
+    private static $instance = null;
+
+
+
+
+    private function __construct() {
+//        $environment = ApiConfig::getEnvironment();
+//        $this->setEnvironment($environment);
+//        ApiConfig::addSDKConfig($this);
+    }
+    
+    
+    public static function getInstance()
+    {
+        if ( is_null( static::$instance ) )
+        {
+            static::$instance = new self();
+        }
+        return static::$instance;
+    }
+
+    public function getContext() {
+        return static::$context;
+    }
+
+    public function getHost() {
+        return  (static::$override!= null) ? static::$override : static::$host;
+    }
+
+    public function getVersion() {
+        return "0.0.1";
+    }
+    
+    
+    public function setEnvironment($environment) {
+        if (array_key_exists($environment, Environment::$MAPPING)) {
+            $configArray = Environment::$MAPPING[$environment];
+            static::$host = $configArray[0];
+            static::$context = $configArray[1];
+        } else {
+            throw new \RuntimeException("Environment: $environment not found for sdk: ".get_class());
         }
     }
     
-    protected static function getOperationMetadata() {
-        return new OperationMetadata("1.0.0", "https://sandbox.api.mastercard.com");
+    public function clearOverride() {
+        self::$override = null;
+    }
+    
+    public function setOverride() {
+        self::$override = "http://localhost:8081";
     }
 
-    /**
-     * Query objects of type Parameters by id and optional criteria
-     * @param type $criteria
-     * @return type
-     */
-    public static function query($criteria)
-    {
-        return parent::execute("uuid", new Parameters($criteria));
-    }
 
 
 }

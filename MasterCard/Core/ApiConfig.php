@@ -27,17 +27,17 @@
  */
 namespace MasterCard\Core;
 
+use MasterCard\Core\Model\Environment;
 use MasterCard\Core\Security\AuthenticationInterface;
+
 
 class ApiConfig {
 
-    private static $SANDBOX = true;
     private static $DEBUG = false;
     private static $AUTHENTICATION = null;
+    private static $registeredInstances = array();
+    private static $ENVIRONMENT = Environment::SANDBOX;
     
-    private static $API_BASE_LIVE_URL = "https://api.mastercard.com";
-    private static $API_BASE_SANDBOX_URL = "https://sandbox.api.mastercard.com";
-
     
     /**
      * Sets the debug.
@@ -63,46 +63,57 @@ class ApiConfig {
      */
     public static function setSandbox($sandbox)
     {
-        static::$SANDBOX = $sandbox;
-    }
-    
-    
-    /**
-     * Sets get debug.
-     */
-    public static function isSandbox()
-    {
-        return static::$SANDBOX == true;
-    }   
-    
-    /**
-     * Sets get debug.
-     */
-    public static function isProduction()
-    {
-        return static::$SANDBOX == false;
+        if ($sandbox == true) {
+            static::$ENVIRONMENT = Environment::SANDBOX;
+        } else {
+            static::$ENVIRONMENT = Environment::PRODUCTION;
+        }
+        static::setEnvironment(static::$ENVIRONMENT);
     }
 
 
     /**
-     * 
-     * @return string
+     * This method is used to set the SubDomain
+     * @param type $subDomain
      */
-    public static function getSandboxUrl() 
-    {
-        return self::$API_BASE_SANDBOX_URL;
+    public static function setEnvironment($environment) {
+        if (!empty($environment)) {
+            foreach (array_values(static::$registeredInstances) as $instance) {
+                $instance->setEnvironment($environment);
+            }
+            static::$ENVIRONMENT = $environment;
+        } 
+        
     }
     
     /**
-     * 
-     * @return string
+     * This method is used to return the set environment
+     * @return type
      */
-    public static function getLiveUrl() 
-    {
-        return self::$API_BASE_LIVE_URL;
+    public static function getEnvironment() {
+        return static::$ENVIRONMENT;
     }
+
+
+    /**
+     * This is used to add the SDKCOnfig to the APIConfig
+     * so when the configuration changes the underline SDKConfig
+     * are updated.
+     * 
+     * @param type $instance
+     */
+    public static function registerResourceConfig($instance) {
+        $className = get_class($instance);
+        if (!array_key_exists($className, static::$registeredInstances)){
+            static::$registeredInstances['$className'] = $instance;
+        }
+    }
+            
     
-    
+    public static function clearResourceConfig() {
+        static::$registeredInstances = array();
+    }
+
     /**
      * Sets the sandbox.
      * @param boolean sandbox

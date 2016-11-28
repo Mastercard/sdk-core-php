@@ -80,10 +80,10 @@ class OAuthAuthentication implements AuthenticationInterface
         $oAuthParameters->setOAuthConsumerKey($this->clientId);
         $oAuthParameters->setOAuthNonce(SecurityUtil::getNonce());
         $oAuthParameters->setOAuthTimestamp(SecurityUtil::getTimestamp());
-        $oAuthParameters->setOAuthSignatureMethod("RSA-SHA1");
+        $oAuthParameters->setOAuthSignatureMethod("RSA-SHA256");
 
         if (!empty($body)) {
-            $encodedHash = Util::base64Encode(Util::sha1Encode($body, true));
+            $encodedHash = Util::base64Encode(Util::sha256Encode($body, true));
             $oAuthParameters->setOAuthBodyHash($encodedHash);
         }
 
@@ -108,7 +108,7 @@ class OAuthAuthentication implements AuthenticationInterface
     {
         openssl_pkcs12_read($this->privateKey, $certs, $this->password);
         $pkeyid = openssl_get_privatekey($certs["pkey"]);
-        openssl_sign($value, $signature, $pkeyid , "sha1");
+        openssl_sign($value, $signature, $pkeyid , "SHA256");
         return Util::base64Encode($signature);
     }
 

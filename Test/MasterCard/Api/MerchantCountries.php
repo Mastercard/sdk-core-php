@@ -49,7 +49,7 @@ class MerchantCountries extends BaseObject {
     }
 
     protected static function getOperationMetadata() {
-        return new OperationMetadata("1.0.0", null);
+        return new OperationMetadata("1.0.0", "https://sandbox.api.mastercard.com");
     }
 
 

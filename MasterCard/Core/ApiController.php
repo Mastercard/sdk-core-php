@@ -53,37 +53,18 @@ class ApiController {
     const HTTP_NOT_ALLOWED = 405;
     const HTTP_BAD_REQUEST = 400;
 
-    protected $hostUrl = null;
     protected $client = null;
     protected $version = "NOT-SET";
-    
     protected $logger = null;
     
 
-    function __construct($version) {
+    function __construct() {
 
           
         $this->logger = new Logger('ApiController');
         
-        
-        
         $this->checkState();
-        
-        if ($version != null) {
-            $this->version = $version;
-        }
 
-        $fullUrl = ApiConfig::getLiveUrl();
-        if (ApiConfig::isSandbox()) {
-            $fullUrl = ApiConfig::getSandboxUrl();
-        }
-
-        if (filter_var($fullUrl, FILTER_VALIDATE_URL) == FALSE) {
-            throw new ApiException("fullUrl: '" . $fullUrl . "' is not a valid url");
-        }
-
-        $this->hostUrl = $fullUrl;
-        $this->hostUrl = Util::normalizeUrl($fullUrl);
         $this->client = new Client([
             'config' => [
                 'curl' => [
@@ -102,14 +83,6 @@ class ApiController {
             throw new ApiException("No ApiConfig::authentication has been configured");
         }
 
-        if (filter_var(ApiConfig::getLiveUrl(), FILTER_VALIDATE_URL) == FALSE) {
-            throw new ApiException("Invalid URL supplied for API_BASE_LIVE_URL");
-        }
-
-
-        if (filter_var(ApiConfig::getSandboxUrl(), FILTER_VALIDATE_URL) == FALSE) {
-            throw new ApiException("Invalid URL supplied for API_BASE_SANDBOX_URL");
-        }
     }
 
     private function removeForwardSlashFromTail($url) {
@@ -136,7 +109,11 @@ class ApiController {
     }
 
     /**
-     * @ignore
+     * This method generated the URL 
+     * @param type $operationConfig
+     * @param type $operationMetadata
+     * @param type $inputMap
+     * @return type
      */
     public function getUrl($operationConfig, $operationMetadata, &$inputMap) {
 
@@ -145,13 +122,22 @@ class ApiController {
         $action = $operationConfig->getAction();
         $resourcePath = $operationConfig->getResourcePath();
         $queryList = $operationConfig->getQueryParams();
-        $hostOverride = $operationMetadata->getHost();
+        $resolvedHostUrl = $operationMetadata->getHost();
+
+        //arizzini: we need to validate the host
+        $this->validateHost($resolvedHostUrl);
         
         $url = "%s";
         
-        $resolvedHostUrl = $this->hostUrl;
-        if (!is_null($hostOverride)) {
-            $resolvedHostUrl = $hostOverride;
+        //arizzini: we need to apply the environment variable.
+        if (strpos($resourcePath, "{:env}") !== FALSE) {
+            $environment = "";
+            if (!empty($operationMetadata->getContext())) {
+                 $environment = $operationMetadata->getContext();
+            } 
+            
+            $resourcePath = str_replace("{:env}", $environment, $resourcePath);
+            $resourcePath = str_replace("//", "/", $resourcePath);
         }
         
         $tmpUrl = Util::getReplacedPath($this->removeForwardSlashFromTail($resolvedHostUrl).$this->removeForwardSlashFromTail($resourcePath), $inputMap);
@@ -198,6 +184,26 @@ class ApiController {
         return $url;
     }
 
+    
+    
+    /**
+     * This function is used to valide the host
+     * ApiConfig subDomain
+     * @throws ApiException
+     */
+    public function validateHost($host) {
+                if (filter_var($host, FILTER_VALIDATE_URL) == FALSE) {
+            throw new \RuntimeException("fullUrl: '" . $host . "' is not a valid url");
+        }
+    }
+
+    /**
+     * This is the function that returns a Request object
+     * @param type $operationConfig
+     * @param type $operationMetadata
+     * @param type $inputMap
+     * @return type
+     */
     public function getRequest($operationConfig, $operationMetadata, &$inputMap) {
         
         $action = $operationConfig->getAction();
@@ -209,6 +215,14 @@ class ApiController {
         $headerMap = Util::subMap($inputMap, $headerList);
         
         $url = $this->getUrl($operationConfig, $operationMetadata, $inputMap);
+        
+                
+//        echo "-------------------------------------\n";
+//        echo "-------------------------------------\n";
+//        echo "url: $url \n";
+//        echo "-------------------------------------\n";
+//        echo "-------------------------------------\n";
+        
         
         $request = null;
 
@@ -232,7 +246,7 @@ class ApiController {
         
         $request = $request->withHeader("Accept", "application/json");
         $request = $request->withHeader("Content-Type", "application/json");
-        $request = $request->withHeader("User-Agent", "PHP-SDK/" . $this->version);
+        $request = $request->withHeader("User-Agent", "PHP-SDK/" . $operationMetadata->getApiVersion());
         foreach ($headerMap as $key => $value) {
             $request = $request->withHeader($key, $value);    
         }
@@ -241,6 +255,14 @@ class ApiController {
         return $request;
     }
 
+    /**
+     * This function executes the request
+     * @param type $operationConfig
+     * @param type $operationMetadata
+     * @param type $inputMap
+     * @return type
+     * @throws SystemException
+     */
     public function execute($operationConfig, $operationMetadata, $inputMap) {
         $request = $this->getRequest($operationConfig, $operationMetadata, $inputMap);
 
