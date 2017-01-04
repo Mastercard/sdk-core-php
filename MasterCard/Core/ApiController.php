@@ -130,13 +130,13 @@ class ApiController {
         $url = "%s";
         
         //arizzini: we need to apply the environment variable.
-        if (strpos($resourcePath, "{:env}") !== FALSE) {
+        if (strpos($resourcePath, "#env") !== FALSE) {
             $environment = "";
             if (!empty($operationMetadata->getContext())) {
                  $environment = $operationMetadata->getContext();
             } 
             
-            $resourcePath = str_replace("{:env}", $environment, $resourcePath);
+            $resourcePath = str_replace("#env", $environment, $resourcePath);
             $resourcePath = str_replace("//", "/", $resourcePath);
         }
         
