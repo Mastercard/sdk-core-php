@@ -35,23 +35,23 @@ class Environment {
     const SANDBOX = "sandbox"; 
     const STAGE = "stage";
     const DEV = "dev";
-    const MTF = "mtf";
-    const ITF = "itf";
+    const PRODUCTION_MTF = "production_mtf";
+    const PRODUCTION_ITF = "production_itf";
+    const STAGE_MTF = "stage_mtf";
+    const STAGE_ITF = "stage_itf";
     const LOCALHOST = "localhost";
-    const DEVCLOUD = "devcloud";
-    const LABSCLOUD = "labscloud";
-    const OTHER1 = "other1";
-    const OTHER2 = "other2";
-    const OTHER3 = "other3";
+    const OTHER = "other";
     
     public static $MAPPING = [
         Environment::PRODUCTION => ["https://api.mastercard.com", null],
         Environment::SANDBOX => ["https://sandbox.api.mastercard.com", null],
         Environment::STAGE => ["https://stage.api.mastercard.com", null],
         Environment::DEV => ["https://dev.api.mastercard.com", null],
-        Environment::MTF => ["https://sandbox.api.mastercard.com", "mtf"],
-        Environment::ITF => ["https://sandbox.api.mastercard.com", "itf"],
-        Environment::LOCALHOST => ["http://localhost:8081", null],
+        Environment::PRODUCTION_MTF => ["https://api.mastercard.com", "mtf"],
+        Environment::PRODUCTION_ITF => ["https://api.mastercard.com", "itf"],
+        Environment::STAGE_MTF => ["https://stage.api.mastercard.com", "mtf"],
+        Environment::STAGE_ITF => ["https://stage.api.mastercard.com", "itf"],
+        Environment::LOCALHOST => ["https://localhost:8081", null],
     ];
     
 }

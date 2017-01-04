@@ -63,38 +63,38 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
 
         ApiConfig::setEnvironment(Environment::SANDBOX);
         $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
-        $operationConfig = new OperationConfig("/{:env}/fraud/v1/account-inquiry", "create", array(), array());
+        $operationConfig = new OperationConfig("/#env/fraud/v1/account-inquiry", "create", array(), array());
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
         $this->assertEquals("https://sandbox.api.mastercard.com/fraud/v1/account-inquiry?Format=JSON", $url);
         
-        ApiConfig::setEnvironment(Environment::ITF);
+        ApiConfig::setEnvironment(Environment::PRODUCTION_ITF);
         $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
-        $operationConfig = new OperationConfig("/{:env}/fraud/v1/account-inquiry", "create", array(), array());
+        $operationConfig = new OperationConfig("/#env/fraud/v1/account-inquiry", "create", array(), array());
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
-        $this->assertEquals("https://sandbox.api.mastercard.com/itf/fraud/v1/account-inquiry?Format=JSON", $url);
+        $this->assertEquals("https://api.mastercard.com/itf/fraud/v1/account-inquiry?Format=JSON", $url);
         
-        ApiConfig::setEnvironment(Environment::MTF);
+        ApiConfig::setEnvironment(Environment::PRODUCTION_MTF);
         $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
-        $operationConfig = new OperationConfig("/{:env}/fraud/v1/account-inquiry", "create", array(), array());
+        $operationConfig = new OperationConfig("/#env/fraud/v1/account-inquiry", "create", array(), array());
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
-        $this->assertEquals("https://sandbox.api.mastercard.com/mtf/fraud/v1/account-inquiry?Format=JSON", $url);
+        $this->assertEquals("https://api.mastercard.com/mtf/fraud/v1/account-inquiry?Format=JSON", $url);
         
         ApiConfig::setEnvironment(null);
         $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
-        $operationConfig = new OperationConfig("/{:env}/fraud/v1/account-inquiry", "create", array(), array());
+        $operationConfig = new OperationConfig("/#env/fraud/v1/account-inquiry", "create", array(), array());
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
-        $this->assertEquals("https://sandbox.api.mastercard.com/mtf/fraud/v1/account-inquiry?Format=JSON", $url);
+        $this->assertEquals("https://api.mastercard.com/mtf/fraud/v1/account-inquiry?Format=JSON", $url);
         
         ApiConfig::setEnvironment("");
         $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
-        $operationConfig = new OperationConfig("/{:env}/fraud/v1/account-inquiry", "create", array(), array());
+        $operationConfig = new OperationConfig("/#env/fraud/v1/account-inquiry", "create", array(), array());
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
-        $this->assertEquals("https://sandbox.api.mastercard.com/mtf/fraud/v1/account-inquiry?Format=JSON", $url);
+        $this->assertEquals("https://api.mastercard.com/mtf/fraud/v1/account-inquiry?Format=JSON", $url);
         
         
         ApiConfig::setEnvironment(Environment::PRODUCTION);
         $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
-        $operationConfig = new OperationConfig("/{:env}/fraud/v1/account-inquiry", "create", array(), array());
+        $operationConfig = new OperationConfig("/#env/fraud/v1/account-inquiry", "create", array(), array());
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
         $this->assertEquals("https://api.mastercard.com/fraud/v1/account-inquiry?Format=JSON", $url);
         
