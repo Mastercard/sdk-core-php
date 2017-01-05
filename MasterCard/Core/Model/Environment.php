@@ -51,7 +51,7 @@ class Environment {
         Environment::PRODUCTION_ITF => ["https://api.mastercard.com", "itf"],
         Environment::STAGE_MTF => ["https://stage.api.mastercard.com", "mtf"],
         Environment::STAGE_ITF => ["https://stage.api.mastercard.com", "itf"],
-        Environment::LOCALHOST => ["https://localhost:8081", null],
+        Environment::LOCALHOST => ["http://localhost:8081", null],
     ];
     
 }
