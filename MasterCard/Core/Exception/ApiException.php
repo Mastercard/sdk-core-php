@@ -38,7 +38,7 @@ class ApiException extends \Exception
 
     protected $message;
     protected $rawErrorData;
-    protected $status;
+    protected $httpStatus;
     protected $errorCode;
     protected $reference;
     
@@ -57,7 +57,7 @@ class ApiException extends \Exception
             $this->message = $message;
         }
                 
-        $this->status = $status;
+        $this->httpStatus = $status;
         $this->rawErrorData = $errorData;
         $this->errorCode = null;
         $this->reference = null;
@@ -106,8 +106,8 @@ class ApiException extends \Exception
      * Returns the HTTP status for the request.
      * @return string HTTP status code (or null if there is no status).
      */
-    function getStatus() {
-        return $this->status;
+    function getHttpStatus() {
+        return $this->httpStatus;
     }
     
     /**
@@ -133,7 +133,7 @@ class ApiException extends \Exception
     function describe() {
         return get_class($this) . ": \"" 
             . $this->getMessage() . "\" (status: "
-            . $this->getStatus() . ", error code: "
+            . $this->getHttpStatus() . ", error code: "
             . $this->getErrorCode() . ", reference: "
             . $this->getReference() . ")";
     }
