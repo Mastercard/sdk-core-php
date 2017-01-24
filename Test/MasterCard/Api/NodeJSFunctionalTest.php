@@ -63,7 +63,7 @@ class NodeJSFunctionalTest extends \PHPUnit_Framework_TestCase{
     
     public function testActionReadFromPostWith500() {
         
-        $this->expectException(InvalidRequestException::class);
+        $this->expectException(\MasterCard\Core\Exception\ApiException::class);
         
         $readItem = Post::read("aaa");
         
