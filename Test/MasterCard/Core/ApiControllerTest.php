@@ -185,6 +185,30 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         }
         
     }
+    
+    
+        public function test405_not_allowed_case_insensitive() {
+        $this->expectException(Exception\ApiException::class);
+        
+
+        $body = "{\"errors\":{\"error\":{\"source\":\"System\",\"reasonCode\":\"METHOD_NOT_ALLOWED\",\"description\":\"Method not Allowed\",\"recoverable\":\"false\"}}}";
+        $requestMap = new RequestMap(json_decode($body, true));
+
+        $controller = new ApiController("0.0.1");
+        $controller->setClient(self::mockClient(405, $body));
+
+        $testObject = new TestBaseObject($requestMap);
+
+        try {
+            $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
+        } catch (Exception\ApiException $ex) {
+            $this->assertEquals("Method not Allowed", $ex->getMessage());
+            $this->assertEquals("System", $ex->getReference());
+            $this->assertEquals("METHOD_NOT_ALLOWED", $ex->getErrorCode());
+            throw $ex;
+        }
+        
+    }
 
     public function test400_invald_request() {
         $this->expectException(Exception\ApiException::class);
@@ -205,6 +229,27 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             throw $ex;
         }
     }
+    
+    public function test400_invald_request_case_insensitive() {
+        $this->expectException(Exception\ApiException::class);
+
+        $body = "{\"errors\":{\"error\":[{\"source\":\"Validation\",\"reasonCode\":\"INVALID_TYPE\",\"description\":\"The supplied field: 'date' is of an unsupported format\",\"recoverable\":false,\"details\":null}]}}\n";
+        $requestMap = new RequestMap(json_decode($body, true));
+
+        $controller = new ApiController("0.0.1");
+        $controller->setClient(self::mockClient(400, $body));
+
+        $testObject = new TestBaseObject($requestMap);
+        try {
+            $responseArray = $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
+        } catch (Exception\ApiException $ex) {
+            $this->assertEquals("The supplied field: 'date' is of an unsupported format", $ex->getMessage());
+            $this->assertEquals("Validation", $ex->getReference());
+            $this->assertEquals("INVALID_TYPE", $ex->getErrorCode());
+            throw $ex;
+        }
+    }
+    
 
     public function test401_unauthorised() {
         $this->expectException(Exception\ApiException::class);
