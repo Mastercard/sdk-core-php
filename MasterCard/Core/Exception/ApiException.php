@@ -58,7 +58,12 @@ class ApiException extends \Exception
         }
                 
         $this->httpStatus = $status;
-        $this->rawErrorData = $errorData;
+        if (!empty($errorData)) {
+            $smartMap = new \MasterCard\Core\Model\RequestMap();
+            $smartMap->setAll($errorData);
+            $this->rawErrorData = $smartMap;
+        }
+        
         $this->errorCode = null;
         $this->reference = null;
 
