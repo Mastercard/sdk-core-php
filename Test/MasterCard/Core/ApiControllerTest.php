@@ -179,8 +179,8 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
         } catch (Exception\ApiException $ex) {
             $this->assertEquals("Method not Allowed", $ex->getMessage());
-            $this->assertEquals("System", $ex->getReference());
-            $this->assertEquals("METHOD_NOT_ALLOWED", $ex->getErrorCode());
+            $this->assertEquals("System", $ex->getSource());
+            $this->assertEquals("METHOD_NOT_ALLOWED", $ex->getReasonCode());
             throw $ex;
         }
         
@@ -203,8 +203,8 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
         } catch (Exception\ApiException $ex) {
             $this->assertEquals("Method not Allowed", $ex->getMessage());
-            $this->assertEquals("System", $ex->getReference());
-            $this->assertEquals("METHOD_NOT_ALLOWED", $ex->getErrorCode());
+            $this->assertEquals("System", $ex->getSource());
+            $this->assertEquals("METHOD_NOT_ALLOWED", $ex->getReasonCode());
             throw $ex;
         }
         
@@ -224,8 +224,8 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             $responseArray = $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
         } catch (Exception\ApiException $ex) {
             $this->assertEquals("The supplied field: 'date' is of an unsupported format", $ex->getMessage());
-            $this->assertEquals("Validation", $ex->getReference());
-            $this->assertEquals("INVALID_TYPE", $ex->getErrorCode());
+            $this->assertEquals("Validation", $ex->getSource());
+            $this->assertEquals("INVALID_TYPE", $ex->getReasonCode());
             throw $ex;
         }
     }
@@ -244,8 +244,8 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             $responseArray = $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
         } catch (Exception\ApiException $ex) {
             $this->assertEquals("The supplied field: 'date' is of an unsupported format", $ex->getMessage());
-            $this->assertEquals("Validation", $ex->getReference());
-            $this->assertEquals("INVALID_TYPE", $ex->getErrorCode());
+            $this->assertEquals("Validation", $ex->getSource());
+            $this->assertEquals("INVALID_TYPE", $ex->getReasonCode());
             throw $ex;
         }
     }
@@ -266,8 +266,8 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             $responseArray = $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
         } catch (Exception\ApiException $ex) {
             $this->assertEquals("OAuth signature is not valid", $ex->getMessage());
-            $this->assertEquals("Authentication", $ex->getReference());
-            $this->assertEquals("FAILED", $ex->getErrorCode());
+            $this->assertEquals("Authentication", $ex->getSource());
+            $this->assertEquals("FAILED", $ex->getReasonCode());
             throw $ex;
         }
     }
@@ -287,8 +287,8 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             $responseArray = $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
         } catch (Exception\ApiException $ex) {
             $this->assertEquals("Something went wrong", $ex->getMessage());
-            $this->assertEquals("OAuth.ConsumerKey", $ex->getReference());
-            $this->assertEquals("INVALID_CLIENT_ID", $ex->getErrorCode());
+            $this->assertEquals("OAuth.ConsumerKey", $ex->getSource());
+            $this->assertEquals("INVALID_CLIENT_ID", $ex->getReasonCode());
             throw $ex;
         }
     }
