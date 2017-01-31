@@ -58,16 +58,14 @@ class ApiException extends \Exception
         }
                 
         $this->httpStatus = $status;
+        $this->reasonCode = null;
+        $this->source = null;
+
         if (!empty($errorData)) {
             $smartMap = new \MasterCard\Core\Model\RequestMap();
             $smartMap->setAll($errorData);
             $this->rawErrorData = $smartMap;
-        }
-        
-        $this->reasonCode = null;
-        $this->source = null;
-
-        if ($errorData != null) {
+            
             $errorDataCaseInsesitive = $this->parseMap($errorData);
             if (array_key_exists('errors', $errorDataCaseInsesitive) && array_key_exists('error', $errorDataCaseInsesitive['errors']))
             {
@@ -137,8 +135,8 @@ class ApiException extends \Exception
      */
     function describe() {
         return get_class($this) . ": \"" 
-            . $this->getMessage() . "\" (status: "
-            . $this->getHttpStatus() . ", reason code: "
+            . $this->getMessage() . "\" (htt_status: "
+            . $this->getHttpStatus() . ", reason_code: "
             . $this->getReasonCode() . ", source: "
             . $this->getSource() . ")";
     }
