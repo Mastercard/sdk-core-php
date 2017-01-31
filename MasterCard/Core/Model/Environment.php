@@ -33,6 +33,8 @@ namespace MasterCard\Core\Model;
 class Environment {
     const PRODUCTION = "production";
     const SANDBOX = "sandbox"; 
+    const SANDBOX_MTF = "sandbox_mtf"; 
+    const SANDBOX_ITF = "sandbox_itf"; 
     const STAGE = "stage";
     const DEV = "dev";
     const PRODUCTION_MTF = "production_mtf";
@@ -45,6 +47,8 @@ class Environment {
     public static $MAPPING = [
         Environment::PRODUCTION => ["https://api.mastercard.com", null],
         Environment::SANDBOX => ["https://sandbox.api.mastercard.com", null],
+        Environment::SANDBOX_MTF => ["https://sandbox.api.mastercard.com", "mtf"],
+        Environment::SANDBOX_ITF => ["https://sandbox.api.mastercard.com", "itf"],
         Environment::STAGE => ["https://stage.api.mastercard.com", null],
         Environment::DEV => ["https://dev.api.mastercard.com", null],
         Environment::PRODUCTION_MTF => ["https://api.mastercard.com", "mtf"],
