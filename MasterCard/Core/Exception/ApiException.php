@@ -135,7 +135,7 @@ class ApiException extends \Exception
      */
     function describe() {
         return get_class($this) . ": \"" 
-            . $this->getMessage() . "\" (htt_status: "
+            . $this->getMessage() . "\" (http_status: "
             . $this->getHttpStatus() . ", reason_code: "
             . $this->getReasonCode() . ", source: "
             . $this->getSource() . ")";
