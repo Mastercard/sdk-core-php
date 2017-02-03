@@ -35,7 +35,7 @@ class RequestMap {
 
     private $properties = array();
     private $parrentContainsSquaredBracket = '/\[(.*)\]/';
-    
+
     /**
      * This gets the value in the map associated with the key
      * @param type $key
