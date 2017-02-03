@@ -6,6 +6,8 @@
  * and open the template in the editor.
  */
 
+
+
 namespace MasterCard\Core;
 
 use GuzzleHttp\Psr7\Response;
@@ -24,6 +26,7 @@ use MasterCard\Core\Security\OAuth\OAuthAuthentication;
 class ApiControllerTest extends \PHPUnit_Framework_TestCase {
 
     protected function setUp() {
+        
         $privateKey = file_get_contents(getcwd() . "/mcapi_sandbox_key.p12");
         ApiConfig::setAuthentication(new OAuthAuthentication("L5BsiPgaF-O3qA36znUATgQXwJB6MRoMSdhjd7wt50c97279!50596e52466e3966546d434b7354584c4975693238513d3d", $privateKey, "test", "password"));
     }
@@ -161,7 +164,8 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function test405_not_allowed() {
-        $this->expectException(Exception\NotAllowedException::class);
+        $this->expectException(Exception\ApiException::class);
+        
 
         $body = "{\"Errors\":{\"Error\":{\"Source\":\"System\",\"ReasonCode\":\"METHOD_NOT_ALLOWED\",\"Description\":\"Method not Allowed\",\"Recoverable\":\"false\"}}}";
         $requestMap = new RequestMap(json_decode($body, true));
@@ -171,11 +175,43 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
 
         $testObject = new TestBaseObject($requestMap);
 
-        $responseArray = $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
+        try {
+            $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
+        } catch (Exception\ApiException $ex) {
+            $this->assertEquals("Method not Allowed", $ex->getMessage());
+            $this->assertEquals("System", $ex->getSource());
+            $this->assertEquals("METHOD_NOT_ALLOWED", $ex->getReasonCode());
+            throw $ex;
+        }
+        
+    }
+    
+    
+        public function test405_not_allowed_case_insensitive() {
+        $this->expectException(Exception\ApiException::class);
+        
+
+        $body = "{\"errors\":{\"error\":{\"source\":\"System\",\"reasonCode\":\"METHOD_NOT_ALLOWED\",\"description\":\"Method not Allowed\",\"recoverable\":\"false\"}}}";
+        $requestMap = new RequestMap(json_decode($body, true));
+
+        $controller = new ApiController("0.0.1");
+        $controller->setClient(self::mockClient(405, $body));
+
+        $testObject = new TestBaseObject($requestMap);
+
+        try {
+            $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
+        } catch (Exception\ApiException $ex) {
+            $this->assertEquals("Method not Allowed", $ex->getMessage());
+            $this->assertEquals("System", $ex->getSource());
+            $this->assertEquals("METHOD_NOT_ALLOWED", $ex->getReasonCode());
+            throw $ex;
+        }
+        
     }
 
     public function test400_invald_request() {
-        $this->expectException(Exception\InvalidRequestException::class);
+        $this->expectException(Exception\ApiException::class);
 
         $body = "{\"Errors\":{\"Error\":[{\"Source\":\"Validation\",\"ReasonCode\":\"INVALID_TYPE\",\"Description\":\"The supplied field: 'date' is of an unsupported format\",\"Recoverable\":false,\"Details\":null}]}}\n";
         $requestMap = new RequestMap(json_decode($body, true));
@@ -184,12 +220,39 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $controller->setClient(self::mockClient(400, $body));
 
         $testObject = new TestBaseObject($requestMap);
-
-        $responseArray = $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
+        try {
+            $responseArray = $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
+        } catch (Exception\ApiException $ex) {
+            $this->assertEquals("The supplied field: 'date' is of an unsupported format", $ex->getMessage());
+            $this->assertEquals("Validation", $ex->getSource());
+            $this->assertEquals("INVALID_TYPE", $ex->getReasonCode());
+            throw $ex;
+        }
     }
+    
+    public function test400_invald_request_case_insensitive() {
+        $this->expectException(Exception\ApiException::class);
+
+        $body = "{\"errors\":{\"error\":[{\"source\":\"Validation\",\"reasonCode\":\"INVALID_TYPE\",\"description\":\"The supplied field: 'date' is of an unsupported format\",\"recoverable\":false,\"details\":null}]}}\n";
+        $requestMap = new RequestMap(json_decode($body, true));
+
+        $controller = new ApiController("0.0.1");
+        $controller->setClient(self::mockClient(400, $body));
+
+        $testObject = new TestBaseObject($requestMap);
+        try {
+            $responseArray = $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
+        } catch (Exception\ApiException $ex) {
+            $this->assertEquals("The supplied field: 'date' is of an unsupported format", $ex->getMessage());
+            $this->assertEquals("Validation", $ex->getSource());
+            $this->assertEquals("INVALID_TYPE", $ex->getReasonCode());
+            throw $ex;
+        }
+    }
+    
 
     public function test401_unauthorised() {
-        $this->expectException(Exception\AuthenticationException::class);
+        $this->expectException(Exception\ApiException::class);
 
         $body = "{\"Errors\":{\"Error\":{\"Source\":\"Authentication\",\"ReasonCode\":\"FAILED\",\"Description\":\"OAuth signature is not valid\",\"Recoverable\":\"false\"}}}";
         $requestMap = new RequestMap(json_decode($body, true));
@@ -199,11 +262,18 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
 
         $testObject = new TestBaseObject($requestMap);
 
-        $responseArray = $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
+        try {
+            $responseArray = $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
+        } catch (Exception\ApiException $ex) {
+            $this->assertEquals("OAuth signature is not valid", $ex->getMessage());
+            $this->assertEquals("Authentication", $ex->getSource());
+            $this->assertEquals("FAILED", $ex->getReasonCode());
+            throw $ex;
+        }
     }
 
     public function test500_invalidrequest() {
-        $this->expectException(Exception\SystemException::class);
+        $this->expectException(Exception\ApiException::class);
 
         $body = "{\"Errors\":{\"Error\":[{\"Source\":\"OAuth.ConsumerKey\",\"ReasonCode\":\"INVALID_CLIENT_ID\",\"Description\":\"Something went wrong\",\"Recoverable\":false,\"Details\":null}]}}";
         $requestMap = new RequestMap(json_decode($body, true));
@@ -213,7 +283,14 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
 
         $testObject = new TestBaseObject($requestMap);
 
-        $responseArray = $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
+        try {
+            $responseArray = $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
+        } catch (Exception\ApiException $ex) {
+            $this->assertEquals("Something went wrong", $ex->getMessage());
+            $this->assertEquals("OAuth.ConsumerKey", $ex->getSource());
+            $this->assertEquals("INVALID_CLIENT_ID", $ex->getReasonCode());
+            throw $ex;
+        }
     }
 
     public function testGetUrlWithEmptyQueue() {

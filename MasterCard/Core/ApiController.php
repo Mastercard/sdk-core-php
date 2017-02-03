@@ -57,6 +57,8 @@ class ApiController {
     protected $version = "NOT-SET";
     protected $logger = null;
     
+    
+    
 
     function __construct() {
 
@@ -266,27 +268,25 @@ class ApiController {
     public function execute($operationConfig, $operationMetadata, $inputMap) {
         $request = $this->getRequest($operationConfig, $operationMetadata, $inputMap);
 
-        if (ApiConfig::isDebug()) {
-            $this->logger->debug("---------------------");
-            $this->logger->debug(">>request(".$request->getMethod().") ". $request->getUri()->__toString() );    
-            $this->logger->debug(">>headers: ", $request->getHeaders());
-            $this->logger->debug(">>body: ". $request->getBody());
-        }
-
         try {
             $response = $this->client->send($request);
             $statusCode = $response->getStatusCode();
             $responseContent = $response->getBody()->getContents();
-
-            
-            if (ApiConfig::isDebug()) {
-                $this->logger->debug("<<statusCode: ". $statusCode);
-                $this->logger->debug("<<headers: ", $response->getHeaders());
-                $this->logger->debug("<<body: ". $responseContent);
-                $this->logger->debug("---------------------");
-            }
             
             if ($statusCode < self::HTTP_AMBIGUOUS) {
+                
+                if (ApiConfig::isDebug()) {
+                    $this->logger->debug("---------------------");
+                    $this->logger->debug(">>request(".$request->getMethod().") ". $request->getUri()->__toString() );    
+                    $this->logger->debug(">>headers: ", $request->getHeaders());
+                    $this->logger->debug(">>body: ". $request->getBody());
+                    
+                    $this->logger->debug("<<statusCode: ". $statusCode);
+                    $this->logger->debug("<<headers: ", $response->getHeaders());
+                    $this->logger->debug("<<body: ". $responseContent);
+                    $this->logger->debug("---------------------");
+                }
+                
                 if (strlen($responseContent) > 0) {
                     return json_decode($responseContent, true);
                 } else {
@@ -299,7 +299,7 @@ class ApiController {
             if ($ex->hasResponse()) {
                 $this->handleException($ex->getResponse(), $request);
             } else {
-                throw new SystemException("An unexpected error has been raised: ".$ex->getMessage());
+                throw new ApiException($ex->getMessage());
             }
         }
     }
@@ -310,42 +310,18 @@ class ApiController {
         $bodyArray = json_decode($bodyContent, TRUE);
 
         //arizzini: in the case of an exception we always show the error.
-        if (!ApiConfig::isDebug()) {
-            $this->logger->debug("---------------------");
-            $this->logger->debug(">>request(".$request->getMethod().") ". $request->getUri()->__toString() );    
-            $this->logger->debug(">>headers: ", $request->getHeaders());
-            $this->logger->debug(">>body: ". $request->getBody());
-        }
+        $this->logger->debug("---------------------");
+        $this->logger->debug(">>request(".$request->getMethod().") ". $request->getUri()->__toString() );    
+        $this->logger->debug(">>headers: ", $request->getHeaders());
+        $this->logger->debug(">>body: ". $request->getBody());
         
         $this->logger->debug("<<statusCode: ". $response->getStatusCode());
         $this->logger->debug("<<headers: ", $response->getHeaders());
         $this->logger->debug("<<body: ". $bodyContent);
         $this->logger->debug("---------------------");
 
-        if ($status < 500) {
-            switch ($status) {
-                case self::HTTP_BAD_REQUEST:
-                    throw new InvalidRequestException("Bad request", $status, $bodyArray);
-                    break;
-                case self::HTTP_REDIRECTED:
-                    throw new InvalidRequestException("Unexpected response code returned from the API, redirect is happening.", $status, $bodyArray);
-                    break;
-                case self::HTTP_UNAUTHORIZED:
-                    throw new AuthenticationException("You are not authorized to make this request. Invalid request signing.", $status, $bodyArray);
-                    break;
-                case self::HTTP_NOT_FOUND:
-                    throw new ObjectNotFoundException("Object not found", $status, $bodyArray);
-                    break;
-                case self::HTTP_NOT_ALLOWED:
-                    throw new NotAllowedException("Operation not allowed", $status, $bodyArray);
-                    break;
-                default:
-                    throw new InvalidRequestException("Bad request", $status, $bodyArray);
-                    break;
-            }
-        } else {
-            throw new SystemException("Internal Server Error:", $status, $bodyArray);
-        }
+        throw new ApiException("Internal Server Error:", $status, $bodyArray);
+
     }
 
 }
