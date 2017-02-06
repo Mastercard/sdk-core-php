@@ -292,6 +292,29 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             throw $ex;
         }
     }
+    
+    
+    public function test500_invalidrequest_json_native() {
+        $this->expectException(Exception\ApiException::class);
+    
+    //
+        $body = "{\"errors\":[{\"source\":\"OpenAPIClientId\",\"reasonCode\":\"AUTHORIZATION_FAILED\",\"key\":\"050007\",\"description\":\"Unauthorized Access\",\"recoverable\":false,\"requestId\":null,\"details\":{\"details\":[{\"name\":\"ErrorDetailCode\",\"value\":\"050007\"}]}}]}";
+        $requestMap = new RequestMap(json_decode($body, true));
+
+        $controller = new ApiController("0.0.1");
+        $controller->setClient(self::mockClient(500, $body));
+
+        $testObject = new TestBaseObject($requestMap);
+
+        try {
+            $responseArray = $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
+        } catch (Exception\ApiException $ex) {
+            $this->assertEquals("Unauthorized Access", $ex->getMessage());
+            $this->assertEquals("OpenAPIClientId", $ex->getSource());
+            $this->assertEquals("AUTHORIZATION_FAILED", $ex->getReasonCode());
+            throw $ex;
+        }
+    }
 
     public function testGetUrlWithEmptyQueue() {
         $controller = new ApiController("0.0.1");
