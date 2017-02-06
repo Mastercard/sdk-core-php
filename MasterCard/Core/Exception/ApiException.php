@@ -70,9 +70,9 @@ class ApiException extends \Exception
             if (array_key_exists('errors', $errorDataCaseInsesitive))
             {
                 $error = $errorDataCaseInsesitive['errors'];
-                if (array_key_exists('error', $errorDataCaseInsesitive['errors'])) 
+                if (array_key_exists('error', $error)) 
                 {
-                    $error = $errorDataCaseInsesitive['errors']['error'];
+                    $error = $error['error'];
                 }                 
                 
                 if (!$this->isAssoc($error))
