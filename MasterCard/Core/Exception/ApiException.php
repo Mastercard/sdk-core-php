@@ -67,26 +67,33 @@ class ApiException extends \Exception
             $this->rawErrorData = $smartMap;
             
             $errorDataCaseInsesitive = $this->parseMap($errorData);
-            if (array_key_exists('errors', $errorDataCaseInsesitive) && array_key_exists('error', $errorDataCaseInsesitive['errors']))
+            if (array_key_exists('errors', $errorDataCaseInsesitive))
             {
-                $error = $errorDataCaseInsesitive['errors']['error'];
+                $error = $errorDataCaseInsesitive['errors'];
+                if (array_key_exists('error', $errorDataCaseInsesitive['errors'])) 
+                {
+                    $error = $errorDataCaseInsesitive['errors']['error'];
+                }                 
+                
                 if (!$this->isAssoc($error))
                 {
                     //arizzini: this is a fix when multiple errors are returned.
                     $error = $error[0];
                 }
-                                
-                if (array_key_exists('description', $error))
-                {
-                    $this->message = $error['description'];
-                }
-                if (array_key_exists('reasoncode', $error))
-                {
-                    $this->reasonCode = $error['reasoncode'];
-                }
-                if (array_key_exists('source', $error))
-                {
-                    $this->source = $error['source'];
+                      
+                if (!empty($error)){
+                    if (array_key_exists('description', $error))
+                    {
+                        $this->message = $error['description'];
+                    }
+                    if (array_key_exists('reasoncode', $error))
+                    {
+                        $this->reasonCode = $error['reasoncode'];
+                    }
+                    if (array_key_exists('source', $error))
+                    {
+                        $this->source = $error['source'];
+                    }
                 }
             }
         }
