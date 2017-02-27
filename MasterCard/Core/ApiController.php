@@ -227,16 +227,24 @@ class ApiController {
         
         
         $request = null;
+        $requestBody = null;
+        if (!empty($inputMap)) {
+            $requestBody = json_encode($inputMap);
+        } else {
+            $requestBody = "{}";
+        }
 
         switch ($action) {
             case "create":
-                $request = new Request("POST", $url, [], json_encode($inputMap));
+                $request = new Request("POST", $url, [], $requestBody);
+                $request = $request->withHeader("Content-Type", "application/json");
                 break;
             case "delete":
                 $request = new Request("DELETE", $url);
                 break;
             case "update":
-                $request = new Request("PUT", $url, [], json_encode($inputMap));
+                $request = new Request("PUT", $url, [], $requestBody);
+                $request = $request->withHeader("Content-Type", "application/json");
                 break;
             case "read":
             case "list":
@@ -244,10 +252,8 @@ class ApiController {
                 $request = new Request("GET", $url);
                 break;
         }
-
         
         $request = $request->withHeader("Accept", "application/json");
-        $request = $request->withHeader("Content-Type", "application/json");
         $request = $request->withHeader("User-Agent", "PHP-SDK/" . $operationMetadata->getApiVersion());
         foreach ($headerMap as $key => $value) {
             $request = $request->withHeader($key, $value);    
