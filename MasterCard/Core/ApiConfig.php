@@ -64,11 +64,10 @@ class ApiConfig {
     public static function setSandbox($sandbox)
     {
         if ($sandbox == true) {
-            static::$ENVIRONMENT = Environment::SANDBOX;
+            static::setEnvironment(Environment::SANDBOX);
         } else {
-            static::$ENVIRONMENT = Environment::PRODUCTION;
+            static::setEnvironment(Environment::PRODUCTION);
         }
-        static::setEnvironment(static::$ENVIRONMENT);
     }
 
 
