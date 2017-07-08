@@ -28,6 +28,8 @@
 
 namespace MasterCard\Core\Exception;
 
+use MasterCard\Core\Model\CaseInsensitiveMap;
+
 /**
  *
  * Base class for all API exceptions.
@@ -41,6 +43,7 @@ class ApiException extends \Exception
     protected $httpStatus;
     protected $reasonCode;
     protected $source;
+    protected $errors;
     
     private $http_status_codes = array(100 => "Continue", 101 => "Switching Protocols", 102 => "Processing", 200 => "OK", 201 => "Created", 202 => "Accepted", 203 => "Non-Authoritative Information", 204 => "No Content", 205 => "Reset Content", 206 => "Partial Content", 207 => "Multi-Status", 300 => "Multiple Choices", 301 => "Moved Permanently", 302 => "Found", 303 => "See Other", 304 => "Not Modified", 305 => "Use Proxy", 306 => "(Unused)", 307 => "Temporary Redirect", 308 => "Permanent Redirect", 400 => "Bad Request", 401 => "Unauthorized", 402 => "Payment Required", 403 => "Forbidden", 404 => "Not Found", 405 => "Method Not Allowed", 406 => "Not Acceptable", 407 => "Proxy Authentication Required", 408 => "Request Timeout", 409 => "Conflict", 410 => "Gone", 411 => "Length Required", 412 => "Precondition Failed", 413 => "Request Entity Too Large", 414 => "Request-URI Too Long", 415 => "Unsupported Media Type", 416 => "Requested Range Not Satisfiable", 417 => "Expectation Failed", 418 => "I'm a teapot", 419 => "Authentication Timeout", 420 => "Enhance Your Calm", 422 => "Unprocessable Entity", 423 => "Locked", 424 => "Failed Dependency", 424 => "Method Failure", 425 => "Unordered Collection", 426 => "Upgrade Required", 428 => "Precondition Required", 429 => "Too Many Requests", 431 => "Request Header Fields Too Large", 444 => "No Response", 449 => "Retry With", 450 => "Blocked by Windows Parental Controls", 451 => "Unavailable For Legal Reasons", 494 => "Request Header Too Large", 495 => "Cert Error", 496 => "No Cert", 497 => "HTTP to HTTPS", 499 => "Client Closed Request", 500 => "Internal Server Error", 501 => "Not Implemented", 502 => "Bad Gateway", 503 => "Service Unavailable", 504 => "Gateway Timeout", 505 => "HTTP Version Not Supported", 506 => "Variant Also Negotiates", 507 => "Insufficient Storage", 508 => "Loop Detected", 509 => "Bandwidth Limit Exceeded", 510 => "Not Extended", 511 => "Network Authentication Required", 598 => "Network read timeout error", 599 => "Network connect timeout error");
 
@@ -59,49 +62,26 @@ class ApiException extends \Exception
                 
         $this->httpStatus = $status;
         $this->reasonCode = null;
-        $this->source = null;
+        $this->source = null; 
+        $this->errors = array();
+        
+        $this->parseErrors($errorData);
+        $this->parseError(0);
 
-        if (!empty($errorData)) {
-            $smartMap = new \MasterCard\Core\Model\RequestMap();
-            $smartMap->setAll($errorData);
-            $this->rawErrorData = $smartMap;
-            
-            $errorDataCaseInsesitive = $this->parseMap($errorData);
-            if (array_key_exists('errors', $errorDataCaseInsesitive))
-            {
-                $error = $errorDataCaseInsesitive['errors'];
-                if (array_key_exists('error', $error)) 
-                {
-                    $error = $error['error'];
-                }                 
-                
-                if (!$this->isAssoc($error))
-                {
-                    //arizzini: this is a fix when multiple errors are returned.
-                    $error = $error[0];
-                }
-                      
-                if (!empty($error)){
-                    if (array_key_exists('description', $error))
-                    {
-                        $this->message = $error['description'];
-                    }
-                    if (array_key_exists('reasoncode', $error))
-                    {
-                        $this->reasonCode = $error['reasoncode'];
-                    }
-                    if (array_key_exists('source', $error))
-                    {
-                        $this->source = $error['source'];
-                    }
-                }
-            }
-        }
+        
     }
     
-    protected function isAssoc($arr)
-    {
-        return is_array($arr) && (array_keys($arr) !== range(0, count($arr) - 1));
+
+    
+
+    public function getErrorSize() {
+        return count($this->errors);
+    }
+    
+    public function parseError($index) {
+        if (!empty($this->errors) && $index >=0 && $index < $this->getErrorSize()) {
+            $this->parseErrorMap($this->errors[$index]);
+        }
     }
     
     /**
@@ -148,36 +128,82 @@ class ApiException extends \Exception
             . $this->getSource() . ")";
     }
     
-    private function parseMap($map) {
-        $result = array();
-        foreach ($map as $key => $value) {
-            if ($this->isAssoc($value)) {
-                //this is a map
-                $result[strtolower($key)] = $this->parseMap($value);
-            } else if (is_array ($value)){
-                //this is a list
-                $result[strtolower($key)] = $this->parseList($value);
-            } else {
-                /// this is a simple value
-                $result[strtolower($key)] = $value;
-            }
-        }
-        return $result;
+    private function isAssoc($arr)
+    {
+        return is_array($arr) && (array_keys($arr) !== range(0, count($arr) - 1));
     }
     
-    private function parseList($list) {
-        $result = array();
-        foreach ($list as $key => $value) {
-            if ($this->isAssoc($value)) {
-                $result[] = $this->parseMap($value);
-            } else if (is_array ($value)) {
-                $result[] = $this->parseList($value);
+    private function parseErrors($errorData) {
+        if (!empty($errorData)) {
+            
+            
+            $errors = array();
+            if ($this->isAssoc($errorData)) {
+                $errors[] = $errorData;
+            } else if (is_array ($errorData)){
+                $errors = array_merge($errors, $errorData);
             } else {
-                $result[] = $value;
+                $errors[] = $errorData;
+            }
+            
+            
+            foreach ($errors as $error) {
+                $smartMap = new CaseInsensitiveMap();
+                $smartMap->setAll($error);
+                
+                if ($smartMap->containsKey("errors.error.reasoncode")) {
+//                    echo "contains errors.error.reasoncode";
+                    $this->addError($smartMap->get("errors.error"));
+                } else if ($smartMap->containsKey("errors.error[0].reasoncode")) {
+//                    echo "contains errors.error[0].reasoncode";
+                    $this->addError($smartMap->get("errors.error"));
+                } else if ($smartMap->containsKey("errors[0].reasoncode")) {
+//                    echo "errors[0].reasoncode";
+                    $this->addError($smartMap->get("errors"));
+                } else if ($smartMap->containsKey("reasoncode")) {
+//                    echo "contains reasoncode";
+                    $this->addError($smartMap->getBaseMapAsArray());
+                } else {
+                    $this->rawErrorData = $smartMap;
+                }
             }
         }
-        return $result;
     }
+    
+    
+    private function addError($error) {
+        
+        if ($this->isAssoc($error)) {
+            $map = new CaseInsensitiveMap();
+            $map->setAll($error);
+            $this->errors[] = $map;
+        } else if (is_array($error)) {
+            foreach ($error as $item) {
+                $map = new CaseInsensitiveMap();
+                $map->setAll($item);
+                $this->errors[] = $map;
+            }
+        }  
+    }
+    
+    private function parseErrorMap($smartMap) {
+        $this->rawErrorData = $smartMap;
+        if ($smartMap->containsKey('description'))
+        {
+            $this->message = $smartMap->get('description');
+        }
+        if ($smartMap->containsKey('reasoncode'))
+        {
+            $this->reasonCode = $smartMap->get('reasoncode');
+        }
+        if ($smartMap->containsKey('source'))
+        {
+            $this->source = $smartMap->get('source');
+        }
+    }
+    
+    
+    
 
 
 }

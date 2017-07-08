@@ -70,6 +70,13 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
         $this->assertEquals("https://sandbox.api.mastercard.com/fraud/v1/account-inquiry?Format=JSON", $url);
         
+        //arizzini: testing isJsonNative = true
+        ApiConfig::setEnvironment(Environment::SANDBOX);
+        $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext(), true);
+        $operationConfig = new OperationConfig("/#env/fraud/v1/account-inquiry", "create", array(), array());
+        $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
+        $this->assertEquals("https://sandbox.api.mastercard.com/fraud/v1/account-inquiry", $url);
+        
         ApiConfig::setEnvironment(Environment::PRODUCTION_ITF);
         $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
         $operationConfig = new OperationConfig("/#env/fraud/v1/account-inquiry", "create", array(), array());
@@ -293,6 +300,28 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         }
     }
     
+    public function test500_invalidrequest_array() {
+        $this->expectException(Exception\ApiException::class);
+
+        $body = "{\"Errors\":[{\"Source\":\"OAuth.ConsumerKey\",\"ReasonCode\":\"INVALID_CLIENT_ID\",\"Description\":\"Something went wrong\",\"Recoverable\":false,\"Details\":null}]}";
+        $requestMap = new RequestMap(json_decode($body, true));
+
+        $controller = new ApiController("0.0.1");
+        $controller->setClient(self::mockClient(500, $body));
+
+        $testObject = new TestBaseObject($requestMap);
+
+        try {
+            $responseArray = $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
+        } catch (Exception\ApiException $ex) {
+            $this->assertEquals("Something went wrong", $ex->getMessage());
+            $this->assertEquals("OAuth.ConsumerKey", $ex->getSource());
+            $this->assertEquals("INVALID_CLIENT_ID", $ex->getReasonCode());
+            throw $ex;
+        }
+    }
+    
+    
     
     public function test500_invalidrequest_json_native() {
         $this->expectException(Exception\ApiException::class);
@@ -312,6 +341,71 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             $this->assertEquals("Unauthorized Access", $ex->getMessage());
             $this->assertEquals("OpenAPIClientId", $ex->getSource());
             $this->assertEquals("AUTHORIZATION_FAILED", $ex->getReasonCode());
+            throw $ex;
+        }
+    }
+    
+    
+    public function test500_invalidrequest_json_native2() {
+        $this->expectException(Exception\ApiException::class);
+    
+    //
+        $body = "{\"errors\":[{\"source\":\"OpenAPIClientId\",\"reasonCode\":\"AUTHORIZATION_FAILED\",\"key\":\"050007\",\"description\":\"Unauthorized Access\"},{\"source\":\"OpenAPIClientId\",\"reasonCode\":\"AUTHORIZATION_FAILED\",\"key\":\"050008\",\"description\":\"Unauthorized Access\"}]}";
+        $requestMap = new RequestMap(json_decode($body, true));
+
+        $controller = new ApiController("0.0.1");
+        $controller->setClient(self::mockClient(500, $body));
+
+        $testObject = new TestBaseObject($requestMap);
+
+        try {
+            $responseArray = $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
+        } catch (Exception\ApiException $ex) {
+            $this->assertEquals("Unauthorized Access", $ex->getMessage());
+            $this->assertEquals("OpenAPIClientId", $ex->getSource());
+            $this->assertEquals("AUTHORIZATION_FAILED", $ex->getReasonCode());
+            $this->assertEquals("050007", $ex->getRawErrorData()->get("key"));
+            
+            $this->assertEquals(2, $ex->getErrorSize());
+            $ex->parseError(1);
+            
+            $this->assertEquals("Unauthorized Access", $ex->getMessage());
+            $this->assertEquals("OpenAPIClientId", $ex->getSource());
+            $this->assertEquals("AUTHORIZATION_FAILED", $ex->getReasonCode());
+            $this->assertEquals("050008", $ex->getRawErrorData()->get("key"));
+                    
+            throw $ex;
+        }
+    }
+    
+    public function test500_invalidrequest_json_native3() {
+        $this->expectException(Exception\ApiException::class);
+    
+    //
+        $body = "[{\"source\":\"OpenAPIClientId\",\"reasonCode\":\"AUTHORIZATION_FAILED\",\"key\":\"050007\",\"description\":\"Unauthorized Access\"},{\"source\":\"OpenAPIClientId\",\"reasonCode\":\"AUTHORIZATION_FAILED\",\"key\":\"050008\",\"description\":\"Unauthorized Access\"}]";
+        $requestMap = new RequestMap(json_decode($body, true));
+
+        $controller = new ApiController("0.0.1");
+        $controller->setClient(self::mockClient(500, $body));
+
+        $testObject = new TestBaseObject($requestMap);
+
+        try {
+            $responseArray = $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
+        } catch (Exception\ApiException $ex) {
+            $this->assertEquals("Unauthorized Access", $ex->getMessage());
+            $this->assertEquals("OpenAPIClientId", $ex->getSource());
+            $this->assertEquals("AUTHORIZATION_FAILED", $ex->getReasonCode());
+            $this->assertEquals("050007", $ex->getRawErrorData()->get("key"));
+            
+            $this->assertEquals(2, $ex->getErrorSize());
+            $ex->parseError(1);
+            
+            $this->assertEquals("Unauthorized Access", $ex->getMessage());
+            $this->assertEquals("OpenAPIClientId", $ex->getSource());
+            $this->assertEquals("AUTHORIZATION_FAILED", $ex->getReasonCode());
+            $this->assertEquals("050008", $ex->getRawErrorData()->get("key"));
+                    
             throw $ex;
         }
     }

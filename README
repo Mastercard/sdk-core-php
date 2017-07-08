@@ -18,3 +18,6 @@ chmod +x run-tests
 ./composer install
 ./run-test
 ```
+
+## Run a single test
+./composer exec -- phpunit --filter test500_invalidrequest_json_native
