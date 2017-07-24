@@ -70,6 +70,13 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
         $this->assertEquals("https://sandbox.api.mastercard.com/fraud/v1/account-inquiry?Format=JSON", $url);
         
+        //arizzini: testing isJsonNative = true
+        ApiConfig::setEnvironment(Environment::SANDBOX);
+        $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext(), true);
+        $operationConfig = new OperationConfig("/#env/fraud/v1/account-inquiry", "create", array(), array());
+        $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
+        $this->assertEquals("https://sandbox.api.mastercard.com/fraud/v1/account-inquiry", $url);
+        
         ApiConfig::setEnvironment(Environment::PRODUCTION_ITF);
         $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
         $operationConfig = new OperationConfig("/#env/fraud/v1/account-inquiry", "create", array(), array());
@@ -315,7 +322,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             throw $ex;
         }
     }
-
+    
     public function testGetUrlWithEmptyQueue() {
         $controller = new ApiController("0.0.1");
 
