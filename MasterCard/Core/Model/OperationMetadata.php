@@ -32,11 +32,13 @@ class OperationMetadata {
     protected $apiVersion;
     protected $host;
     protected $context = null;
+    protected $jsonNative = false;
     
-    public function __construct($apiVersion, $host, $context = null) {
+    public function __construct($apiVersion, $host, $context = null, $jsonNative = false) {
         $this->apiVersion = $apiVersion;
         $this->host = $host;
         $this->context = $context;
+        $this->jsonNative = $jsonNative;
     }
     
     
@@ -62,6 +64,14 @@ class OperationMetadata {
      */
     public function getContext() {
         return $this->context;
+    }
+    
+    /**
+     * return is this is a jsonNatice call
+     * @return true | false
+     */
+    public function isJsonNative() {
+        return $this->jsonNative;
     }
     
     
