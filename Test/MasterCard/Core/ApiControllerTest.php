@@ -394,7 +394,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(2, count($inputMap));
     }
     
-        public function testGetUrlWithOverride() {
+    public function testGetUrlWithOverride() {
         $controller = new ApiController("0.0.1");
 
         $inputMap = array(
@@ -417,6 +417,88 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals("http://localhost:8081/fraud/lostandstolen/v1/account-inquiry?three=3&Format=JSON", $url);
         $this->assertEquals(2, count($inputMap));
     }
+    
+    public function test_POST_request() {
+        $controller = new ApiController("0.0.1");
+
+        $inputMap = array(
+            'api' => 'lostandstolen',
+            'version' => 1,
+            'three' => 3,
+            'four' => 4,
+            'five' => 5
+        );
+        
+        $config = ResourceConfig::getInstance();
+        $config->setOverride();
+        $config->setEnvironment(Environment::SANDBOX);
+        $operationMetadate = new OperationMetadata("mock:0.0.1", $config->getHost(), $config->getContext());
+
+
+        $operationConfig = new OperationConfig("/fraud/{api}/v{version}/account-inquiry", "create", array('one', 'two', 'three'), array());
+        $request = $controller->getRequest($operationConfig, $operationMetadate, $inputMap);
+        
+
+        $this->assertEquals("POST", $request->getMethod());
+        $this->assertEquals(json_encode(array('four' => 4, 'five' => 5)), $request->getBody());
+        
+        $headers = $request->getHeaders();
+        
+        //arizzini: Content-Type is present
+        $this->assertTrue(array_key_exists("Content-Type", $headers));
+        
+        //arizzini: Accept is present
+        $this->assertTrue(array_key_exists("Accept", $headers));
+        
+        $this->assertEquals("Php_SDK:1.4.3/mock:0.0.1", $headers['User-Agent'][0]);
+        
+        //arizzini: oauth_body_hash is present in OAUTH token.
+        $this->assertTrue(strpos($headers['Authorization'][0], 'oauth_body_hash') !== false);
+        
+    }
+    
+    
+     public function test_GET_request() {
+        $controller = new ApiController("0.0.1");
+
+        $inputMap = array(
+            'api' => 'lostandstolen',
+            'version' => 1,
+            'three' => 3,
+            'four' => 4,
+            'five' => 5
+        );
+        
+        $config = ResourceConfig::getInstance();
+        $config->setOverride();
+        $config->setEnvironment(Environment::SANDBOX);
+        $operationMetadate = new OperationMetadata("mock:0.0.1", $config->getHost(), $config->getContext());
+
+
+        $operationConfig = new OperationConfig("/fraud/{api}/v{version}/account-inquiry", "query", array('one', 'two', 'three'), array());
+        $request = $controller->getRequest($operationConfig, $operationMetadate, $inputMap);
+        
+
+        
+        $this->assertEquals("GET", $request->getMethod());
+        $body = $request->getBody()->getContents();
+        $this->assertTrue(empty($body));
+        
+        $headers = $request->getHeaders();
+        
+        //arizzini: Content-Type is not present
+        $this->assertFalse(array_key_exists("Content-Type", $headers));
+        
+        //arizzini: Accept is present
+        $this->assertTrue(array_key_exists("Accept", $headers));
+        
+        $this->assertEquals("Php_SDK:1.4.3/mock:0.0.1", $headers['User-Agent'][0]);
+        
+        //arizzini: oauth_body_hash is not present
+        $this->assertFalse(strpos($headers['Authorization'][0], 'oauth_body_hash') !== false);
+        
+    }
+    
 
 
 }
