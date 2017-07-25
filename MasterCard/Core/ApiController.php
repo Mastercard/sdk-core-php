@@ -234,14 +234,14 @@ class ApiController {
         switch ($action) {
             case "create":
                 $request = new Request("POST", $url, [], $requestBody);
-                $request = $request->withHeader("Content-Type", "application/json");
+                $request = $request->withHeader("Content-Type", "application/json; charset=utf-8");
                 break;
             case "delete":
                 $request = new Request("DELETE", $url);
                 break;
             case "update":
                 $request = new Request("PUT", $url, [], $requestBody);
-                $request = $request->withHeader("Content-Type", "application/json");
+                $request = $request->withHeader("Content-Type", "application/json; charset=utf-8");
                 break;
             case "read":
             case "list":
@@ -250,7 +250,7 @@ class ApiController {
                 break;
         }
         
-        $request = $request->withHeader("Accept", "application/json");
+        $request = $request->withHeader("Accept", "application/json; charset=utf-8");
         $request = $request->withHeader("User-Agent", Constants::getCoreVersion() ."/". $operationMetadata->getApiVersion());
         foreach ($headerMap as $key => $value) {
             $request = $request->withHeader($key, $value);    
