@@ -444,13 +444,15 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         
         $headers = $request->getHeaders();
         
+        print_r($headers);
+        
         //arizzini: Content-Type is present
         $this->assertTrue(array_key_exists("Content-Type", $headers));
         
         //arizzini: Accept is present
         $this->assertTrue(array_key_exists("Accept", $headers));
         
-        $this->assertEquals("Php_SDK:1.4.3/mock:0.0.1", $headers['User-Agent'][0]);
+        $this->assertEquals("mastercard-api-core(php):1.4.3/mock:0.0.1", $headers['User-Agent'][0]);
         
         //arizzini: oauth_body_hash is present in OAUTH token.
         $this->assertTrue(strpos($headers['Authorization'][0], 'oauth_body_hash') !== false);
@@ -492,7 +494,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         //arizzini: Accept is present
         $this->assertTrue(array_key_exists("Accept", $headers));
         
-        $this->assertEquals("Php_SDK:1.4.3/mock:0.0.1", $headers['User-Agent'][0]);
+        $this->assertEquals("mastercard-api-core(php):1.4.3/mock:0.0.1", $headers['User-Agent'][0]);
         
         //arizzini: oauth_body_hash is not present
         $this->assertFalse(strpos($headers['Authorization'][0], 'oauth_body_hash') !== false);
