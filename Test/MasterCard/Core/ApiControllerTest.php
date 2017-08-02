@@ -444,8 +444,6 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         
         $headers = $request->getHeaders();
         
-        print_r($headers);
-        
         //arizzini: Content-Type is present
         $this->assertTrue(array_key_exists("Content-Type", $headers));
         

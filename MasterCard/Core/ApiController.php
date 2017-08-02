@@ -272,7 +272,7 @@ class ApiController {
         $request = $this->getRequest($operationConfig, $operationMetadata, $inputMap);
 
         try {
-            $response = $this->client->send($request);
+            $response = $this->client->send($request, array_merge(ApiConfig::getProxy(), ApiConfig::getTimeout()));
             $statusCode = $response->getStatusCode();
             $responseContent = $response->getBody()->getContents();
             
