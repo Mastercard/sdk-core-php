@@ -30,17 +30,12 @@
 namespace MasterCard\Core;
 
 use MasterCard\Core\Exception\ApiException;
-use MasterCard\Core\Exception\InvalidRequestException;
-use MasterCard\Core\Exception\AuthenticationException;
-use MasterCard\Core\Exception\ObjectNotFoundException;
-use MasterCard\Core\Exception\NotAllowedException;
-use MasterCard\Core\Exception\SystemException;
 use MasterCard\Core\ApiConfig;
+use MasterCard\Core\Model\Constants;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
 
 class ApiController {
 
@@ -180,7 +175,9 @@ class ApiController {
                 break;
         }
 
-        $url = $this->appendToQueryString($url, "Format=JSON");
+        if ($operationMetadata->isJsonNative() == false) {
+            $url = $this->appendToQueryString($url, "Format=JSON");
+        }
         $url = vsprintf($url, $queryParams);
         
         return $url;
@@ -237,14 +234,14 @@ class ApiController {
         switch ($action) {
             case "create":
                 $request = new Request("POST", $url, [], $requestBody);
-                $request = $request->withHeader("Content-Type", "application/json");
+                $request = $request->withHeader("Content-Type", "application/json; charset=utf-8");
                 break;
             case "delete":
                 $request = new Request("DELETE", $url);
                 break;
             case "update":
                 $request = new Request("PUT", $url, [], $requestBody);
-                $request = $request->withHeader("Content-Type", "application/json");
+                $request = $request->withHeader("Content-Type", "application/json; charset=utf-8");
                 break;
             case "read":
             case "list":
@@ -253,8 +250,8 @@ class ApiController {
                 break;
         }
         
-        $request = $request->withHeader("Accept", "application/json");
-        $request = $request->withHeader("User-Agent", "PHP-SDK/" . $operationMetadata->getApiVersion());
+        $request = $request->withHeader("Accept", "application/json; charset=utf-8");
+        $request = $request->withHeader("User-Agent", Constants::getCoreVersion() ."/". $operationMetadata->getApiVersion());
         foreach ($headerMap as $key => $value) {
             $request = $request->withHeader($key, $value);    
         }
@@ -275,7 +272,7 @@ class ApiController {
         $request = $this->getRequest($operationConfig, $operationMetadata, $inputMap);
 
         try {
-            $response = $this->client->send($request);
+            $response = $this->client->send($request, array_merge(ApiConfig::getProxy(), ApiConfig::getTimeout()));
             $statusCode = $response->getStatusCode();
             $responseContent = $response->getBody()->getContents();
             

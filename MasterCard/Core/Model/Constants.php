@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright 2016 MasterCard International.
  *
@@ -26,54 +27,16 @@
  *
  */
 
+
 namespace MasterCard\Core\Model;
 
-class OperationMetadata {
-    protected $apiVersion;
-    protected $host;
-    protected $context = null;
-    protected $jsonNative = false;
+class Constants {
+    const SDK = "mastercard-api-core(php)";
+    const VERSION = "1.4.4"; 
     
-    public function __construct($apiVersion, $host, $context = null, $jsonNative = false) {
-        $this->apiVersion = $apiVersion;
-        $this->host = $host;
-        $this->context = $context;
-        $this->jsonNative = $jsonNative;
+    public static function getCoreVersion() {
+        return Constants::SDK.":".Constants::VERSION;
     }
-    
-    
-    /**
-     * return the apiversion
-     * @return type
-     */
-    public function getApiVersion() {
-        return $this->apiVersion;
-    }
-    
-    /**
-     * return the host
-     * @return type
-     */
-    public function getHost() {
-        return $this->host;
-    }
-    
-    /**
-     * return the environment
-     * @return type
-     */
-    public function getContext() {
-        return $this->context;
-    }
-    
-    /**
-     * return is this is a jsonNatice call
-     * @return true | false
-     */
-    public function isJsonNative() {
-        return $this->jsonNative;
-    }
-    
-    
     
 }
+

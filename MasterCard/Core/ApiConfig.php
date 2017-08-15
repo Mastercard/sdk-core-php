@@ -37,6 +37,9 @@ class ApiConfig {
     private static $AUTHENTICATION = null;
     private static $registeredInstances = array();
     private static $ENVIRONMENT = Environment::SANDBOX;
+    private static $PROXY = array();
+    private static $CONNECTION_TIMEOUT = 5;
+    private static $READ_TIMEOUT = 30;
     
     
     /**
@@ -57,6 +60,64 @@ class ApiConfig {
         return static::$DEBUG;
     }
     
+    /**
+     * Sets the timeout
+     * @param type $timeout
+     */
+    public static function setConnectionTimeout($timeout) {
+        if (!empty($timeout) && is_numeric($timeout)) {
+            static::$CONNECTION_TIMEOUT = $timeout;
+        } else {
+            static::$CONNECTION_TIMEOUT = 5;
+        }
+    }
+    
+        /**
+     * Sets the timeout
+     * @param type $timeout
+     */
+    public static function setReadTimeout($timeout) {
+        if (!empty($timeout) && is_numeric($timeout)) {
+            static::$READ_TIMEOUT = $timeout;
+        } else {
+            static::$READ_TIMEOUT = 30;
+        }
+    }
+    
+    /**
+     * Gets the timeout
+     * @return type
+     */
+    public static function getTimeout() {
+        return [ 'connection_timeout' => self::$CONNECTION_TIMEOUT, 'read_timeout' => self::$READ_TIMEOUT ];
+    }
+    
+    
+    /**
+     * Sets the proxy configuration
+     * @param type $proxy
+     */
+    public static function setProxy($proxy) {
+        if (!empty($proxy)) {
+            static::$PROXY = $proxy;
+        } else {
+            static::$PROXY = array();
+        }
+    }
+    
+
+    /**
+     * Get the proxy configuration
+     * @return type
+     */
+    public static function getProxy() {
+        if (!empty(self::$PROXY)) {
+           return [ 'proxy' => self::$PROXY ];
+        } else {
+            return array();
+        }
+    }
+
     /**
      * Sets the sandbox.
      * @param boolean sandbox
