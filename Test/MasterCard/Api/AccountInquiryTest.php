@@ -53,20 +53,20 @@ class AccountInquiryTest extends \PHPUnit_Framework_TestCase {
 
 
 
-    public function test_example_stolen_with_proxy()
-    {
-        //example_stolen
-        $map = new RequestMap();
-        $map->set ("AccountInquiry.AccountNumber", "5343434343434343");
-        ApiConfig::setProxy(['http'  => 'http://localhost:9999', 'https' => 'http://localhost:9999']);
+    // public function test_example_stolen_with_proxy()
+    // {
+    //     //example_stolen
+    //     $map = new RequestMap();
+    //     $map->set ("AccountInquiry.AccountNumber", "5343434343434343");
+    //     ApiConfig::setProxy(['http'  => 'http://localhost:9999', 'https' => 'http://localhost:9999']);
 
-        $request = new AccountInquiry($map);
-        $response = $request->update();
-        $this->assertEquals(strtolower("True"), strtolower(str_replace("'", "", var_export($response->get("Account.Listed"), true))));
-        $this->assertEquals(strtolower("S"), strtolower($response->get("Account.ReasonCode")));
-        $this->assertEquals(strtolower("STOLEN"), strtolower($response->get("Account.Reason")));
+    //     $request = new AccountInquiry($map);
+    //     $response = $request->update();
+    //     $this->assertEquals(strtolower("True"), strtolower(str_replace("'", "", var_export($response->get("Account.Listed"), true))));
+    //     $this->assertEquals(strtolower("S"), strtolower($response->get("Account.ReasonCode")));
+    //     $this->assertEquals(strtolower("STOLEN"), strtolower($response->get("Account.Reason")));
 
-    }
+    // }
         
 
 
