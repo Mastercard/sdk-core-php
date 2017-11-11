@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -11,10 +11,11 @@ namespace MasterCard\Api;
 use MasterCard\Core\Model\RequestMap;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use PHPUnit\Framework\TestCase;
 
 
-abstract class BaseTest extends \PHPUnit_Framework_TestCase {
-    
+abstract class BaseTest extends TestCase {
+
     protected static $logger = null;
     public static $responses = array();
     public static $authentications = array();
@@ -22,7 +23,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase {
 
     protected function setUp() {
         self::$logger = new Logger('BaseTest');
- 
+
     }
 
     /**
@@ -83,6 +84,6 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase {
         }
     }
 
-        
-    
+
+
 }

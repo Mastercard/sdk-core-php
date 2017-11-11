@@ -31,91 +31,92 @@
 namespace MasterCard\Core\Model;
 
 use MasterCard\Core\Model\RequestMap;
+use PHPUnit\Framework\TestCase;
 
-class BaseMapTest extends \PHPUnit_Framework_TestCase
+class BaseMapTest extends TestCase
 {
     public function testMap()
     {
         $baseObject = new RequestMap();
         $baseObject->set("key1", "value1");
-        
+
         $this->assertTrue($baseObject != NULL);
         $this->assertTrue($baseObject->containsKey("key1"));
         $this->assertEquals(1, $baseObject->size());
         $this->assertEquals("value1", $baseObject->get("key1"));
     }
-    
-    
+
+
     public function testMapWithListOfValues() {
         $map = new RequestMap();
         $map->set("channels[0]", "ATM");
         $map->set("channels[1]", "POS");
         $map->set("channels[2]", "ECOM");
-        
+
         $jsonString = "{\"channels\":[\"ATM\",\"POS\",\"ECOM\"]}";
-        
+
         $jsonStringFromMap = strval(json_encode($map->getBaseMapAsArray()));
 
-        
+
         $this->assertEquals($jsonString, $jsonStringFromMap);
-        
-        
+
+
         $newMap = new RequestMap();
         $newMap->setAll($map->getBaseMapAsArray());
         $jsonStringFromNewMap = strval(json_encode($newMap->getBaseMapAsArray()));
-        
+
         $this->assertEquals($jsonStringFromMap, $jsonStringFromNewMap);
-        
-        
+
+
     }
-    
-    
+
+
     public function testNestedMap()
     {
         $baseObject = new RequestMap();
         $baseObject->set("key1.key2.key3", "value1");
         $baseObject->set("key1.key2.key4", "value2");
-        
-        
+
+
         $this->assertTrue($baseObject != NULL);
-        
+
         $this->assertTrue($baseObject->containsKey("key1"));
         $this->assertTrue($baseObject->containsKey("key1.key2"));
         $this->assertTrue($baseObject->containsKey("key1.key2.key3"));
         $this->assertTrue($baseObject->size() == 1);
         $this->assertEquals("value1", $baseObject->get("key1.key2.key3"));
-        
+
         $this->assertTrue($baseObject->containsKey("key1.key2.key4"));
         $this->assertEquals("value2", $baseObject->get("key1.key2.key4"));
-        
-        
+
+
         $this->assertFalse($baseObject->containsKey("key1.key2.key3."));
         $this->assertNull($baseObject->get("key1.key2.key3."));
         $this->assertFalse($baseObject->containsKey("key1.key2."));
         $this->assertNull($baseObject->get("key1.key2."));
         $this->assertFalse($baseObject->containsKey("key1."));
         $this->assertNull($baseObject->get("key1."));
-        
+
         $this->assertFalse($baseObject->containsKey("key1.key2.something.different"));
         $this->assertNull($baseObject->get("key1.key2.something.different"));
         $this->assertFalse($baseObject->containsKey("key1.something.different"));
         $this->assertNull($baseObject->get("key1.something.different"));
         $this->assertFalse($baseObject->containsKey("key1..."));
-        $this->assertNull($baseObject->get("key1..."));           
-        
+        $this->assertNull($baseObject->get("key1..."));
+
     }
-    
+
         public function testNestedMapWithList()
     {
         $body = "[ { \"user.name\":\"andrea\", \"user.surname\":\"rizzini\" } ]";
         $baseMap = new RequestMap();
         $baseMap->setAll(json_decode($body, true));
-        
+
         $this->assertEquals(1, $baseMap->size());
         $this->assertEquals("andrea", $baseMap->get("list[0].user.name"));
         $this->assertEquals("rizzini", $baseMap->get("list[0].user.surname"));
-        
-        
+
+
         $this->assertTrue($baseMap->containsKey("list"));
         $this->assertNotEmpty($baseMap->get("list"));
         $this->assertTrue($baseMap->containsKey("list[0]"));
@@ -130,19 +131,19 @@ class BaseMapTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEmpty($baseMap->get("list[].user"));
         $this->assertTrue($baseMap->containsKey("list[0].user.name"));
         $this->assertNotEmpty($baseMap->get("list[0].user.name"));
-        
+
         $this->assertFalse($baseMap->containsKey("list2"));
         $this->assertEmpty($baseMap->get("list2"));
         $this->assertFalse($baseMap->containsKey("list[2]"));
         $this->assertEmpty($baseMap->get("list[2]"));
-        
+
         $this->assertFalse($baseMap->containsKey("list[2].some.nonsense"));
         $this->assertEmpty($baseMap->get("list[2].some.nonsense"));
         $this->assertFalse($baseMap->containsKey("list[2].some...."));
         $this->assertEmpty($baseMap->get("list[2].some...."));
-        
+
     }
-    
+
     public function testForNestedListOfMaps() {
             $map = new RequestMap();
             $map->set("payment_transfer.transfer_reference", "10017018676132929870330");
@@ -193,10 +194,10 @@ class BaseMapTest extends \PHPUnit_Framework_TestCase
 
             $jsonString = '{"payment_transfer":{"transfer_reference":"10017018676132929870330","payment_type":"P2P","amount":"1000","currency":"USD","sender_account_uri":"pan:5013040000000018;exp=2017-08;cvc=123","sender":{"first_name":"John","middle_name":"Tyler","last_name":"Jones","nationality":"USA","date_of_birth":"1994-05-21","address":{"line1":"21 Broadway","line2":"Apartment A-6","city":"OFallon","country_subdivision":"MO","postal_code":"63368","country":"USA"},"phone":"11234565555","email":" John.Jones123@abcmail.com "},"recipient_account_uri":"pan:5013040000000018;exp=2017-08;cvc=123","recipient":{"first_name":"Jane","middle_name":"Tyler","last_name":"Smith","nationality":"USA","date_of_birth":"1999-12-30","address":{"line1":"1 Main St","line2":"Apartment 9","city":"OFallon","country_subdivision":"MO","postal_code":"63368","country":"USA"},"phone":"11234567890","email":" Jane.Smith123@abcmail.com "},"reconciliation_data":{"custom_field":[{"name":" ABC","value":" 123 "},{"name":" DEF","value":" 456 "},{"name":" GHI","value":" 789 "}]},"statement_descriptor":"CLA*THANK YOU","channel":"KIOSK","funding_source":"DEBIT","text":"funding_source"}}';
             $this->assertEquals(strval($jsonString), strval(json_encode($map->getBaseMapAsArray())));
-        
-        
+
+
     }
-    
+
     public function testForNestedListOfValue() {
             $map = new RequestMap();
             $map->set("payment_transfer.transfer_reference", "40010671860312562053150");
@@ -242,33 +243,33 @@ class BaseMapTest extends \PHPUnit_Framework_TestCase
             $map->set("payment_transfer.statement_descriptor", "CLA*THANK YOU");
             $map->set("payment_transfer.channel", "KIOSK");
             $map->set("payment_transfer.text", "funding_source");
-    
+
             $this->assertTrue($map->containsKey("payment_transfer.funding_source[0]"));
             $this->assertTrue($map->containsKey("payment_transfer.funding_source[1]"));
 
             $jsonString = '{"payment_transfer":{"transfer_reference":"40010671860312562053150","payment_type":"P2P","funding_source":["CREDIT","DEBIT"],"amount":"1800","currency":"USD","sender_account_uri":"pan:5013040000000018;exp=2017-08;cvc=123","sender":{"first_name":"John","middle_name":"Tyler","last_name":"Jones","nationality":"USA","date_of_birth":"1994-05-21","address":{"line1":"21 Broadway","line2":"Apartment A-6","city":"OFallon","country_subdivision":"MO","postal_code":"63368","country":"USA"},"phone":"11234565555","email":" John.Jones123@abcmail.com "},"recipient_account_uri":"pan:5013040000000018;exp=2017-08;cvc=123","recipient":{"first_name":"Jane","middle_name":"Tyler","last_name":"Smith","nationality":"USA","date_of_birth":"1999-12-30","address":{"line1":"1 Main St","line2":"Apartment 9","city":"OFallon","country_subdivision":"MO","postal_code":"63368","country":"USA"},"phone":"11234567890","email":" Jane.Smith123@abcmail.com "},"reconciliation_data":{"custom_field":[{"name":" ABC","value":" 123 "},{"name":" DEF","value":" 456 "},{"name":" GHI","value":" 789 "}]},"statement_descriptor":"CLA*THANK YOU","channel":"KIOSK","text":"funding_source"}}';
             $this->assertEquals(strval($jsonString), strval(json_encode($map->getBaseMapAsArray())));
-        
-        
+
+
     }
-    
-    
+
+
     public function TestSetAll()
     {
         $map = array( "Account" => array( "Status" => true, "Listed" => true, "ReasonCode" => "S", "Reason" => "STOLEN"));
         $baseMap = new RequestMap();
         $baseMap->setAll($map);
-        
+
         $this->assertTrue($baseMap != NULL);
         $this->assertTrue($baseMap->containsKey("Account.Status"));
         $this->assertTrue($baseMap->size() == 1);
         $this->assertEquals("STOLEN", $baseMap->get("Account.Reason"));
-        
-        
+
+
     }
-    
 
-    
 
-            
+
+
+
 }

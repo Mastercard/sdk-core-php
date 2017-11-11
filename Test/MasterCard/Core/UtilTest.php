@@ -30,9 +30,10 @@
 namespace MasterCard\Core;
 
 use MasterCard\Core\Model\RequestMap;
+use PHPUnit\Framework\TestCase;
 
-class UtilTest extends \PHPUnit_Framework_TestCase {
-    
+class UtilTest extends TestCase {
+
     public function testNormalizeUrl() {
         $baseUrl = "http://php.net/manual/en/function.parse-url.php";
         $this->assertEquals($baseUrl, Util::normalizeUrl($baseUrl));
@@ -69,15 +70,15 @@ class UtilTest extends \PHPUnit_Framework_TestCase {
         $url = "http://php.net/manual/en/function.parse-url.php?some=parameter&some1=parameter2";
         $this->assertEquals("http%3A%2F%2Fphp.net%2Fmanual%2Fen%2Ffunction.parse-url.php%3Fsome%3Dparameter%26some1%3Dparameter2", Util::urlEncode($url));
     }
-    
+
     public function testUri3986Encode()
     {
         $this->assertEquals("andrea%21andrea%2Aandrea%27andrea%28andrea%29", Util::uriRfc3986Encode("andrea!andrea*andrea'andrea(andrea)"));
     }
-    
-    
+
+
     public function testSubMap() {
-        
+
         $inputMap = array(
             'one' => 1,
             'two' => 2,
@@ -85,28 +86,28 @@ class UtilTest extends \PHPUnit_Framework_TestCase {
             'four' => 4,
             'five' => 5
         );
-        
+
         $keyList = array (
             'one',
             'three',
             'five'
         );
-        
+
         $subMap = Util::subMap($inputMap, $keyList);
-        
+
         $this->assertEquals(3, count($subMap));
         $this->assertEquals(1, $subMap['one']);
         $this->assertEquals(3, $subMap['three']);
         $this->assertEquals(5, $subMap['five']);
-        
+
         $this->assertEquals(2, count($inputMap));
         $this->assertEquals(2, $inputMap['two']);
         $this->assertEquals(4, $inputMap['four']);
     }
-    
-    
+
+
     public function testGetReplacedPath() {
-        
+
         $inputMap = array(
             'one' => 1,
             'two' => 2,
@@ -116,21 +117,21 @@ class UtilTest extends \PHPUnit_Framework_TestCase {
         );
         $path = "http://localhost:8080/{one}/{two}/{three}/car";
         $result = Util::getReplacedPath($path, $inputMap);
-        
+
         $this->assertEquals("http://localhost:8080/1/2/3/car", $result);
         $this->assertEquals(2, count($inputMap));
     }
-    
+
 //    public function testGetReplacedPathWithBaseMap() {
-//        
+//
 //        $inputMap = new BaseMap();
 //        $inputMap->set("one", 1)->set("two", 2)->set("three", 3)->set("four", 4)->set("five", 5);
-//            
+//
 //        $path = "http://localhost:8080/{one}/{two}/{three}/car";
 //        $result = Util::getReplacedPath($path, $inputMap);
-//        
+//
 //        $this->assertEquals("http://localhost:8080/1/2/3/car", $result);
 //        $this->assertEquals(2, count($inputMap));
 //    }
-    
+
 }

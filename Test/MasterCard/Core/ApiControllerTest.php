@@ -22,11 +22,12 @@ use MasterCard\Core\Model\OperationConfig;
 use MasterCard\Core\Model\OperationMetadata;
 use MasterCard\Core\Security\AuthenticationInterface;
 use MasterCard\Core\Security\OAuth\OAuthAuthentication;
+use PHPUnit\Framework\TestCase;
 
-class ApiControllerTest extends \PHPUnit_Framework_TestCase {
+class ApiControllerTest extends TestCase {
 
     protected function setUp() {
-        
+
         $privateKey = file_get_contents(getcwd() . "/mcapi_sandbox_key.p12");
         ApiConfig::setAuthentication(new OAuthAuthentication("L5BsiPgaF-O3qA36znUATgQXwJB6MRoMSdhjd7wt50c97279!50596e52466e3966546d434b7354584c4975693238513d3d", $privateKey, "test", "password"));
     }
@@ -43,8 +44,8 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
 
     public function testApiConfig() {
 
-        //test default      
-        
+        //test default
+
         $this->assertEquals(Environment::SANDBOX, ApiConfig::getEnvironment());
 
         ApiConfig::setSandbox(true);
@@ -54,60 +55,60 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(Environment::PRODUCTION, ApiConfig::getEnvironment());
 
     }
-    
-    
+
+
     public function testEnvironment() {
         $controller = new ApiController("0.0.1");
 
         $inputMap = array();
         $config = ResourceConfig::getInstance();
         ApiConfig::registerResourceConfig($config);
-        
+
 
         ApiConfig::setEnvironment(Environment::SANDBOX);
         $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
         $operationConfig = new OperationConfig("/#env/fraud/v1/account-inquiry", "create", array(), array());
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
         $this->assertEquals("https://sandbox.api.mastercard.com/fraud/v1/account-inquiry?Format=JSON", $url);
-        
+
         //arizzini: testing isJsonNative = true
         ApiConfig::setEnvironment(Environment::SANDBOX);
         $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext(), true);
         $operationConfig = new OperationConfig("/#env/fraud/v1/account-inquiry", "create", array(), array());
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
         $this->assertEquals("https://sandbox.api.mastercard.com/fraud/v1/account-inquiry", $url);
-        
+
         ApiConfig::setEnvironment(Environment::PRODUCTION_ITF);
         $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
         $operationConfig = new OperationConfig("/#env/fraud/v1/account-inquiry", "create", array(), array());
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
         $this->assertEquals("https://api.mastercard.com/itf/fraud/v1/account-inquiry?Format=JSON", $url);
-        
+
         ApiConfig::setEnvironment(Environment::PRODUCTION_MTF);
         $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
         $operationConfig = new OperationConfig("/#env/fraud/v1/account-inquiry", "create", array(), array());
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
         $this->assertEquals("https://api.mastercard.com/mtf/fraud/v1/account-inquiry?Format=JSON", $url);
-        
+
         ApiConfig::setEnvironment(null);
         $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
         $operationConfig = new OperationConfig("/#env/fraud/v1/account-inquiry", "create", array(), array());
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
         $this->assertEquals("https://api.mastercard.com/mtf/fraud/v1/account-inquiry?Format=JSON", $url);
-        
+
         ApiConfig::setEnvironment("");
         $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
         $operationConfig = new OperationConfig("/#env/fraud/v1/account-inquiry", "create", array(), array());
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
         $this->assertEquals("https://api.mastercard.com/mtf/fraud/v1/account-inquiry?Format=JSON", $url);
-        
-        
+
+
         ApiConfig::setEnvironment(Environment::PRODUCTION);
         $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
         $operationConfig = new OperationConfig("/#env/fraud/v1/account-inquiry", "create", array(), array());
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
         $this->assertEquals("https://api.mastercard.com/fraud/v1/account-inquiry?Format=JSON", $url);
-        
+
         ApiConfig::clearResourceConfig();
         ApiConfig::setEnvironment(Environment::SANDBOX);
     }
@@ -172,7 +173,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
 
     public function test405_not_allowed() {
         $this->expectException(Exception\ApiException::class);
-        
+
 
         $body = "{\"Errors\":{\"Error\":{\"Source\":\"System\",\"ReasonCode\":\"METHOD_NOT_ALLOWED\",\"Description\":\"Method not Allowed\",\"Recoverable\":\"false\"}}}";
         $requestMap = new RequestMap(json_decode($body, true));
@@ -190,13 +191,13 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             $this->assertEquals("METHOD_NOT_ALLOWED", $ex->getReasonCode());
             throw $ex;
         }
-        
+
     }
-    
-    
+
+
         public function test405_not_allowed_case_insensitive() {
         $this->expectException(Exception\ApiException::class);
-        
+
 
         $body = "{\"errors\":{\"error\":{\"source\":\"System\",\"reasonCode\":\"METHOD_NOT_ALLOWED\",\"description\":\"Method not Allowed\",\"recoverable\":\"false\"}}}";
         $requestMap = new RequestMap(json_decode($body, true));
@@ -214,7 +215,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             $this->assertEquals("METHOD_NOT_ALLOWED", $ex->getReasonCode());
             throw $ex;
         }
-        
+
     }
 
     public function test400_invald_request() {
@@ -236,7 +237,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             throw $ex;
         }
     }
-    
+
     public function test400_invald_request_case_insensitive() {
         $this->expectException(Exception\ApiException::class);
 
@@ -256,7 +257,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             throw $ex;
         }
     }
-    
+
 
     public function test401_unauthorised() {
         $this->expectException(Exception\ApiException::class);
@@ -299,11 +300,11 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             throw $ex;
         }
     }
-    
-    
+
+
     public function test500_invalidrequest_json_native() {
         $this->expectException(Exception\ApiException::class);
-    
+
     //
         $body = "{\"errors\":[{\"source\":\"OpenAPIClientId\",\"reasonCode\":\"AUTHORIZATION_FAILED\",\"key\":\"050007\",\"description\":\"Unauthorized Access\",\"recoverable\":false,\"requestId\":null,\"details\":{\"details\":[{\"name\":\"ErrorDetailCode\",\"value\":\"050007\"}]}}]}";
         $requestMap = new RequestMap(json_decode($body, true));
@@ -322,7 +323,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             throw $ex;
         }
     }
-    
+
     public function testGetUrlWithEmptyQueue() {
         $controller = new ApiController("0.0.1");
 
@@ -339,7 +340,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $config->setEnvironment(Environment::SANDBOX);
         $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
         $operationConfig = new OperationConfig("/fraud/{api}/v{version}/account-inquiry", "create", array(), array());
-        
+
 
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
 
@@ -362,7 +363,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $config->setEnvironment(Environment::SANDBOX);
         $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
 
-        
+
         $operationConfig = new OperationConfig("/fraud/{api}/v{version}/account-inquiry", "create", array('six', 'seven', 'eight'), array());
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
 
@@ -380,7 +381,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             'four' => 4,
             'five' => 5
         );
-        
+
         $config = ResourceConfig::getInstance();
         $config->setEnvironment(Environment::SANDBOX);
         $operationMetadate = new OperationMetadata("0.0.1", $config->getHost(), $config->getContext());
@@ -393,7 +394,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals("https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry?three=3&Format=JSON", $url);
         $this->assertEquals(2, count($inputMap));
     }
-    
+
     public function testGetUrlWithOverride() {
         $controller = new ApiController("0.0.1");
 
@@ -404,7 +405,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             'four' => 4,
             'five' => 5
         );
-        
+
         $config = ResourceConfig::getInstance();
         $config->setOverride();
         $config->setEnvironment(Environment::SANDBOX);
@@ -417,7 +418,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals("http://localhost:8081/fraud/lostandstolen/v1/account-inquiry?three=3&Format=JSON", $url);
         $this->assertEquals(2, count($inputMap));
     }
-    
+
     public function test_POST_request() {
         $controller = new ApiController("0.0.1");
 
@@ -428,7 +429,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             'four' => 4,
             'five' => 5
         );
-        
+
         $config = ResourceConfig::getInstance();
         $config->setOverride();
         $config->setEnvironment(Environment::SANDBOX);
@@ -437,27 +438,27 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
 
         $operationConfig = new OperationConfig("/fraud/{api}/v{version}/account-inquiry", "create", array('one', 'two', 'three'), array());
         $request = $controller->getRequest($operationConfig, $operationMetadate, $inputMap);
-        
+
 
         $this->assertEquals("POST", $request->getMethod());
         $this->assertEquals(json_encode(array('four' => 4, 'five' => 5)), $request->getBody());
-        
+
         $headers = $request->getHeaders();
-        
+
         //arizzini: Content-Type is present
         $this->assertTrue(array_key_exists("Content-Type", $headers));
-        
+
         //arizzini: Accept is present
         $this->assertTrue(array_key_exists("Accept", $headers));
-        
+
         $this->assertEquals("mastercard-api-core(php):1.4.4/mock:0.0.1", $headers['User-Agent'][0]);
-        
+
         //arizzini: oauth_body_hash is present in OAUTH token.
         $this->assertTrue(strpos($headers['Authorization'][0], 'oauth_body_hash') !== false);
-        
+
     }
-    
-    
+
+
      public function test_GET_request() {
         $controller = new ApiController("0.0.1");
 
@@ -468,7 +469,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             'four' => 4,
             'five' => 5
         );
-        
+
         $config = ResourceConfig::getInstance();
         $config->setOverride();
         $config->setEnvironment(Environment::SANDBOX);
@@ -477,28 +478,28 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
 
         $operationConfig = new OperationConfig("/fraud/{api}/v{version}/account-inquiry", "query", array('one', 'two', 'three'), array());
         $request = $controller->getRequest($operationConfig, $operationMetadate, $inputMap);
-        
 
-        
+
+
         $this->assertEquals("GET", $request->getMethod());
         $body = $request->getBody()->getContents();
         $this->assertTrue(empty($body));
-        
+
         $headers = $request->getHeaders();
-        
+
         //arizzini: Content-Type is not present
         $this->assertFalse(array_key_exists("Content-Type", $headers));
-        
+
         //arizzini: Accept is present
         $this->assertTrue(array_key_exists("Accept", $headers));
-        
+
         $this->assertEquals("mastercard-api-core(php):1.4.4/mock:0.0.1", $headers['User-Agent'][0]);
-        
+
         //arizzini: oauth_body_hash is not present
         $this->assertFalse(strpos($headers['Authorization'][0], 'oauth_body_hash') !== false);
-        
+
     }
-    
+
 
 
 }
