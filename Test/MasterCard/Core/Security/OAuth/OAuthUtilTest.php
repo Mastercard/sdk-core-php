@@ -81,7 +81,7 @@ class OAuthUtilTest extends \PHPUnit_Framework_TestCase {
         
         
         $signature = $this->oauthAuthentication->signValue($baseString);
-        $this->assertEquals("EhVW5sommBlfPSk5+RfR5LSuuvgzeMi8tiyh4+3Ao7uzyp5hjaCTi8igfwMmSfZH700BU9kUv5MOSR/keAkEXTeTBgp1eQMRSiGhHK68UeFTAyDW+mtxsrJNeftDhmkmxd2Cm8WIfmcxLUYD6g1b1QmJWEExkCkG9ztdqHT/6ef56OCEAJtAS5FfxQ5ew41hxFi0FtAdtYAepAwKdMJ1dwBiAlNmIJNYFqO61XPSnB5UtH1VR63Ti+AA0hAgZE8oH94MkksK1tkiYXzuPWuO4+kL5KQt1J2+zH8vOUSqDhQErsZxCEEF930NXafO0YyMmE4tkPEs10iaVerKo/Uu0A==", $signature);
+        $this->assertEquals("7cu8PjbG9LCv4BmG9qOJft/wfkrEhQzDbHkEQ8zdBrgFvJ+RbPL3s2jRjoioXYw1tJzSnIfknksfc66fBMc6fURRRy2zUQlXU8q6Xun0l4islF99s8whmbkiYmVAfsnVokbAidCXxQxkCinFSn0Y+fun6Re3UzL7cHPzFSCW7kVB7+KNyVPEMT7xKy4dnfIwYoHesfGr4uWZfag8k8PQtI/j5ankb7FVXMAWoFnIYAIZuVRRocLK6cPPmYs0hLoJWIZN8WISdYBGXFD7fAwCy6OlyJPj7IHxtO/ROl4LI8tkmOkm6+ltxBZgU+N6tlVPfxBPF1JFftylyCbvDJzZYg==", $signature);
         $oAuthParameters->setOAuthSignature($signature);
         
         $baseParams = $oAuthParameters->getBaseParameters();
@@ -90,7 +90,7 @@ class OAuthUtilTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals("apwbAT6IoMRmB9wE9K4fNHDsaMo=", $baseParams['oauth_body_hash'] );
         $this->assertEquals("L5BsiPgaF-O3qA36znUATgQXwJB6MRoMSdhjd7wt50c97279!50596e52466e3966546d434b7354584c4975693238513d3d", $baseParams['oauth_consumer_key']);
         $this->assertEquals("NONCE", $baseParams['oauth_nonce']);
-        $this->assertEquals("EhVW5sommBlfPSk5+RfR5LSuuvgzeMi8tiyh4+3Ao7uzyp5hjaCTi8igfwMmSfZH700BU9kUv5MOSR/keAkEXTeTBgp1eQMRSiGhHK68UeFTAyDW+mtxsrJNeftDhmkmxd2Cm8WIfmcxLUYD6g1b1QmJWEExkCkG9ztdqHT/6ef56OCEAJtAS5FfxQ5ew41hxFi0FtAdtYAepAwKdMJ1dwBiAlNmIJNYFqO61XPSnB5UtH1VR63Ti+AA0hAgZE8oH94MkksK1tkiYXzuPWuO4+kL5KQt1J2+zH8vOUSqDhQErsZxCEEF930NXafO0YyMmE4tkPEs10iaVerKo/Uu0A==", $baseParams['oauth_signature']);
+        $this->assertEquals("7cu8PjbG9LCv4BmG9qOJft/wfkrEhQzDbHkEQ8zdBrgFvJ+RbPL3s2jRjoioXYw1tJzSnIfknksfc66fBMc6fURRRy2zUQlXU8q6Xun0l4islF99s8whmbkiYmVAfsnVokbAidCXxQxkCinFSn0Y+fun6Re3UzL7cHPzFSCW7kVB7+KNyVPEMT7xKy4dnfIwYoHesfGr4uWZfag8k8PQtI/j5ankb7FVXMAWoFnIYAIZuVRRocLK6cPPmYs0hLoJWIZN8WISdYBGXFD7fAwCy6OlyJPj7IHxtO/ROl4LI8tkmOkm6+ltxBZgU+N6tlVPfxBPF1JFftylyCbvDJzZYg==", $baseParams['oauth_signature']);
         $this->assertEquals("RSA-SHA1", $baseParams['oauth_signature_method']);
         $this->assertEquals("TIMESTAMP", $baseParams['oauth_timestamp']);
         
@@ -98,7 +98,7 @@ class OAuthUtilTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals("apwbAT6IoMRmB9wE9K4fNHDsaMo%3D", Util::uriRfc3986Encode($baseParams['oauth_body_hash']));
         $this->assertEquals("L5BsiPgaF-O3qA36znUATgQXwJB6MRoMSdhjd7wt50c97279%2150596e52466e3966546d434b7354584c4975693238513d3d", Util::uriRfc3986Encode($baseParams['oauth_consumer_key']));
         $this->assertEquals("NONCE", Util::uriRfc3986Encode($baseParams['oauth_nonce'] ));
-        $this->assertEquals("EhVW5sommBlfPSk5%2BRfR5LSuuvgzeMi8tiyh4%2B3Ao7uzyp5hjaCTi8igfwMmSfZH700BU9kUv5MOSR%2FkeAkEXTeTBgp1eQMRSiGhHK68UeFTAyDW%2BmtxsrJNeftDhmkmxd2Cm8WIfmcxLUYD6g1b1QmJWEExkCkG9ztdqHT%2F6ef56OCEAJtAS5FfxQ5ew41hxFi0FtAdtYAepAwKdMJ1dwBiAlNmIJNYFqO61XPSnB5UtH1VR63Ti%2BAA0hAgZE8oH94MkksK1tkiYXzuPWuO4%2BkL5KQt1J2%2BzH8vOUSqDhQErsZxCEEF930NXafO0YyMmE4tkPEs10iaVerKo%2FUu0A%3D%3D",
+        $this->assertEquals("7cu8PjbG9LCv4BmG9qOJft%2FwfkrEhQzDbHkEQ8zdBrgFvJ%2BRbPL3s2jRjoioXYw1tJzSnIfknksfc66fBMc6fURRRy2zUQlXU8q6Xun0l4islF99s8whmbkiYmVAfsnVokbAidCXxQxkCinFSn0Y%2Bfun6Re3UzL7cHPzFSCW7kVB7%2BKNyVPEMT7xKy4dnfIwYoHesfGr4uWZfag8k8PQtI%2Fj5ankb7FVXMAWoFnIYAIZuVRRocLK6cPPmYs0hLoJWIZN8WISdYBGXFD7fAwCy6OlyJPj7IHxtO%2FROl4LI8tkmOkm6%2BltxBZgU%2BN6tlVPfxBPF1JFftylyCbvDJzZYg%3D%3D",
                  Util::uriRfc3986Encode($baseParams['oauth_signature']));
         $this->assertEquals("RSA-SHA1", Util::uriRfc3986Encode($baseParams['oauth_signature_method']));
         $this->assertEquals("TIMESTAMP", Util::uriRfc3986Encode($baseParams['oauth_timestamp']) );
@@ -135,7 +135,7 @@ class OAuthUtilTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals("PUT&https%3A%2F%2Fsandbox.api.mastercard.com%2Ffraud%2Floststolen%2Fv1%2Faccount-inquiry&Format%3DJSON%26oauth_body_hash%3DnmtgpSOebxR%252FPfZyg9qwNoUEsYY%253D%26oauth_consumer_key%3DL5BsiPgaF-O3qA36znUATgQXwJB6MRoMSdhjd7wt50c97279%252150596e52466e3966546d434b7354584c4975693238513d3d%26oauth_nonce%3DFl0qGYY1ZmwMzzpdN%26oauth_signature_method%3DRSA-SHA1%26oauth_timestamp%3D1457428003", $baseString);
 
         $signature = $this->oauthAuthentication->signValue($baseString);
-        $this->assertEquals("Q03RVNaPUalnH8ITeKrw13OjXneuuUcYH13aOHATnuMB57DCnK6GxW5roZkXRN6k6fuGeGlY5TYnqpK/uwc0EXEpg9XDh7UWagp+JF6TTLgT+6YF9beN5cE6GcxCsD5IVy2GZbpCrNcq5bKRKKUideHv1xUuE51nNnIorTYvFs+vbz3fDvL/v+eX4Qq2zjDUfUpwLEUhtwbcDeyTk1EvyB7j2740l2XF2s31RE9uaXZlbAZhtW+f7TmOEn0Zsx8NhZ9u3WUXVDWJkRUOWGZlf1B0oKIL52UjbP0XRc3hfCgAU0bo37V22umPfH0+vxQ0AtVHZu0doeSn8d3MDUg8CQ==", $signature);
+        $this->assertEquals("9CxMg0Dd4bOJbwftfkd+Gubxg0t4ovU6SznJQs91VU3x4xLDKxI66xCWc7IdkdG0sIVXuDK3vxcht6UEwHIg8KxQKqS9d5Od9QrYyfHDsz0Zyy+gwkNNV/oStokX5SWLUVMv94FO5QM5soibbLgoh5aTvDeZtMWkeTGu1LIvake7vxG+NC6kvGAHkmJwNB92XOsIQ2PUgpjtfvG02OLwsepleNY7hFOA9lyD5cNNijU43Xzfn7IFWGS6+fZ5UaJhvy9SbqnGMajURByXteHB48kpndBvNSmGn16w4IMEhQ9MemuigeAguMllgmMxsrpFCCmFGS6jo9IZlGzKfOGK/g==", $signature);
         $oAuthParameters->setOAuthSignature($signature);
         
         $baseParams = $oAuthParameters->getBaseParameters();
@@ -143,7 +143,7 @@ class OAuthUtilTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals("nmtgpSOebxR/PfZyg9qwNoUEsYY=", $baseParams['oauth_body_hash'] );
         $this->assertEquals("L5BsiPgaF-O3qA36znUATgQXwJB6MRoMSdhjd7wt50c97279!50596e52466e3966546d434b7354584c4975693238513d3d", $baseParams['oauth_consumer_key']);
         $this->assertEquals("Fl0qGYY1ZmwMzzpdN", $baseParams['oauth_nonce']);
-        $this->assertEquals("Q03RVNaPUalnH8ITeKrw13OjXneuuUcYH13aOHATnuMB57DCnK6GxW5roZkXRN6k6fuGeGlY5TYnqpK/uwc0EXEpg9XDh7UWagp+JF6TTLgT+6YF9beN5cE6GcxCsD5IVy2GZbpCrNcq5bKRKKUideHv1xUuE51nNnIorTYvFs+vbz3fDvL/v+eX4Qq2zjDUfUpwLEUhtwbcDeyTk1EvyB7j2740l2XF2s31RE9uaXZlbAZhtW+f7TmOEn0Zsx8NhZ9u3WUXVDWJkRUOWGZlf1B0oKIL52UjbP0XRc3hfCgAU0bo37V22umPfH0+vxQ0AtVHZu0doeSn8d3MDUg8CQ==", $baseParams['oauth_signature']);
+        $this->assertEquals("9CxMg0Dd4bOJbwftfkd+Gubxg0t4ovU6SznJQs91VU3x4xLDKxI66xCWc7IdkdG0sIVXuDK3vxcht6UEwHIg8KxQKqS9d5Od9QrYyfHDsz0Zyy+gwkNNV/oStokX5SWLUVMv94FO5QM5soibbLgoh5aTvDeZtMWkeTGu1LIvake7vxG+NC6kvGAHkmJwNB92XOsIQ2PUgpjtfvG02OLwsepleNY7hFOA9lyD5cNNijU43Xzfn7IFWGS6+fZ5UaJhvy9SbqnGMajURByXteHB48kpndBvNSmGn16w4IMEhQ9MemuigeAguMllgmMxsrpFCCmFGS6jo9IZlGzKfOGK/g==", $baseParams['oauth_signature']);
         $this->assertEquals("RSA-SHA1", $baseParams['oauth_signature_method']);
         $this->assertEquals("1457428003", $baseParams['oauth_timestamp']);
        
