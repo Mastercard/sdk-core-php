@@ -34,11 +34,12 @@ class OperationMetadata {
     protected $context = null;
     protected $jsonNative = false;
     
-    public function __construct($apiVersion, $host, $context = null, $jsonNative = false) {
+    public function __construct($apiVersion, $host, $context = null, $jsonNative = false, $contentTypeOverride = null) {
         $this->apiVersion = $apiVersion;
         $this->host = $host;
         $this->context = $context;
         $this->jsonNative = $jsonNative;
+        $this->contentTypeOverride = $contentTypeOverride;
     }
     
     
@@ -72,6 +73,14 @@ class OperationMetadata {
      */
     public function isJsonNative() {
         return $this->jsonNative;
+    }
+
+        /**
+     * return the environment
+     * @return type
+     */
+    public function getContentTypeOverride() {
+        return $this->contentTypeOverride;
     }
     
     
