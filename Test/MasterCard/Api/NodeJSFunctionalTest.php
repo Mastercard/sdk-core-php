@@ -38,7 +38,7 @@
 /**
  * 
  */
-class NodeJSFunctionalTest extends \PHPUnit_Framework_TestCase{
+class NodeJSFunctionalTest extends BaseTest{
     
     
     public static function setUpBeforeClass() {
