@@ -221,6 +221,11 @@ class ApiController {
 //        echo "url: $url \n";
 //        echo "-------------------------------------\n";
 //        echo "-------------------------------------\n";
+
+        $contentType = "application/json; charset=utf-8";
+        if (!empty($operationMetadata->getContentTypeOverride())) {
+            $contentType = $operationMetadata->getContentTypeOverride()."; charset=utf-8";
+        }
         
         
         $request = null;
@@ -234,14 +239,14 @@ class ApiController {
         switch ($action) {
             case "create":
                 $request = new Request("POST", $url, [], $requestBody);
-                $request = $request->withHeader("Content-Type", "application/json; charset=utf-8");
+                $request = $request->withHeader("Content-Type", $contentType);
                 break;
             case "delete":
                 $request = new Request("DELETE", $url);
                 break;
             case "update":
                 $request = new Request("PUT", $url, [], $requestBody);
-                $request = $request->withHeader("Content-Type", "application/json; charset=utf-8");
+                $request = $request->withHeader("Content-Type", $contentType);
                 break;
             case "read":
             case "list":
@@ -250,7 +255,7 @@ class ApiController {
                 break;
         }
         
-        $request = $request->withHeader("Accept", "application/json; charset=utf-8");
+        $request = $request->withHeader("Accept", $contentType);
         $request = $request->withHeader("User-Agent", Constants::getCoreVersion() ."/". $operationMetadata->getApiVersion());
         foreach ($headerMap as $key => $value) {
             $request = $request->withHeader($key, $value);    

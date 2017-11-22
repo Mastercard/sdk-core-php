@@ -450,7 +450,47 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         //arizzini: Accept is present
         $this->assertTrue(array_key_exists("Accept", $headers));
         
-        $this->assertEquals("mastercard-api-core(php):1.4.4/mock:0.0.1", $headers['User-Agent'][0]);
+        $this->assertEquals("mastercard-api-core(php):1.4.5/mock:0.0.1", $headers['User-Agent'][0]);
+        
+        //arizzini: oauth_body_hash is present in OAUTH token.
+        $this->assertTrue(strpos($headers['Authorization'][0], 'oauth_body_hash') !== false);
+        
+    }
+    
+        public function test_POST_request_with_jsonNative_and_contentTypeOverride() {
+        $controller = new ApiController("0.0.1");
+
+        $inputMap = array(
+            'api' => 'lostandstolen',
+            'version' => 1,
+            'three' => 3,
+            'four' => 4,
+            'five' => 5
+        );
+        
+        $config = ResourceConfig::getInstance();
+        $config->setOverride();
+        $config->setEnvironment(Environment::SANDBOX);
+        $operationMetadate = new OperationMetadata("mock:0.0.1", $config->getHost(), $config->getContext(), true, "text/json");
+
+
+        $operationConfig = new OperationConfig("/fraud/{api}/v{version}/account-inquiry", "create", array('one', 'two', 'three'), array());
+        $request = $controller->getRequest($operationConfig, $operationMetadate, $inputMap);
+        
+
+        $this->assertEquals("POST", $request->getMethod());
+        $this->assertEquals(json_encode(array('four' => 4, 'five' => 5)), $request->getBody());
+        
+        $headers = $request->getHeaders();
+        
+        //arizzini: Content-Type is present
+        $this->assertTrue(array_key_exists("Content-Type", $headers));
+        $this->assertEquals("text/json; charset=utf-8", $headers['Content-Type'][0]);
+        //arizzini: Accept is present
+        $this->assertTrue(array_key_exists("Accept", $headers));
+        $this->assertEquals("text/json; charset=utf-8", $headers['Accept'][0]);
+        
+        $this->assertEquals("mastercard-api-core(php):1.4.5/mock:0.0.1", $headers['User-Agent'][0]);
         
         //arizzini: oauth_body_hash is present in OAUTH token.
         $this->assertTrue(strpos($headers['Authorization'][0], 'oauth_body_hash') !== false);
@@ -492,7 +532,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
         //arizzini: Accept is present
         $this->assertTrue(array_key_exists("Accept", $headers));
         
-        $this->assertEquals("mastercard-api-core(php):1.4.4/mock:0.0.1", $headers['User-Agent'][0]);
+        $this->assertEquals("mastercard-api-core(php):1.4.5/mock:0.0.1", $headers['User-Agent'][0]);
         
         //arizzini: oauth_body_hash is not present
         $this->assertFalse(strpos($headers['Authorization'][0], 'oauth_body_hash') !== false);

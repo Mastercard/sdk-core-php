@@ -26,63 +26,48 @@
  *
  */
 
-namespace MasterCard\Core\Model;
+ namespace MasterCard\Api;
 
-class OperationMetadata {
-    protected $apiVersion;
-    protected $host;
-    protected $context = null;
-    protected $jsonNative = false;
+ use MasterCard\Core\Model\BaseObject;
+ use MasterCard\Core\Model\RequestMap;
+ use MasterCard\Core\Model\OperationMetadata;
+ use MasterCard\Core\Model\OperationConfig;
+
+
+/**
+ * 
+ */
+class JsonEcho extends BaseObject {
+
     
-    public function __construct($apiVersion, $host, $context = null, $jsonNative = false, $contentTypeOverride = null) {
-        $this->apiVersion = $apiVersion;
-        $this->host = $host;
-        $this->context = $context;
-        $this->jsonNative = $jsonNative;
-        $this->contentTypeOverride = $contentTypeOverride;
+       
+    protected static function getOperationMetadata() {
+        return new OperationMetadata("1.0.0", "http://echo.jpillora.com/");
     }
     
-    
-    /**
-     * return the apiversion
-     * @return type
-     */
-    public function getApiVersion() {
-        return $this->apiVersion;
-    }
-    
-    /**
-     * return the host
-     * @return type
-     */
-    public function getHost() {
-        return $this->host;
-    }
-    
-    /**
-     * return the environment
-     * @return type
-     */
-    public function getContext() {
-        return $this->context;
-    }
-    
-    /**
-     * return is this is a jsonNatice call
-     * @return true | false
-     */
-    public function isJsonNative() {
-        return $this->jsonNative;
+    protected static function getOperationConfig($operationUUID) {
+        switch ($operationUUID) {
+            case "uuid":
+                return new OperationConfig("/mcapitest/JsonNativePostPublic", "create", array(), array());
+            default:
+                throw new \Exception("Invalid operationUUID supplied: $operationUUID");
+        }
     }
 
-        /**
-     * return the environment
+
+
+
+
+    /**
+     * Query objects of type Insights by id and optional criteria
+     * @param type $criteria
      * @return type
      */
-    public function getContentTypeOverride() {
-        return $this->contentTypeOverride;
+    public static function create($criteria)
+    {
+        return parent::execute("uuid", new JsonEcho($criteria));
     }
-    
-    
-    
+
+
 }
+
