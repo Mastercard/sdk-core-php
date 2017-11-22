@@ -11,9 +11,10 @@ namespace MasterCard\Api;
 use MasterCard\Core\Model\RequestMap;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use PHPUnit\Framework\TestCase;
 
 
-abstract class BaseTest extends \PHPUnit_Framework_TestCase {
+abstract class BaseTest extends TestCase {
     
     protected static $logger = null;
     public static $responses = array();

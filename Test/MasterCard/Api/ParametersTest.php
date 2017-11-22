@@ -34,7 +34,7 @@ use MasterCard\Core\Security\OAuth\OAuthAuthentication;
 
 
 
-class ParametersTest extends \PHPUnit_Framework_TestCase {
+class ParametersTest extends BaseTest{
 
     protected function setUp() {
         $privateKey = file_get_contents(getcwd()."/mcapi_sandbox_key.p12");

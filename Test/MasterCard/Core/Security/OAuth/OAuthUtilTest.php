@@ -35,8 +35,9 @@ use MasterCard\Core\Security\AuthenticationInterface;
 use MasterCard\Core\Security\SecurityUtil;
 use MasterCard\Core\Security\OAuth\OAuthParameters;
 use MasterCard\Core\Model\RequestMap;
+use PHPUnit\Framework\TestCase;
 
-class OAuthUtilTest extends \PHPUnit_Framework_TestCase {
+class OAuthUtilTest extends TestCase {
 
     protected $oauthAuthentication;
     
