@@ -3,3 +3,6 @@ vendor
 composer.lock
 /nbproject/private/
 /nodejs-server/node_modules/
+nbproject/
+
+result/
