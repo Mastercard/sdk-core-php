@@ -35,7 +35,7 @@ use MasterCard\Api\MerchantCategories;
 
 
 
-class MerchantCountriesTest extends \PHPUnit_Framework_TestCase {
+class MerchantCountriesTest extends BaseTest {
 
     protected function setUp() {
         ApiConfig::setDebug(false);

@@ -30,8 +30,9 @@
 namespace MasterCard\Core;
 
 use MasterCard\Core\Model\RequestMap;
+use PHPUnit\Framework\TestCase;
 
-class UtilTest extends \PHPUnit_Framework_TestCase {
+class UtilTest extends TestCase{
     
     public function testNormalizeUrl() {
         $baseUrl = "http://php.net/manual/en/function.parse-url.php";

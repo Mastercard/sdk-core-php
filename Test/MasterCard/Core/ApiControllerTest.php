@@ -22,8 +22,9 @@ use MasterCard\Core\Model\OperationConfig;
 use MasterCard\Core\Model\OperationMetadata;
 use MasterCard\Core\Security\AuthenticationInterface;
 use MasterCard\Core\Security\OAuth\OAuthAuthentication;
+use PHPUnit\Framework\TestCase;
 
-class ApiControllerTest extends \PHPUnit_Framework_TestCase {
+class ApiControllerTest extends TestCase {
 
     protected function setUp() {
         

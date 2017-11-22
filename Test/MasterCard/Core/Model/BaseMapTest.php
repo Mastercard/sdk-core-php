@@ -31,8 +31,9 @@
 namespace MasterCard\Core\Model;
 
 use MasterCard\Core\Model\RequestMap;
+use PHPUnit\Framework\TestCase;
 
-class BaseMapTest extends \PHPUnit_Framework_TestCase
+class BaseMapTest extends TestCase
 {
     public function testMap()
     {
