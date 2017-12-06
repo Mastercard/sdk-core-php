@@ -95,12 +95,12 @@ class UtilTest extends TestCase{
         
         $subMap = Util::subMap($inputMap, $keyList);
         
-        $this->assertEquals(3, count($subMap));
+        $this->assertCount(3, $subMap);
         $this->assertEquals(1, $subMap['one']);
         $this->assertEquals(3, $subMap['three']);
         $this->assertEquals(5, $subMap['five']);
         
-        $this->assertEquals(2, count($inputMap));
+        $this->assertCount(2, $inputMap);
         $this->assertEquals(2, $inputMap['two']);
         $this->assertEquals(4, $inputMap['four']);
     }
@@ -119,7 +119,7 @@ class UtilTest extends TestCase{
         $result = Util::getReplacedPath($path, $inputMap);
         
         $this->assertEquals("http://localhost:8080/1/2/3/car", $result);
-        $this->assertEquals(2, count($inputMap));
+        $this->assertCount(2, $inputMap);
     }
     
 //    public function testGetReplacedPathWithBaseMap() {

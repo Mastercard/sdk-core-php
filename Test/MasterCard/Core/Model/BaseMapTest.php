@@ -40,7 +40,7 @@ class BaseMapTest extends TestCase
         $baseObject = new RequestMap();
         $baseObject->set("key1", "value1");
         
-        $this->assertTrue($baseObject != NULL);
+        $this->assertNotEquals(NULL, $baseObject);
         $this->assertTrue($baseObject->containsKey("key1"));
         $this->assertEquals(1, $baseObject->size());
         $this->assertEquals("value1", $baseObject->get("key1"));
@@ -78,12 +78,12 @@ class BaseMapTest extends TestCase
         $baseObject->set("key1.key2.key4", "value2");
         
         
-        $this->assertTrue($baseObject != NULL);
+        $this->assertNotEquals(NULL, $baseObject);
         
         $this->assertTrue($baseObject->containsKey("key1"));
         $this->assertTrue($baseObject->containsKey("key1.key2"));
         $this->assertTrue($baseObject->containsKey("key1.key2.key3"));
-        $this->assertTrue($baseObject->size() == 1);
+        $this->assertEquals(1, $baseObject->size());
         $this->assertEquals("value1", $baseObject->get("key1.key2.key3"));
         
         $this->assertTrue($baseObject->containsKey("key1.key2.key4"));
@@ -260,9 +260,9 @@ class BaseMapTest extends TestCase
         $baseMap = new RequestMap();
         $baseMap->setAll($map);
         
-        $this->assertTrue($baseMap != NULL);
+        $this->assertNotEquals(NULL, $baseMap);
         $this->assertTrue($baseMap->containsKey("Account.Status"));
-        $this->assertTrue($baseMap->size() == 1);
+        $this->assertEquals(1, $baseMap->size());
         $this->assertEquals("STOLEN", $baseMap->get("Account.Reason"));
         
         
