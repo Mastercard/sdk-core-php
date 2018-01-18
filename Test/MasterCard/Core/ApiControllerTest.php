@@ -451,7 +451,7 @@ class ApiControllerTest extends TestCase {
         //arizzini: Accept is present
         $this->assertArrayHasKey("Accept", $headers);
         
-        $this->assertEquals("mastercard-api-core(php):1.4.5/mock:0.0.1", $headers['User-Agent'][0]);
+        $this->assertEquals("mastercard-api-core(php):1.4.6/mock:0.0.1", $headers['User-Agent'][0]);
         
         //arizzini: oauth_body_hash is present in OAUTH token.
         $this->assertContains('oauth_body_hash', $headers['Authorization'][0]);
@@ -491,7 +491,7 @@ class ApiControllerTest extends TestCase {
         $this->assertArrayHasKey("Accept", $headers);
         $this->assertEquals("text/json; charset=utf-8", $headers['Accept'][0]);
         
-        $this->assertEquals("mastercard-api-core(php):1.4.5/mock:0.0.1", $headers['User-Agent'][0]);
+        $this->assertEquals("mastercard-api-core(php):1.4.6/mock:0.0.1", $headers['User-Agent'][0]);
         
         //arizzini: oauth_body_hash is present in OAUTH token.
         $this->assertContains('oauth_body_hash', $headers['Authorization'][0]);
@@ -533,7 +533,7 @@ class ApiControllerTest extends TestCase {
         //arizzini: Accept is present
         $this->assertArrayHasKey("Accept", $headers);
         
-        $this->assertEquals("mastercard-api-core(php):1.4.5/mock:0.0.1", $headers['User-Agent'][0]);
+        $this->assertEquals("mastercard-api-core(php):1.4.6/mock:0.0.1", $headers['User-Agent'][0]);
         
         //arizzini: oauth_body_hash is not present
         $this->assertNotContains('oauth_body_hash', $headers['Authorization'][0]);
