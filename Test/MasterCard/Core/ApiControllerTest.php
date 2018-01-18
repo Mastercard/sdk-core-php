@@ -345,7 +345,7 @@ class ApiControllerTest extends TestCase {
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
 
         $this->assertEquals("https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry?Format=JSON", $url);
-        $this->assertEquals(3, count($inputMap));
+        $this->assertCount(3, $inputMap);
     }
 
     public function testGetUrlWithNonMatchingQueue() {
@@ -368,7 +368,7 @@ class ApiControllerTest extends TestCase {
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
 
         $this->assertEquals("https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry?Format=JSON", $url);
-        $this->assertEquals(3, count($inputMap));
+        $this->assertCount(3, $inputMap);
     }
 
     public function testGetUrlWithQuery() {
@@ -392,7 +392,7 @@ class ApiControllerTest extends TestCase {
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
 
         $this->assertEquals("https://sandbox.api.mastercard.com/fraud/lostandstolen/v1/account-inquiry?three=3&Format=JSON", $url);
-        $this->assertEquals(2, count($inputMap));
+        $this->assertCount(2, $inputMap);
     }
     
     public function testGetUrlWithOverride() {
@@ -416,7 +416,7 @@ class ApiControllerTest extends TestCase {
         $url = $controller->getUrl($operationConfig, $operationMetadate, $inputMap);
 
         $this->assertEquals("http://localhost:8081/fraud/lostandstolen/v1/account-inquiry?three=3&Format=JSON", $url);
-        $this->assertEquals(2, count($inputMap));
+        $this->assertCount(2, $inputMap);
     }
     
     public function test_POST_request() {
@@ -446,10 +446,10 @@ class ApiControllerTest extends TestCase {
         $headers = $request->getHeaders();
         
         //arizzini: Content-Type is present
-        $this->assertTrue(array_key_exists("Content-Type", $headers));
+        $this->assertArrayHasKey("Content-Type", $headers);
         
         //arizzini: Accept is present
-        $this->assertTrue(array_key_exists("Accept", $headers));
+        $this->assertArrayHasKey("Accept", $headers);
         
         $this->assertEquals("mastercard-api-core(php):1.4.5/mock:0.0.1", $headers['User-Agent'][0]);
         
@@ -485,10 +485,10 @@ class ApiControllerTest extends TestCase {
         $headers = $request->getHeaders();
         
         //arizzini: Content-Type is present
-        $this->assertTrue(array_key_exists("Content-Type", $headers));
+        $this->assertArrayHasKey("Content-Type", $headers);
         $this->assertEquals("text/json; charset=utf-8", $headers['Content-Type'][0]);
         //arizzini: Accept is present
-        $this->assertTrue(array_key_exists("Accept", $headers));
+        $this->assertArrayHasKey("Accept", $headers);
         $this->assertEquals("text/json; charset=utf-8", $headers['Accept'][0]);
         
         $this->assertEquals("mastercard-api-core(php):1.4.5/mock:0.0.1", $headers['User-Agent'][0]);
@@ -523,15 +523,15 @@ class ApiControllerTest extends TestCase {
         
         $this->assertEquals("GET", $request->getMethod());
         $body = $request->getBody()->getContents();
-        $this->assertTrue(empty($body));
+        $this->assertEmpty($body);
         
         $headers = $request->getHeaders();
         
         //arizzini: Content-Type is not present
-        $this->assertFalse(array_key_exists("Content-Type", $headers));
+        $this->assertArrayNotHasKey("Content-Type", $headers);
         
         //arizzini: Accept is present
-        $this->assertTrue(array_key_exists("Accept", $headers));
+        $this->assertArrayHasKey("Accept", $headers);
         
         $this->assertEquals("mastercard-api-core(php):1.4.5/mock:0.0.1", $headers['User-Agent'][0]);
         

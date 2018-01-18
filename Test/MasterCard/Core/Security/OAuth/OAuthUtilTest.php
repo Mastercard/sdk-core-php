@@ -50,13 +50,13 @@ class OAuthUtilTest extends TestCase {
     public function testGetNonce() {
         $nonce = SecurityUtil::getNonce();
         $this->assertNotNull($nonce);
-        $this->assertEquals(16, strlen($nonce));
+        $this->assertSame(16, strlen($nonce));
     }
 
     public function testGetTimestamp() {
         $nonce = SecurityUtil::getTimestamp();
         $this->assertNotNull($nonce);
-        $this->assertEquals(10, strlen($nonce));
+        $this->assertSame(10, strlen($nonce));
     }
 
 
