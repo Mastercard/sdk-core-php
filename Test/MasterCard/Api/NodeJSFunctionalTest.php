@@ -96,7 +96,7 @@ class NodeJSFunctionalTest extends BaseTest{
                 
         $createdItems = Post::listByCriteria();
         
-        $this->assertEquals(true, is_array($createdItems));
+        $this->assertInternalType('array', $createdItems);
               
         $createdItem = $createdItems[0];
         
@@ -115,7 +115,7 @@ class NodeJSFunctionalTest extends BaseTest{
                 
         $createdItems = Post::listByCriteria($criteria);
         
-        $this->assertEquals(true, is_array($createdItems));
+        $this->assertInternalType('array', $createdItems);
               
         $createdItem = $createdItems[0];
         
@@ -181,7 +181,7 @@ class NodeJSFunctionalTest extends BaseTest{
         
         $items =UserPostPath::listByCriteria($requestMap);
         
-        $this->assertEquals(true, is_array($items));
+        $this->assertInternalType('array', $items);
               
         $item = $items[0];
         
@@ -197,7 +197,7 @@ class NodeJSFunctionalTest extends BaseTest{
         
         $items =  UserPostHeader::listByCriteria($requestMap);
         
-        $this->assertEquals(true, is_array($items));
+        $this->assertInternalType('array', $items);
               
         $item = $items[0];
         

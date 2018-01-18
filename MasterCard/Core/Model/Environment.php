@@ -32,30 +32,37 @@ namespace MasterCard\Core\Model;
 
 class Environment {
     const PRODUCTION = "production";
+    const PRODUCTION_MTF = "production_mtf";
+    const PRODUCTION_ITF = "production_itf";
     const SANDBOX = "sandbox"; 
+    const SANDBOX_STATIC = "sandbox_static"; 
     const SANDBOX_MTF = "sandbox_mtf"; 
     const SANDBOX_ITF = "sandbox_itf"; 
     const STAGE = "stage";
-    const DEV = "dev";
-    const PRODUCTION_MTF = "production_mtf";
-    const PRODUCTION_ITF = "production_itf";
     const STAGE_MTF = "stage_mtf";
     const STAGE_ITF = "stage_itf";
+    const DEV = "dev";
     const LOCALHOST = "localhost";
     const OTHER = "other";
+    const ITF = "itf";
+    const PERF = "perf";
+    
     
     public static $MAPPING = [
         Environment::PRODUCTION => ["https://api.mastercard.com", null],
+        Environment::PRODUCTION_MTF => ["https://api.mastercard.com", "mtf"],
+        Environment::PRODUCTION_ITF => ["https://api.mastercard.com", "itf"],
         Environment::SANDBOX => ["https://sandbox.api.mastercard.com", null],
+        Environment::SANDBOX_STATIC => ["https://sandbox.api.mastercard.com", "static"],
         Environment::SANDBOX_MTF => ["https://sandbox.api.mastercard.com", "mtf"],
         Environment::SANDBOX_ITF => ["https://sandbox.api.mastercard.com", "itf"],
         Environment::STAGE => ["https://stage.api.mastercard.com", null],
-        Environment::DEV => ["https://dev.api.mastercard.com", null],
-        Environment::PRODUCTION_MTF => ["https://api.mastercard.com", "mtf"],
-        Environment::PRODUCTION_ITF => ["https://api.mastercard.com", "itf"],
         Environment::STAGE_MTF => ["https://stage.api.mastercard.com", "mtf"],
         Environment::STAGE_ITF => ["https://stage.api.mastercard.com", "itf"],
+        Environment::DEV => ["https://dev.api.mastercard.com", null],
         Environment::LOCALHOST => ["http://localhost:8081", null],
+        Environment::ITF => ["https://itf.api.mastercard.com", null],
+        Environment::PERF => ["https://perf.api.mastercard.com", null]
     ];
     
 }
