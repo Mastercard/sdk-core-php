@@ -53,7 +53,7 @@ class Environment {
         Environment::PRODUCTION_MTF => ["https://api.mastercard.com", "mtf"],
         Environment::PRODUCTION_ITF => ["https://api.mastercard.com", "itf"],
         Environment::SANDBOX => ["https://sandbox.api.mastercard.com", null],
-        Environment::SANDBOX => ["https://sandbox.api.mastercard.com", "static"],
+        Environment::SANDBOX_STATIC => ["https://sandbox.api.mastercard.com", "static"],
         Environment::SANDBOX_MTF => ["https://sandbox.api.mastercard.com", "mtf"],
         Environment::SANDBOX_ITF => ["https://sandbox.api.mastercard.com", "itf"],
         Environment::STAGE => ["https://stage.api.mastercard.com", null],
