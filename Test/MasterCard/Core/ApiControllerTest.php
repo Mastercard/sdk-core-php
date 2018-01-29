@@ -297,9 +297,33 @@ class ApiControllerTest extends TestCase {
             $this->assertEquals("Something went wrong", $ex->getMessage());
             $this->assertEquals("OAuth.ConsumerKey", $ex->getSource());
             $this->assertEquals("INVALID_CLIENT_ID", $ex->getReasonCode());
+            $this->assertEquals("OAuth.ConsumerKey", $ex->getRawErrorData()->get("Errors.Error[0].Source"));
             throw $ex;
         }
     }
+    
+    public function test500_invalidrequest_array() {
+        $this->expectException(Exception\ApiException::class);
+
+        $body = "{\"Errors\":[{\"Source\":\"OAuth.ConsumerKey\",\"ReasonCode\":\"INVALID_CLIENT_ID\",\"Description\":\"Something went wrong\",\"Recoverable\":false,\"Details\":null}]}";
+        $requestMap = new RequestMap(json_decode($body, true));
+
+        $controller = new ApiController("0.0.1");
+        $controller->setClient(self::mockClient(500, $body));
+
+        $testObject = new TestBaseObject($requestMap);
+
+        try {
+            $responseArray = $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
+        } catch (Exception\ApiException $ex) {
+            $this->assertEquals("Something went wrong", $ex->getMessage());
+            $this->assertEquals("OAuth.ConsumerKey", $ex->getSource());
+            $this->assertEquals("INVALID_CLIENT_ID", $ex->getReasonCode());
+            $this->assertEquals("OAuth.ConsumerKey", $ex->getRawErrorData()->get("Errors[0].Source"));
+            throw $ex;
+        }
+    }
+    
     
     
     public function test500_invalidrequest_json_native() {
@@ -320,6 +344,76 @@ class ApiControllerTest extends TestCase {
             $this->assertEquals("Unauthorized Access", $ex->getMessage());
             $this->assertEquals("OpenAPIClientId", $ex->getSource());
             $this->assertEquals("AUTHORIZATION_FAILED", $ex->getReasonCode());
+            $this->assertEquals("OpenAPIClientId", $ex->getRawErrorData()->get("errors[0].source"));
+            throw $ex;
+        }
+    }
+    
+    
+    public function test500_invalidrequest_json_native2() {
+        $this->expectException(Exception\ApiException::class);
+    
+    //
+        $body = "{\"errors\":[{\"source\":\"OpenAPIClientId\",\"reasonCode\":\"AUTHORIZATION_FAILED\",\"key\":\"050007\",\"description\":\"Unauthorized Access\"},{\"source\":\"OpenAPIClientId\",\"reasonCode\":\"AUTHORIZATION_FAILED\",\"key\":\"050008\",\"description\":\"Unauthorized Access\"}]}";
+        $requestMap = new RequestMap(json_decode($body, true));
+
+        $controller = new ApiController("0.0.1");
+        $controller->setClient(self::mockClient(500, $body));
+
+        $testObject = new TestBaseObject($requestMap);
+
+        try {
+            $responseArray = $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
+        } catch (Exception\ApiException $ex) {
+            $this->assertEquals("Unauthorized Access", $ex->getMessage());
+            $this->assertEquals("OpenAPIClientId", $ex->getSource());
+            $this->assertEquals("AUTHORIZATION_FAILED", $ex->getReasonCode());
+            $this->assertEquals("050007", $ex->getError()->get("key"));
+            $this->assertEquals("OpenAPIClientId", $ex->getRawErrorData()->get("errors[0].source"));
+            
+            $this->assertEquals(2, $ex->getErrorSize());
+            $ex->parseError(1);
+            
+            $this->assertEquals("Unauthorized Access", $ex->getMessage());
+            $this->assertEquals("OpenAPIClientId", $ex->getSource());
+            $this->assertEquals("AUTHORIZATION_FAILED", $ex->getReasonCode());
+            $this->assertEquals("050008", $ex->getError()->get("key"));
+                    
+            throw $ex;
+        }
+    }
+    
+    public function test500_invalidrequest_json_native3() {
+        $this->expectException(Exception\ApiException::class);
+    
+    //
+        $body = "[{\"source\":\"OpenAPIClientId\",\"reasonCode\":\"AUTHORIZATION_FAILED\",\"key\":\"050007\",\"description\":\"Unauthorized Access\"},{\"source\":\"OpenAPIClientId\",\"reasonCode\":\"AUTHORIZATION_FAILED\",\"key\":\"050008\",\"description\":\"Unauthorized Access\"}]";
+        $requestMap = new RequestMap(json_decode($body, true));
+
+        $controller = new ApiController("0.0.1");
+        $controller->setClient(self::mockClient(500, $body));
+
+        $testObject = new TestBaseObject($requestMap);
+
+        try {
+            $responseArray = $controller->execute($testObject->getOperationConfig("uuid"), $testObject->getOperationMetadata(), $testObject->getBaseMapAsArray());
+        } catch (Exception\ApiException $ex) {
+            $this->assertEquals("Unauthorized Access", $ex->getMessage());
+            $this->assertEquals("OpenAPIClientId", $ex->getSource());
+            $this->assertEquals("AUTHORIZATION_FAILED", $ex->getReasonCode());
+            $this->assertEquals("050007", $ex->getError()->get("key"));
+            $this->assertEquals("OpenAPIClientId", $ex->getRawErrorData()->get("source"));
+            
+            $this->assertEquals("AUTHORIZATION_FAILED", $ex->getRawErrorData()->get("reasonCode"));
+            
+            $this->assertEquals(2, $ex->getErrorSize());
+            $ex->parseError(1);
+            
+            $this->assertEquals("Unauthorized Access", $ex->getMessage());
+            $this->assertEquals("OpenAPIClientId", $ex->getSource());
+            $this->assertEquals("AUTHORIZATION_FAILED", $ex->getReasonCode());
+            $this->assertEquals("050008", $ex->getError()->get("key"));
+                    
             throw $ex;
         }
     }
