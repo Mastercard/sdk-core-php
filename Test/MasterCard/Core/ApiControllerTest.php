@@ -296,6 +296,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             $this->assertEquals("Something went wrong", $ex->getMessage());
             $this->assertEquals("OAuth.ConsumerKey", $ex->getSource());
             $this->assertEquals("INVALID_CLIENT_ID", $ex->getReasonCode());
+            $this->assertEquals("OAuth.ConsumerKey", $ex->getRawErrorData()->get("Errors.Error[0].Source"));
             throw $ex;
         }
     }
@@ -317,6 +318,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             $this->assertEquals("Something went wrong", $ex->getMessage());
             $this->assertEquals("OAuth.ConsumerKey", $ex->getSource());
             $this->assertEquals("INVALID_CLIENT_ID", $ex->getReasonCode());
+            $this->assertEquals("OAuth.ConsumerKey", $ex->getRawErrorData()->get("Errors[0].Source"));
             throw $ex;
         }
     }
@@ -341,6 +343,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             $this->assertEquals("Unauthorized Access", $ex->getMessage());
             $this->assertEquals("OpenAPIClientId", $ex->getSource());
             $this->assertEquals("AUTHORIZATION_FAILED", $ex->getReasonCode());
+            $this->assertEquals("OpenAPIClientId", $ex->getRawErrorData()->get("errors[0].source"));
             throw $ex;
         }
     }
@@ -365,6 +368,7 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             $this->assertEquals("OpenAPIClientId", $ex->getSource());
             $this->assertEquals("AUTHORIZATION_FAILED", $ex->getReasonCode());
             $this->assertEquals("050007", $ex->getError()->get("key"));
+            $this->assertEquals("OpenAPIClientId", $ex->getRawErrorData()->get("errors[0].source"));
             
             $this->assertEquals(2, $ex->getErrorSize());
             $ex->parseError(1);
@@ -397,10 +401,9 @@ class ApiControllerTest extends \PHPUnit_Framework_TestCase {
             $this->assertEquals("OpenAPIClientId", $ex->getSource());
             $this->assertEquals("AUTHORIZATION_FAILED", $ex->getReasonCode());
             $this->assertEquals("050007", $ex->getError()->get("key"));
+            $this->assertEquals("OpenAPIClientId", $ex->getRawErrorData()->get("source"));
             
-            $rawError = $ex->getRawErrorData();
-            $reasonCode = $rawError[0]["reasonCode"];
-            $this->assertEquals("AUTHORIZATION_FAILED", $reasonCode);
+            $this->assertEquals("AUTHORIZATION_FAILED", $ex->getRawErrorData()->get("reasonCode"));
             
             $this->assertEquals(2, $ex->getErrorSize());
             $ex->parseError(1);

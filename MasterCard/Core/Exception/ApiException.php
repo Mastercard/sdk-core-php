@@ -68,10 +68,10 @@ class ApiException extends \Exception
         $this->reasonCode = null;
         $this->source = null; 
         
-        $this->rawErrorData = $errorData;
         $this->errors = array();
         $this->error = null;
         
+        $this->parseRawErrorData($errorData);
         $this->parseErrors($errorData);
         $this->parseError(0);
 
@@ -144,6 +144,18 @@ class ApiException extends \Exception
     {
         return is_array($arr) && (array_keys($arr) !== range(0, count($arr) - 1));
     }
+    
+    private function parseRawErrorData($errorData) {
+        if ($this->isAssoc($errorData)) {
+            $caseInsesitiveMap = new CaseInsensitiveMap();
+            $caseInsesitiveMap->setAll($errorData);
+            $this->rawErrorData = $caseInsesitiveMap;
+        } else if (is_array ($errorData) && $this->isAssoc($errorData[0])){
+            $caseInsesitiveMap = new CaseInsensitiveMap();
+            $caseInsesitiveMap->setAll($errorData[0]);
+            $this->rawErrorData = $caseInsesitiveMap;
+        }
+    }  
     
     private function parseErrors($errorData) {
         if (!empty($errorData)) {
