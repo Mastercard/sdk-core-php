@@ -32,7 +32,7 @@ namespace MasterCard\Core\Model;
 
 class Constants {
     const SDK = "mastercard-api-core(php)";
-    const VERSION = "1.4.6"; 
+    const VERSION = "1.4.7"; 
     
     public static function getCoreVersion() {
         return Constants::SDK.":".Constants::VERSION;
