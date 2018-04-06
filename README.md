@@ -4,6 +4,7 @@ This is the SDK Core Api for all the SDK used in MasterCard.
 It provides some Core functionality for all our SDKs.
 
 It provide:
+	
 	- Exception handling.
 	- Security (OAUTH).
 	- Crypt utilities.
