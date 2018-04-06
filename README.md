@@ -24,11 +24,11 @@ For simplicity I've added to the project under the bin an instance of composer.
 ## Ignore tests
 
 ~~~bash
-	./composer.sh exec -- phpunit --debug --filter test_utf_8
+	./run-test.sh --debug --filter test_utf_8
 ~~~
 
 ## Run a single test
 
 ~~~bash
-	./composer.sh exec -- phpunit --filter test500_invalidrequest_json_native
+	./run-test.sh --filter test500_invalidrequest_json_native
 ~~~
