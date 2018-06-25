@@ -42,9 +42,9 @@ class NodeJSFunctionalTest extends BaseTest{
     
     
     public static function setUpBeforeClass() {
-        $privateKey = file_get_contents(getcwd()."/mcapi_sandbox_key.p12");
+        $privateKey = file_get_contents(getcwd()."/fake-key.p12");
         ApiConfig::setSandbox(true);
-        ApiConfig::setAuthentication(new OAuthAuthentication("L5BsiPgaF-O3qA36znUATgQXwJB6MRoMSdhjd7wt50c97279!50596e52466e3966546d434b7354584c4975693238513d3d", $privateKey, "test", "password"));
+        ApiConfig::setAuthentication(new OAuthAuthentication("DuEVInT1ASB7AN7grP2Wd8t6Tpg31uYUlSTzoofYxP92pgyM!qkNEwNPSA0MnulBO6jTFt7cuIOgN3BnEAgvWcAeb1Z84bgqU", $privateKey, "fake-key", "fakepassword"));
     }
     
     

@@ -42,13 +42,13 @@ class JsonEcho extends BaseObject {
     
        
     protected static function getOperationMetadata() {
-        return new OperationMetadata("1.0.0", "http://echo.jpillora.com/");
+        return new OperationMetadata("1.0.0", "http://localhost:8081/");
     }
-    
+
     protected static function getOperationConfig($operationUUID) {
         switch ($operationUUID) {
             case "uuid":
-                return new OperationConfig("/mcapitest/JsonNativePostPublic", "create", array(), array());
+                return new OperationConfig("/mock_crud_server/echo", "create", array(), array());
             default:
                 throw new \Exception("Invalid operationUUID supplied: $operationUUID");
         }
