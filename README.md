@@ -19,8 +19,6 @@ chmod +x run-tests.sh
 ./run-test
 ```
 
-## Ignore tests
-`./composer exec -- phpunit --debug --filter test_utf_8`
-
 ## Run a single test
 `./composer exec -- phpunit --filter test500_invalidrequest_json_native`
+
