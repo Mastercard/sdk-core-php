@@ -296,7 +296,11 @@ class ApiController {
                 }
                 
                 if (strlen($responseContent) > 0) {
-                    return json_decode($responseContent, true);
+                    // ugly hack to enforce utf-8 encoded string before decoding it to associative array.
+                    // php v7.0 will sometimes return null when encountering a special char.
+                    $responseEncoded = utf8_encode($responseContent);
+
+                    return json_decode($responseEncoded, true);
                 } else {
                     return array();
                 }
