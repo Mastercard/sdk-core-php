@@ -147,13 +147,13 @@ class ApiException extends \Exception
     
     private function parseRawErrorData($errorData) {
         if ($this->isAssoc($errorData)) {
-            caseInsensitiveMap = new CaseInsensitiveMap();
-            caseInsensitiveMap->setAll($errorData);
-            $this->rawErrorData = caseInsensitiveMap;
+            $caseInsensitiveMap = new CaseInsensitiveMap();
+            $caseInsensitiveMap->setAll($errorData);
+            $this->rawErrorData = $caseInsensitiveMap;
         } else if (is_array ($errorData) && $this->isAssoc($errorData[0])){
-            caseInsensitiveMap = new CaseInsensitiveMap();
-            caseInsensitiveMap->setAll($errorData[0]);
-            $this->rawErrorData = caseInsensitiveMap;
+            $caseInsensitiveMap = new CaseInsensitiveMap();
+            $caseInsensitiveMap->setAll($errorData[0]);
+            $this->rawErrorData = $caseInsensitiveMap;
         }
     }  
     
